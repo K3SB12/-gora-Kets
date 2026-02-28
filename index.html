@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>🏛️ ÁGORA · Curso Inteligente desde YouTube</title>
+    <title>🏛️ ÁGORA · Curso Inteligente</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -88,15 +88,19 @@
             background: var(--card); border: 1px solid var(--border);
             padding: 0.7rem 1.5rem; border-radius: 40px; cursor: pointer;
             display: inline-flex; align-items: center; gap: 8px; color: var(--text);
+            font-size: 0.95rem;
         }
         .btn-primary { background: var(--accent); color: #1e2a32; border: none; }
+        .btn-primary:hover { background: #c9a04b; }
         .btn-success { background: var(--success); color: white; border: none; }
         .btn-warning { background: var(--warning); color: white; border: none; }
+        .btn-danger { background: var(--danger); color: white; border: none; }
+        .btn-sm { padding: 0.5rem 1.2rem; font-size: 0.85rem; }
         .security-officer {
             background: var(--security-bg); border-radius: 20px; padding: 1.5rem;
             margin-bottom: 2rem; color: var(--security-text); border-left: 8px solid var(--accent);
         }
-        .security-header { display: flex; align-items: center; gap: 1rem; }
+        .security-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
         .security-avatar {
             width: 60px; height: 60px; background: var(--accent); border-radius: 50%;
             display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #1e2a32;
@@ -139,6 +143,8 @@
             .sidebar button { padding: 0.5rem 0.8rem; font-size: 0.8rem; white-space: nowrap; }
             .sidebar-footer { display: none; }
             .main-content { padding: 1rem; max-height: none; }
+            .header-bar { flex-direction: column; align-items: flex-start; }
+            .btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -160,21 +166,21 @@
 
     <div class="main-content">
         <div class="header-bar">
-            <h1><i class="fas fa-columns"></i> ÁGORA · Curso Inteligente desde YouTube</h1>
+            <h1><i class="fas fa-columns"></i> ÁGORA · Tu plaza de conocimiento</h1>
             <div class="modo-toggle" id="toggleModo"><i class="fas fa-moon"></i> <span>Claroscuro</span></div>
         </div>
 
-        <!-- ========== PANEL 1: ÁGORA·VIDEO CON YOUTUBE API REAL ========== -->
+        <!-- PANEL 1: ÁGORA·VIDEO -->
         <div id="tab1" class="tab-panel active">
             <div class="card">
-                <h3><i class="fas fa-youtube" style="color: var(--accent);"></i> Ágora·Video con YouTube API</h3>
-                <p>Pega cualquier enlace de YouTube y obtendrás el título real, descripción y un curso generado con IA paso a paso.</p>
+                <h3><i class="fas fa-youtube"></i> Ágora·Video</h3>
+                <p>Pega cualquier enlace de YouTube y obtén un curso paso a paso con herramientas, cuidados y ejemplos.</p>
                 
-                <div style="background: linear-gradient(135deg, #b68b40, #8a6a30); padding: 2rem; border-radius: 20px; margin: 2rem 0; color: white;">
+                <div style="background: linear-gradient(135deg, #b68b40, #8a6a30); padding: 2rem; border-radius: 20px; margin: 2rem 0;">
                     <label style="color: white;">🔗 Enlace del video</label>
-                    <input type="url" id="youtubeUrl" placeholder="https://youtube.com/watch?v=..." style="background: white; color: black;">
-                    <button class="btn" id="generarCursoBtn" style="background: #1e2a32; color: white; margin-top: 1rem;">
-                        <i class="fas fa-magic"></i> Obtener datos y generar curso
+                    <input type="url" id="youtubeUrl" placeholder="https://youtube.com/watch?v=..." style="background: white; width:100%;">
+                    <button class="btn" id="generarCursoBtn" style="background: #1e2a32; color: white; margin-top: 1rem; width:100%;">
+                        <i class="fas fa-magic"></i> Generar curso
                     </button>
                 </div>
 
@@ -183,12 +189,12 @@
                     <p>Obteniendo información del video...</p>
                 </div>
 
-                <div id="errorMsg" style="display: none; background: #fee2e2; color: #991b1b; padding: 1rem; border-radius: 10px; margin: 1rem 0;"></div>
+                <div id="errorMsg" style="display: none; background: #fee2e2; color: #991b1b; padding: 1rem; border-radius: 10px;"></div>
 
                 <div id="resultadoCurso" style="display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h4 id="videoTitulo" style="color: var(--accent); font-family: Georgia;"></h4>
-                        <span class="progress-badge" id="cursoProgreso">0/5 completado</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4 id="videoTitulo" style="color: var(--accent);"></h4>
+                        <span class="progress-badge" id="cursoProgreso">0/2 completado</span>
                     </div>
                     
                     <div style="position: relative; padding-bottom: 56.25%; margin: 1rem 0;">
@@ -200,13 +206,13 @@
                     <div id="pasosContainer"></div>
                     
                     <button class="btn btn-success" onclick="guardarCurso()" style="margin-top: 1rem; width: 100%;">
-                        <i class="fas fa-save"></i> Guardar curso en Mi Ágora
+                        <i class="fas fa-save"></i> Guardar curso
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- ========== PANEL 2: ARQUITECTURA ========== -->
+        <!-- PANEL 2: ARQUITECTURA -->
         <div id="tab2" class="tab-panel">
             <div class="card">
                 <h3><i class="fas fa-landmark"></i> Arquitectura Profesional</h3>
@@ -231,7 +237,7 @@
             </div>
         </div>
 
-        <!-- ========== PANEL 3: MODELOS IA ========== -->
+        <!-- PANEL 3: MODELOS IA -->
         <div id="tab3" class="tab-panel">
             <div class="card">
                 <h3>🤖 Comparativa Modelos IA 2026</h3>
@@ -239,12 +245,12 @@
                     <tr><th>Modelo</th><th>Contexto</th><th>Precio</th></tr>
                     <tr><td>Claude 4.5</td><td>500k tokens</td><td>$20/mes</td></tr>
                     <tr><td>Gemini 3.1 Pro</td><td>2M tokens</td><td>$22/mes</td></tr>
-                    <tr><td>DeepSeek V3</td><td>128k tokens</td><td class="badge-safe">GRATIS</td></tr>
+                    <tr><td>DeepSeek V3</td><td>128k tokens</td><td><span style="background:#10b981; color:white; padding:0.2rem 0.5rem; border-radius:20px;">GRATIS</span></td></tr>
                 </table>
             </div>
         </div>
 
-        <!-- ========== PANEL 4: CASOS ÁUREOS ========== -->
+        <!-- PANEL 4: CASOS ÁUREOS -->
         <div id="tab4" class="tab-panel">
             <div class="card">
                 <h3><i class="fas fa-dollar-sign"></i> Casos de Éxito</h3>
@@ -256,7 +262,7 @@
             </div>
         </div>
 
-        <!-- ========== PANEL 5: SPEC TÉCNICO ========== -->
+        <!-- PANEL 5: SPEC -->
         <div id="tab5" class="tab-panel">
             <div class="card">
                 <h3><i class="fas fa-scroll"></i> SPEC Técnico</h3>
@@ -272,10 +278,10 @@
             </div>
         </div>
 
-        <!-- ========== PANEL 6: GEMINI CLI ========== -->
+        <!-- PANEL 6: GEMINI -->
         <div id="tab6" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-terminal"></i> Gemini CLI / Plan Mode</h3>
+                <h3><i class="fas fa-terminal"></i> Gemini CLI</h3>
                 <div class="code-block">
 npm install -g @google/gemini-cli
 /plan  # Activar Plan Mode
@@ -283,14 +289,14 @@ npm install -g @google/gemini-cli
             </div>
         </div>
 
-        <!-- ========== PANEL 7: OFICIAL DE SEGURIDAD ========== -->
+        <!-- PANEL 7: SEGURIDAD -->
         <div id="tab7" class="tab-panel">
             <div class="card">
                 <h3><i class="fas fa-shield-alt"></i> Ágora·Seguridad</h3>
                 <div class="security-officer" id="securityOfficer">
                     <div class="security-header">
                         <div class="security-avatar"><i class="fas fa-shield-alt"></i></div>
-                        <span class="badge-safe">🛡️ MODO SEGURO</span>
+                        <span style="background:#10b981; color:white; padding:0.3rem 0.8rem; border-radius:20px;">🛡️ MODO SEGURO</span>
                     </div>
                     <div class="security-message" id="securityMessage">Todo gratuito, tú decides si gastar.</div>
                     <div class="security-stats">
@@ -303,27 +309,22 @@ npm install -g @google/gemini-cli
             </div>
         </div>
 
-        <!-- ========== PANEL 8: MI ÁGORA ========== -->
+        <!-- PANEL 8: MI ÁGORA -->
         <div id="tab8" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-book"></i> Mis Cursos Guardados</h3>
+                <h3><i class="fas fa-book"></i> Mis Cursos</h3>
                 <div id="cursosGuardados"></div>
             </div>
         </div>
 
-        <div class="toast" id="toastMsg">✅ Hecho en Ágora</div>
+        <div class="toast" id="toastMsg">✅ Hecho</div>
     </div>
 
     <script>
         // ============================================================
-        // CONFIGURACIÓN - PEGA TU API KEY AQUÍ
+        // TU NUEVA API KEY (SEGURA)
         // ============================================================
-        const API_KEY = ''; // <-- REEMPLAZA ESTO CON TU CLAVE REAL
-        
-        // Verificación amigable
-        if (API_KEY === 'AQUI_PEGA_TU_API_KEY') {
-            alert('🔑 Recuerda pegar tu API Key de YouTube en el código (busca "AQUI_PEGA_TU_API_KEY")');
-        }
+        const API_KEY = 'AIzaSyC8cCxb1WBmIIG5oz3l7-HNPnmWwIuCb0o';
 
         // ============================================================
         // OFICIAL DE SEGURIDAD
@@ -344,7 +345,7 @@ npm install -g @google/gemini-cli
         SecurityOfficer.updateUI();
 
         // ============================================================
-        // FUNCIÓN PARA OBTENER DATOS DE YOUTUBE (VIDEOS.LIST)
+        // FUNCIÓN PARA OBTENER DATOS DE YOUTUBE
         // ============================================================
         async function obtenerInfoVideo(videoId) {
             const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`;
@@ -363,97 +364,31 @@ npm install -g @google/gemini-cli
                     throw new Error('Video no encontrado');
                 }
             } catch (error) {
-                console.error('Error al obtener video:', error);
+                console.error('Error:', error);
                 throw error;
             }
         }
 
         // ============================================================
-        // GENERADOR DE CURSOS (con datos reales de YouTube)
+        // GENERADOR DE CURSOS
         // ============================================================
         let cursoActual = null;
         let progresoPasos = [];
 
-        document.getElementById('generarCursoBtn').addEventListener('click', async ()=>{
-            const url = document.getElementById('youtubeUrl').value;
-            if(!url) { alert('Pega un enlace de YouTube'); return; }
-            
-            // Extraer ID del video
-            let videoId = '';
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            if (match && match[2].length === 11) videoId = match[2];
-            else { alert('URL no válida'); return; }
-
-            // Mostrar loading
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('resultadoCurso').style.display = 'none';
-            document.getElementById('errorMsg').style.display = 'none';
-
-            try {
-                // Obtener datos reales de YouTube
-                SecurityOfficer.logSafeDecision('Llamada a YouTube API (costo: 1 unidad)');
-                const snippet = await obtenerInfoVideo(videoId);
-                
-                // Título real
-                const titulo = snippet.title;
-                document.getElementById('videoTitulo').innerText = titulo;
-                document.getElementById('videoIframe').src = `https://www.youtube.com/embed/${videoId}`;
-                
-                // Descripción real (limitada para no saturar)
-                const descripcion = snippet.description.substring(0, 300) + (snippet.description.length > 300 ? '...' : '');
-                document.getElementById('videoDescripcion').innerHTML = `<strong>📝 Descripción:</strong> ${descripcion}`;
-
-                // Generar pasos basados en palabras clave de la descripción/título
-                const textoCompleto = (titulo + ' ' + snippet.description).toLowerCase();
-                
-                // Detectar tema para personalizar pasos
-                let pasosGenerados;
-                if (textoCompleto.includes('firebase') || textoCompleto.includes('base de datos')) {
-                    pasosGenerados = pasosFirebase;
-                } else if (textoCompleto.includes('react') || textoCompleto.includes('frontend')) {
-                    pasosGenerados = pasosReact;
-                } else if (textoCompleto.includes('api') || textoCompleto.includes('backend')) {
-                    pasosGenerados = pasosAPI;
-                } else {
-                    pasosGenerados = pasosArquitectura; // Por defecto
-                }
-
-                cursoActual = { pasos: pasosGenerados };
-                progresoPasos = new Array(pasosGenerados.length).fill(false);
-                
-                renderizarPasos(pasosGenerados);
-                document.getElementById('resultadoCurso').style.display = 'block';
-                actualizarProgreso();
-                
-                SecurityOfficer.logSafeDecision('Curso generado con datos reales de YouTube');
-                
-            } catch (error) {
-                document.getElementById('errorMsg').style.display = 'block';
-                document.getElementById('errorMsg').innerHTML = `❌ Error: ${error.message}. Verifica tu API Key y que el video exista.`;
-                SecurityOfficer.logWarning('Error al obtener datos de YouTube');
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
-        });
-
-        // ============================================================
-        // BIBLIOTECA DE PASOS SEGÚN TEMAS
-        // ============================================================
         const pasosArquitectura = [
             {
                 titulo: "Análisis de Contexto",
-                herramientas: ["Miro o pizarra", "Documentación", "Entrevistas"],
+                herramientas: ["Miro", "Documentación", "Entrevistas"],
                 queHacer: ["Identificar actores", "Definir alcance", "Listar restricciones"],
                 cuidados: ["No saltarse este paso", "Involucrar a stakeholders"],
-                ejemplo: "Para una app de reservas, los actores son usuarios y dueños de locales."
+                ejemplo: "Para una app de reservas, los actores son usuarios y dueños."
             },
             {
                 titulo: "Diseño de Arquitectura",
                 herramientas: ["Draw.io", "Lucidchart"],
                 queHacer: ["Diagrama de componentes", "Elegir stack tecnológico"],
                 cuidados: ["Evitar sobreingeniería"],
-                ejemplo: "Frontend: React, Backend: Firebase, Base de datos: Firestore"
+                ejemplo: "Frontend: React, Backend: Firebase"
             }
         ];
 
@@ -464,42 +399,57 @@ npm install -g @google/gemini-cli
                 queHacer: ["Crear proyecto", "Registrar app", "Copiar config"],
                 cuidados: ["NUNCA subir credenciales a GitHub", "Activar alertas de presupuesto"],
                 ejemplo: "import { initializeApp } from 'firebase/app';"
-            },
-            {
-                titulo: "Autenticación",
-                herramientas: ["Firebase Auth"],
-                queHacer: ["Habilitar email/password", "Configurar reglas"],
-                cuidados: ["Verificar emails", "Rate limiting"],
-                ejemplo: "createUserWithEmailAndPassword(auth, email, password)"
             }
         ];
 
-        const pasosReact = [
-            {
-                titulo: "Crear proyecto React",
-                herramientas: ["Node.js", "npm/yarn"],
-                queHacer: ["npx create-react-app mi-app", "Estructurar carpetas"],
-                cuidados: ["Mantener versión de Node actualizada"],
-                ejemplo: "npx create-react-app mi-app --template typescript"
-            }
-        ];
+        document.getElementById('generarCursoBtn').addEventListener('click', async ()=>{
+            const url = document.getElementById('youtubeUrl').value;
+            if(!url) { alert('Pega un enlace de YouTube'); return; }
+            
+            let videoId = '';
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            if (match && match[2].length === 11) videoId = match[2];
+            else { alert('URL no válida'); return; }
 
-        const pasosAPI = [
-            {
-                titulo: "Diseñar endpoints",
-                herramientas: ["Postman", "Swagger"],
-                queHacer: ["Definir rutas REST", "Estructurar JSON"],
-                cuidados: ["Versionar API (/v1/...)", "Documentar"],
-                ejemplo: "GET /api/v1/usuarios"
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultadoCurso').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
+
+            try {
+                SecurityOfficer.logSafeDecision('Llamada a YouTube API (1 unidad)');
+                const snippet = await obtenerInfoVideo(videoId);
+                
+                document.getElementById('videoTitulo').innerText = snippet.title;
+                document.getElementById('videoIframe').src = `https://www.youtube.com/embed/${videoId}`;
+                
+                const descripcion = snippet.description.substring(0, 300) + (snippet.description.length > 300 ? '...' : '');
+                document.getElementById('videoDescripcion').innerHTML = `<strong>📝 Descripción:</strong> ${descripcion}`;
+
+                const textoCompleto = (snippet.title + ' ' + snippet.description).toLowerCase();
+                let pasosGenerados = textoCompleto.includes('firebase') ? pasosFirebase : pasosArquitectura;
+
+                cursoActual = { pasos: pasosGenerados };
+                progresoPasos = new Array(pasosGenerados.length).fill(false);
+                
+                renderizarPasos(pasosGenerados);
+                document.getElementById('resultadoCurso').style.display = 'block';
+                actualizarProgreso();
+                
+            } catch (error) {
+                document.getElementById('errorMsg').style.display = 'block';
+                document.getElementById('errorMsg').innerHTML = `❌ Error: ${error.message}. Verifica la URL.`;
+                SecurityOfficer.logWarning('Error al obtener datos');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
             }
-        ];
+        });
 
         function renderizarPasos(pasos) {
             const container = document.getElementById('pasosContainer');
             let html = '';
             
             pasos.forEach((paso, index) => {
-                const completado = progresoPasos[index] ? 'open' : '';
                 const checkIcon = progresoPasos[index] ? 'fa-check-circle' : 'fa-circle';
                 
                 html += `
@@ -513,14 +463,14 @@ npm install -g @google/gemini-cli
                             <div class="step-section">
                                 <h5><i class="fas fa-tools"></i> HERRAMIENTAS</h5>
                                 <ul class="step-checklist">
-                                    ${paso.herramientas.map(h => `<li><input type="checkbox" onchange="marcarSubtarea(${index}, this)"> ${h}</li>`).join('')}
+                                    ${paso.herramientas.map(h => `<li><input type="checkbox"> ${h}</li>`).join('')}
                                 </ul>
                             </div>
                             
                             <div class="step-section">
                                 <h5><i class="fas fa-list-check"></i> QUÉ HACER</h5>
                                 <ul class="step-checklist">
-                                    ${paso.queHacer.map(q => `<li><input type="checkbox" onchange="marcarSubtarea(${index}, this)"> ${q}</li>`).join('')}
+                                    ${paso.queHacer.map(q => `<li><input type="checkbox"> ${q}</li>`).join('')}
                                 </ul>
                             </div>
                             
@@ -535,7 +485,7 @@ npm install -g @google/gemini-cli
                             </div>
                             
                             <button class="btn btn-sm" onclick="marcarPasoCompletado(${index})">
-                                <i class="fas fa-check-circle"></i> Marcar paso completado
+                                <i class="fas fa-check-circle"></i> Marcar completado
                             </button>
                         </div>
                     </div>
@@ -547,13 +497,10 @@ npm install -g @google/gemini-cli
 
         window.togglePaso = (index) => {
             const content = document.getElementById(`paso-${index}`);
-            const header = content.previousElementSibling;
             if (content.style.display === 'none') {
                 content.style.display = 'block';
-                header.classList.add('open');
             } else {
                 content.style.display = 'none';
-                header.classList.remove('open');
             }
         };
 
@@ -561,7 +508,6 @@ npm install -g @google/gemini-cli
             progresoPasos[index] = true;
             renderizarPasos(cursoActual.pasos);
             actualizarProgreso();
-            document.getElementById(`paso-${index}`).style.display = 'none';
             SecurityOfficer.logSafeDecision(`Paso ${index+1} completado`);
         };
 
@@ -577,8 +523,7 @@ npm install -g @google/gemini-cli
                 titulo: document.getElementById('videoTitulo').innerText,
                 videoId: document.getElementById('videoIframe').src.split('/').pop().split('?')[0],
                 fecha: new Date().toLocaleDateString(),
-                progreso: progresoPasos,
-                pasos: cursoActual.pasos
+                progreso: progresoPasos
             });
             localStorage.setItem('misCursos', JSON.stringify(guardados));
             mostrarCursosGuardados();
@@ -589,7 +534,7 @@ npm install -g @google/gemini-cli
             const div = document.getElementById('cursosGuardados');
             const guardados = JSON.parse(localStorage.getItem('misCursos')) || [];
             if(guardados.length === 0) { 
-                div.innerHTML = '<p>Tu ágora personal está vacía.</p>'; 
+                div.innerHTML = '<p>Tu ágora está vacía.</p>'; 
                 return; 
             }
             let html = '';
@@ -597,7 +542,6 @@ npm install -g @google/gemini-cli
                 html += `<div style="padding:1rem; border-bottom:1px solid var(--border);">
                     <strong>${c.titulo}</strong> (${c.fecha})<br>
                     <iframe src="https://www.youtube.com/embed/${c.videoId}" style="width:100%; height:200px; border-radius:15px; margin-top:0.5rem;" frameborder="0" allowfullscreen></iframe>
-                    <p>Progreso: ${c.progreso?.filter(p=>p).length || 0}/${c.pasos?.length || 0} pasos</p>
                 </div>`;
             });
             div.innerHTML = html;
@@ -632,12 +576,11 @@ npm install -g @google/gemini-cli
         };
 
         window.descargarSpec = function() {
-            const spec = `# SPEC TÉCNICO\n## Visión\n## Arquitectura\n## Flujos`;
+            const spec = `# SPEC\n## Visión\n## Arquitectura\n## Flujos`;
             const blob = new Blob([spec], {type:'text/markdown'});
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'spec.md'; a.click();
         };
 
-        // Inicializar
         mostrarCursosGuardados();
     </script>
 </body>
