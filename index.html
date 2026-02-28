@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>🏛️ ÁGORA · Curso Inteligente</title>
+    <title>🏛️ ÁGORA · Tu compañero de aprendizaje</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -55,7 +55,9 @@
             font-size: 0.9rem; color: #b8aa99; padding-top: 2rem;
             border-top: 1px solid var(--accent);
         }
-        .main-content { flex: 1; padding: 2rem; overflow-y: auto; max-height: 100vh; }
+        .main-content {
+            flex: 1; padding: 2rem; overflow-y: auto; max-height: 100vh;
+        }
         .header-bar {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 2rem; background: var(--header-bg); padding: 1rem 2rem;
@@ -96,6 +98,20 @@
         .btn-warning { background: var(--warning); color: white; border: none; }
         .btn-danger { background: var(--danger); color: white; border: none; }
         .btn-sm { padding: 0.5rem 1.2rem; font-size: 0.85rem; }
+        .badge {
+            padding: 0.3rem 0.8rem; border-radius: 30px; font-size: 0.75rem;
+            background: var(--accent-light); color: var(--accent); font-weight: 600;
+        }
+        .badge-safe { background: #10b981; color: white; }
+        .fila-acciones i { margin: 0 6px; cursor: pointer; opacity: 0.7; font-size: 1rem; }
+        .fila-acciones i:hover { opacity: 1; color: var(--accent); }
+        .barra-acciones { display: flex; gap: 10px; flex-wrap: wrap; margin: 1.5rem 0; }
+        .toast {
+            position: fixed; bottom: 20px; right: 20px; background: var(--accent);
+            color: #1e2a32; padding: 1rem 2rem; border-radius: 60px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; z-index: 9999;
+            font-weight: 500;
+        }
         .security-officer {
             background: var(--security-bg); border-radius: 20px; padding: 1.5rem;
             margin-bottom: 2rem; color: var(--security-text); border-left: 8px solid var(--accent);
@@ -108,43 +124,57 @@
         .security-message { margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px; }
         .security-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem; }
         .security-stat { background: rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 10px; text-align: center; }
-        .step-container { margin: 1.5rem 0; border: 2px solid var(--accent-light); border-radius: 20px; overflow: hidden; }
-        .step-header {
-            background: var(--accent-light); padding: 1rem 1.5rem; cursor: pointer;
+
+        /* Estilos para categorías */
+        .categoria-container {
+            background: var(--bg); border-radius: 20px; padding: 1rem; margin-bottom: 1rem;
+        }
+        .categoria-header {
             display: flex; justify-content: space-between; align-items: center;
-            font-weight: 600; font-size: 1.1rem; transition: 0.2s;
+            padding: 0.5rem; cursor: pointer; border-bottom: 1px solid var(--border);
         }
-        .step-header:hover { background: #e8d6b0; }
-        .step-header i { transition: transform 0.3s; }
-        .step-header.open i { transform: rotate(90deg); }
-        .step-content { padding: 1.5rem; background: var(--card); border-top: 1px solid var(--border); }
-        .step-section { margin-bottom: 1.5rem; padding: 1rem; background: var(--bg); border-radius: 15px; }
-        .step-section h5 { color: var(--accent); margin-bottom: 0.8rem; font-size: 1rem; text-transform: uppercase; }
-        .step-checklist { list-style: none; padding: 0; }
-        .step-checklist li { padding: 0.5rem 0; display: flex; align-items: center; gap: 0.8rem; border-bottom: 1px dashed var(--border); }
-        .step-checklist input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
-        .step-warning { background: #fff3cd; border-left: 4px solid var(--warning); padding: 1rem; border-radius: 10px; margin: 1rem 0; color: #856404; }
-        .code-block { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 10px; font-family: monospace; overflow-x: auto; margin: 1rem 0; }
-        .progress-badge { background: var(--accent); color: #1e2a32; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-        .toast {
-            position: fixed; bottom: 20px; right: 20px; background: var(--accent);
-            color: #1e2a32; padding: 1rem 2rem; border-radius: 60px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; z-index: 9999;
+        .categoria-header h4 { display: flex; align-items: center; gap: 0.5rem; }
+        .categoria-content { padding: 1rem 0; }
+        .enlace-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.5rem; border-bottom: 1px dashed var(--border);
         }
+        .enlace-item:last-child { border-bottom: none; }
+
+        /* Estilos para historial */
+        .historial-dia {
+            margin-bottom: 1.5rem; padding: 1rem; background: var(--bg); border-radius: 15px;
+        }
+        .historial-fecha {
+            font-weight: 600; color: var(--accent); margin-bottom: 0.5rem;
+        }
+
+        /* Estilos para bitácora */
+        .bitacora-entrada {
+            background: var(--bg); border-radius: 15px; padding: 1rem; margin-bottom: 1rem;
+        }
+        .bitacora-tags span {
+            background: var(--accent-light); padding: 0.2rem 0.5rem; border-radius: 15px;
+            font-size: 0.8rem; margin-right: 0.3rem;
+        }
+
+        /* Responsive móvil */
         @media (max-width: 768px) {
             body { flex-direction: column; }
             .sidebar {
                 width: 100%; padding: 1rem; max-height: 80px; overflow: visible;
                 flex-direction: row; align-items: center; justify-content: space-between;
-                position: sticky; top: 0;
+                position: sticky; top: 0; z-index: 1000;
             }
-            .sidebar h2 { margin-bottom: 0; border-bottom: none; font-size: 1.2rem; }
-            .sidebar nav { flex-direction: row; overflow-x: auto; }
+            .sidebar h2 { margin-bottom: 0; border-bottom: none; padding-bottom: 0; font-size: 1.2rem; }
+            .sidebar nav { flex-direction: row; overflow-x: auto; gap: 0.2rem; }
             .sidebar button { padding: 0.5rem 0.8rem; font-size: 0.8rem; white-space: nowrap; }
             .sidebar-footer { display: none; }
             .main-content { padding: 1rem; max-height: none; }
-            .header-bar { flex-direction: column; align-items: flex-start; }
-            .btn { width: 100%; justify-content: center; }
+            .header-bar { flex-direction: column; align-items: flex-start; padding: 1rem; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .barra-acciones { flex-direction: column; align-items: stretch; }
+            .btn { justify-content: center; }
         }
     </style>
 </head>
@@ -153,152 +183,124 @@
         <h2><i class="fas fa-columns"></i> ÁGORA</h2>
         <nav id="menuNav">
             <button data-tab="tab1" class="active"><i class="fas fa-youtube"></i> Ágora·Video</button>
-            <button data-tab="tab2"><i class="fas fa-landmark"></i> Arquitectura</button>
-            <button data-tab="tab3"><i class="fas fa-microchip"></i> Modelos IA</button>
-            <button data-tab="tab4"><i class="fas fa-dollar-sign"></i> Casos Áureos</button>
-            <button data-tab="tab5"><i class="fas fa-scroll"></i> SPEC</button>
-            <button data-tab="tab6"><i class="fas fa-terminal"></i> Gemini</button>
-            <button data-tab="tab7"><i class="fas fa-shield-alt"></i> Seguridad</button>
-            <button data-tab="tab8"><i class="fas fa-book"></i> Mi Ágora</button>
+            <button data-tab="tab2"><i class="fas fa-folder-tree"></i> Categorías</button>
+            <button data-tab="tab3"><i class="fas fa-history"></i> Historial</button>
+            <button data-tab="tab4"><i class="fas fa-book-open"></i> Bitácora</button>
+            <button data-tab="tab5"><i class="fas fa-chart-line"></i> Progreso</button>
+            <button data-tab="tab6"><i class="fas fa-shield-alt"></i> Seguridad</button>
+            <button data-tab="tab7"><i class="fas fa-info-circle"></i> Guías</button>
         </nav>
-        <div class="sidebar-footer"><i class="fas fa-leaf"></i> Siempre gratuito · Sabiduría colectiva</div>
+        <div class="sidebar-footer"><i class="fas fa-leaf"></i> Siempre gratuito · Tu compañero de aprendizaje</div>
     </div>
 
     <div class="main-content">
         <div class="header-bar">
-            <h1><i class="fas fa-columns"></i> ÁGORA · Tu plaza de conocimiento</h1>
+            <h1><i class="fas fa-columns"></i> ÁGORA · Tu compañero de aprendizaje</h1>
             <div class="modo-toggle" id="toggleModo"><i class="fas fa-moon"></i> <span>Claroscuro</span></div>
         </div>
 
-        <!-- PANEL 1: ÁGORA·VIDEO -->
+        <!-- ========== PANEL 1: ÁGORA·VIDEO ========== -->
         <div id="tab1" class="tab-panel active">
             <div class="card">
                 <h3><i class="fas fa-youtube"></i> Ágora·Video</h3>
-                <p>Pega cualquier enlace de YouTube y obtén un curso paso a paso con herramientas, cuidados y ejemplos.</p>
+                <p>Pega cualquier enlace de YouTube y obtén recomendaciones personalizadas.</p>
                 
                 <div style="background: linear-gradient(135deg, #b68b40, #8a6a30); padding: 2rem; border-radius: 20px; margin: 2rem 0;">
                     <label style="color: white;">🔗 Enlace del video</label>
                     <input type="url" id="youtubeUrl" placeholder="https://youtube.com/watch?v=..." style="background: white; width:100%;">
-                    <button class="btn" id="generarCursoBtn" style="background: #1e2a32; color: white; margin-top: 1rem; width:100%;">
-                        <i class="fas fa-magic"></i> Generar curso
+                    <button class="btn" id="analizarVideoBtn" style="background: #1e2a32; color: white; margin-top: 1rem; width:100%;">
+                        <i class="fas fa-magic"></i> Analizar video
                     </button>
                 </div>
 
-                <div id="loading" style="display: none; text-align: center; padding: 2rem;">
-                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--accent);"></i>
-                    <p>Obteniendo información del video...</p>
-                </div>
-
-                <div id="errorMsg" style="display: none; background: #fee2e2; color: #991b1b; padding: 1rem; border-radius: 10px;"></div>
-
-                <div id="resultadoCurso" style="display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h4 id="videoTitulo" style="color: var(--accent);"></h4>
-                        <span class="progress-badge" id="cursoProgreso">0/2 completado</span>
-                    </div>
-                    
-                    <div style="position: relative; padding-bottom: 56.25%; margin: 1rem 0;">
-                        <iframe id="videoIframe" style="position: absolute; top:0; left:0; width:100%; height:100%; border-radius:15px;" frameborder="0" allowfullscreen></iframe>
+                <div id="analisisResultado" style="display: none;">
+                    <div style="background: var(--accent-light); padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem;">
+                        <h4>📊 Análisis del video</h4>
+                        <p><strong>Título:</strong> <span id="videoTitulo"></span></p>
+                        <p><strong>Tema detectado:</strong> <span id="videoTema"></span></p>
+                        <p><strong>Nivel estimado:</strong> <span id="videoNivel"></span></p>
+                        <p><strong>Etiquetas sugeridas:</strong> <span id="videoEtiquetas"></span></p>
                     </div>
 
-                    <div id="videoDescripcion" style="background: var(--bg); padding: 1rem; border-radius: 15px; margin: 1rem 0;"></div>
-                    
-                    <div id="pasosContainer"></div>
-                    
-                    <button class="btn btn-success" onclick="guardarCurso()" style="margin-top: 1rem; width: 100%;">
-                        <i class="fas fa-save"></i> Guardar curso
-                    </button>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg); padding: 1rem; border-radius: 15px; text-align: center;">
+                            <h5>🎯 Recomendación principal</h5>
+                            <p id="recomendacionPrincipal"></p>
+                            <button class="btn btn-sm btn-primary" id="abrirRecomendacionBtn">Abrir herramienta</button>
+                        </div>
+                        <div style="background: var(--bg); padding: 1rem; border-radius: 15px; text-align: center;">
+                            <h5>📋 Alternativas</h5>
+                            <p id="recomendacionAlternativa"></p>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--bg); padding: 1.5rem; border-radius: 15px;">
+                        <h4>📋 Guía paso a paso</h4>
+                        <div id="guiaPasos"></div>
+                        <button class="btn btn-success btn-sm" id="guardarProgresoBtn" style="margin-top: 1rem;">Guardar progreso</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- PANEL 2: ARQUITECTURA -->
+        <!-- ========== PANEL 2: CATEGORÍAS ========== -->
         <div id="tab2" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-landmark"></i> Arquitectura Profesional</h3>
-                <div class="grid-2">
-                    <div>
-                        <h4>Plantilla de Contexto</h4>
-                        <div class="code-block">
-// ROL: "Eres arquitecta senior"
-// CONTEXTO: "App que escalará a 1M usuarios"
-// RESTRICCIONES: "Offline-first"
-// EJEMPLOS: "Como Uber, pero para..."
-                        </div>
-                        <button class="btn btn-primary" onclick="descargarPlantilla()">Descargar plantilla</button>
-                    </div>
-                    <div>
-                        <h4>Video Recomendado</h4>
-                        <div style="position: relative; padding-bottom: 56.25%;">
-                            <iframe src="https://www.youtube.com/embed/8BZ2AlerW9c" style="position: absolute; top:0; left:0; width:100%; height:100%; border-radius:15px;" frameborder="0" allowfullscreen></iframe>
-                        </div>
-                    </div>
+                <h3><i class="fas fa-folder-tree"></i> Mis categorías</h3>
+                <div class="barra-acciones">
+                    <button class="btn btn-primary" id="nuevaCategoriaBtn"><i class="fas fa-plus"></i> Nueva categoría</button>
                 </div>
+                <div id="categoriasContainer"></div>
             </div>
         </div>
 
-        <!-- PANEL 3: MODELOS IA -->
+        <!-- ========== PANEL 3: HISTORIAL ========== -->
         <div id="tab3" class="tab-panel">
             <div class="card">
-                <h3>🤖 Comparativa Modelos IA 2026</h3>
-                <table class="step-section" style="width:100%;">
-                    <tr><th>Modelo</th><th>Contexto</th><th>Precio</th></tr>
-                    <tr><td>Claude 4.5</td><td>500k tokens</td><td>$20/mes</td></tr>
-                    <tr><td>Gemini 3.1 Pro</td><td>2M tokens</td><td>$22/mes</td></tr>
-                    <tr><td>DeepSeek V3</td><td>128k tokens</td><td><span style="background:#10b981; color:white; padding:0.2rem 0.5rem; border-radius:20px;">GRATIS</span></td></tr>
-                </table>
+                <h3><i class="fas fa-history"></i> Historial de aprendizaje</h3>
+                <div id="historialContainer"></div>
             </div>
         </div>
 
-        <!-- PANEL 4: CASOS ÁUREOS -->
+        <!-- ========== PANEL 4: BITÁCORA ========== -->
         <div id="tab4" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-dollar-sign"></i> Casos de Éxito</h3>
-                <div class="grid-3">
-                    <div class="step-section"><h4>GoodBarber</h4><p>+$10M en ventas</p><a href="https://es.goodbarber.com" target="_blank">Ver →</a></div>
-                    <div class="step-section"><h4>Adalo</h4><p>+3M de apps</p><a href="https://adalo.com" target="_blank">Ver →</a></div>
-                    <div class="step-section"><h4>Bubble</h4><p>Startups Series A</p><a href="https://bubble.io/showcase" target="_blank">Ver →</a></div>
+                <h3><i class="fas fa-book-open"></i> Mi bitácora</h3>
+                <div class="barra-acciones">
+                    <button class="btn btn-primary" id="nuevaEntradaBitacoraBtn"><i class="fas fa-plus"></i> Nueva entrada</button>
                 </div>
+                <div id="bitacoraContainer"></div>
             </div>
         </div>
 
-        <!-- PANEL 5: SPEC -->
+        <!-- ========== PANEL 5: PROGRESO ========== -->
         <div id="tab5" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-scroll"></i> SPEC Técnico</h3>
-                <div class="code-block">
-# SPEC
-## 1. Visión
-## 2. Arquitectura
-## 3. Flujos
-## 4. Datos
-## 5. Seguridad
+                <h3><i class="fas fa-chart-line"></i> Mi progreso</h3>
+                <div class="security-officer" style="margin-bottom: 2rem;">
+                    <div class="security-stats">
+                        <div class="security-stat">📊 <span id="totalVideos">0</span> videos</div>
+                        <div class="security-stat">📝 <span id="totalNotas">0</span> notas</div>
+                        <div class="security-stat">🔥 <span id="rachaActual">0</span> días seguidos</div>
+                        <div class="security-stat">🏆 <span id="mejorRacha">0</span> mejor racha</div>
+                    </div>
                 </div>
-                <button class="btn btn-primary" onclick="descargarSpec()">Descargar SPEC.md</button>
+                <div id="progresoDetalle"></div>
             </div>
         </div>
 
-        <!-- PANEL 6: GEMINI -->
+        <!-- ========== PANEL 6: SEGURIDAD ========== -->
         <div id="tab6" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-terminal"></i> Gemini CLI</h3>
-                <div class="code-block">
-npm install -g @google/gemini-cli
-/plan  # Activar Plan Mode
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL 7: SEGURIDAD -->
-        <div id="tab7" class="tab-panel">
-            <div class="card">
-                <h3><i class="fas fa-shield-alt"></i> Ágora·Seguridad</h3>
+                <h3><i class="fas fa-shield-alt"></i> Oficial de Seguridad</h3>
                 <div class="security-officer" id="securityOfficer">
                     <div class="security-header">
                         <div class="security-avatar"><i class="fas fa-shield-alt"></i></div>
-                        <span style="background:#10b981; color:white; padding:0.3rem 0.8rem; border-radius:20px;">🛡️ MODO SEGURO</span>
+                        <span class="badge-safe">🛡️ MODO SEGURO</span>
                     </div>
-                    <div class="security-message" id="securityMessage">Todo gratuito, tú decides si gastar.</div>
+                    <div class="security-message" id="securityMessage">
+                        ✅ Sin APIs externas · ✅ Sin costos · ✅ Sin riesgos
+                    </div>
                     <div class="security-stats">
                         <div class="security-stat">🟢 <span id="safeDecisions">0</span> seguras</div>
                         <div class="security-stat">🟡 <span id="warnings">0</span> alertas</div>
@@ -309,11 +311,32 @@ npm install -g @google/gemini-cli
             </div>
         </div>
 
-        <!-- PANEL 8: MI ÁGORA -->
-        <div id="tab8" class="tab-panel">
+        <!-- ========== PANEL 7: GUÍAS ========== -->
+        <div id="tab7" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-book"></i> Mis Cursos</h3>
-                <div id="cursosGuardados"></div>
+                <h3><i class="fas fa-info-circle"></i> Guías de herramientas</h3>
+                <div class="grid-3">
+                    <div class="step-section">
+                        <h4>🎯 Miyagi Labs</h4>
+                        <p>Genera cursos completos con quizzes y feedback IA</p>
+                        <a href="https://miyagilabs.ai" target="_blank" class="btn btn-sm">Visitar</a>
+                    </div>
+                    <div class="step-section">
+                        <h4>📝 Ainee</h4>
+                        <p>Notas, mapas mentales, flashcards y podcasts</p>
+                        <a href="https://ainee.com" target="_blank" class="btn btn-sm">Visitar</a>
+                    </div>
+                    <div class="step-section">
+                        <h4>⚡ LongCut</h4>
+                        <p>Workspace interactivo con chat sobre el video</p>
+                        <a href="https://longcut.ai" target="_blank" class="btn btn-sm">Visitar</a>
+                    </div>
+                    <div class="step-section">
+                        <h4>🎧 NotebookLM</h4>
+                        <p>Podcasts, resúmenes y mapas mentales</p>
+                        <a href="https://notebooklm.google.com" target="_blank" class="btn btn-sm">Visitar</a>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -322,19 +345,65 @@ npm install -g @google/gemini-cli
 
     <script>
         // ============================================================
-        // TU NUEVA API KEY (SEGURA)
+        // ESTADO GLOBAL (DATOS REALES, NO SIMULADOS)
         // ============================================================
-        const API_KEY = 'AIzaSyC8cCxb1WBmIIG5oz3l7-HNPnmWwIuCb0o';
+        let estado = {
+            categorias: JSON.parse(localStorage.getItem('agora_categorias')) || [
+                { id: 1, nombre: 'Programación', color: '#3b82f6', enlaces: [] },
+                { id: 2, nombre: 'Diseño', color: '#10b981', enlaces: [] },
+                { id: 3, nombre: 'IA y ML', color: '#8b5cf6', enlaces: [] },
+                { id: 4, nombre: 'Pendientes', color: '#f59e0b', enlaces: [] }
+            ],
+            historial: JSON.parse(localStorage.getItem('agora_historial')) || [],
+            bitacora: JSON.parse(localStorage.getItem('agora_bitacora')) || [],
+            progreso: JSON.parse(localStorage.getItem('agora_progreso')) || {
+                totalVideos: 0,
+                totalNotas: 0,
+                rachaActual: 0,
+                mejorRacha: 0,
+                ultimoAcceso: null
+            }
+        };
 
         // ============================================================
-        // OFICIAL DE SEGURIDAD
+        // OFICIAL DE SEGURIDAD (SIN APIs, SIN RIESGOS)
         // ============================================================
         const SecurityOfficer = {
-            stats: { safeDecisions:0, warnings:0, risksAvoided:0, costSavings:0 },
-            logSafeDecision(msg) { this.stats.safeDecisions++; this.updateUI(); this.showMessage(`✅ ${msg}`); },
-            logWarning(msg) { this.stats.warnings++; this.updateUI(); this.showMessage(`⚠️ ${msg}`); },
-            logRiskAvoided(msg) { this.stats.risksAvoided++; this.stats.costSavings+=200; this.updateUI(); this.showMessage(`🛡️ ${msg}`); },
-            showMessage(msg) { document.getElementById('securityMessage').innerHTML = msg; },
+            stats: {
+                safeDecisions: parseInt(localStorage.getItem('seguridad_safeDecisions')) || 0,
+                warnings: parseInt(localStorage.getItem('seguridad_warnings')) || 0,
+                risksAvoided: parseInt(localStorage.getItem('seguridad_risksAvoided')) || 0,
+                costSavings: parseInt(localStorage.getItem('seguridad_costSavings')) || 0
+            },
+            logSafeDecision(msg) {
+                this.stats.safeDecisions++;
+                this.stats.costSavings += 50;
+                this.save();
+                this.updateUI();
+                this.showMessage(`✅ ${msg}`);
+            },
+            logWarning(msg) {
+                this.stats.warnings++;
+                this.save();
+                this.updateUI();
+                this.showMessage(`⚠️ ${msg}`);
+            },
+            logRiskAvoided(msg) {
+                this.stats.risksAvoided++;
+                this.stats.costSavings += 200;
+                this.save();
+                this.updateUI();
+                this.showMessage(`🛡️ ${msg}`);
+            },
+            showMessage(msg) {
+                document.getElementById('securityMessage').innerHTML = msg;
+            },
+            save() {
+                localStorage.setItem('seguridad_safeDecisions', this.stats.safeDecisions);
+                localStorage.setItem('seguridad_warnings', this.stats.warnings);
+                localStorage.setItem('seguridad_risksAvoided', this.stats.risksAvoided);
+                localStorage.setItem('seguridad_costSavings', this.stats.costSavings);
+            },
             updateUI() {
                 document.getElementById('safeDecisions').innerText = this.stats.safeDecisions;
                 document.getElementById('warnings').innerText = this.stats.warnings;
@@ -345,219 +414,538 @@ npm install -g @google/gemini-cli
         SecurityOfficer.updateUI();
 
         // ============================================================
-        // FUNCIÓN PARA OBTENER DATOS DE YOUTUBE
+        // FUNCIONES DE PERSISTENCIA
         // ============================================================
-        async function obtenerInfoVideo(videoId) {
-            const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`;
-            
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                if (data.error) {
-                    throw new Error(data.error.message);
-                }
-                
-                if (data.items && data.items.length > 0) {
-                    return data.items[0].snippet;
-                } else {
-                    throw new Error('Video no encontrado');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                throw error;
-            }
+        function guardarTodo() {
+            localStorage.setItem('agora_categorias', JSON.stringify(estado.categorias));
+            localStorage.setItem('agora_historial', JSON.stringify(estado.historial));
+            localStorage.setItem('agora_bitacora', JSON.stringify(estado.bitacora));
+            localStorage.setItem('agora_progreso', JSON.stringify(estado.progreso));
+            actualizarProgreso();
         }
 
         // ============================================================
-        // GENERADOR DE CURSOS
+        // ANALIZADOR DE VIDEOS (SIN API, BASADO EN TEXTO)
         // ============================================================
-        let cursoActual = null;
-        let progresoPasos = [];
-
-        const pasosArquitectura = [
-            {
-                titulo: "Análisis de Contexto",
-                herramientas: ["Miro", "Documentación", "Entrevistas"],
-                queHacer: ["Identificar actores", "Definir alcance", "Listar restricciones"],
-                cuidados: ["No saltarse este paso", "Involucrar a stakeholders"],
-                ejemplo: "Para una app de reservas, los actores son usuarios y dueños."
-            },
-            {
-                titulo: "Diseño de Arquitectura",
-                herramientas: ["Draw.io", "Lucidchart"],
-                queHacer: ["Diagrama de componentes", "Elegir stack tecnológico"],
-                cuidados: ["Evitar sobreingeniería"],
-                ejemplo: "Frontend: React, Backend: Firebase"
-            }
-        ];
-
-        const pasosFirebase = [
-            {
-                titulo: "Configurar Firebase",
-                herramientas: ["Cuenta Google", "Firebase Console"],
-                queHacer: ["Crear proyecto", "Registrar app", "Copiar config"],
-                cuidados: ["NUNCA subir credenciales a GitHub", "Activar alertas de presupuesto"],
-                ejemplo: "import { initializeApp } from 'firebase/app';"
-            }
-        ];
-
-        document.getElementById('generarCursoBtn').addEventListener('click', async ()=>{
-            const url = document.getElementById('youtubeUrl').value;
-            if(!url) { alert('Pega un enlace de YouTube'); return; }
+        function analizarVideo(titulo) {
+            const texto = titulo.toLowerCase();
             
+            // Detectar tema
+            let tema = 'General';
+            if (texto.includes('react') || texto.includes('javascript') || texto.includes('python') || texto.includes('programación')) {
+                tema = 'Programación';
+            } else if (texto.includes('diseño') || texto.includes('figma') || texto.includes('ux') || texto.includes('ui')) {
+                tema = 'Diseño';
+            } else if (texto.includes('ia') || texto.includes('inteligencia') || texto.includes('machine learning') || texto.includes('ml')) {
+                tema = 'IA y ML';
+            }
+
+            // Detectar nivel
+            let nivel = 'Intermedio';
+            if (texto.includes('principiante') || texto.includes('básico') || texto.includes('desde cero')) {
+                nivel = 'Principiante';
+            } else if (texto.includes('avanzado') || texto.includes('experto') || texto.includes('profesional')) {
+                nivel = 'Avanzado';
+            }
+
+            // Generar etiquetas
+            let etiquetas = [];
+            if (texto.includes('react')) etiquetas.push('#react');
+            if (texto.includes('javascript')) etiquetas.push('#javascript');
+            if (texto.includes('python')) etiquetas.push('#python');
+            if (texto.includes('diseño')) etiquetas.push('#diseño');
+            if (texto.includes('figma')) etiquetas.push('#figma');
+            if (etiquetas.length === 0) etiquetas.push('#aprendizaje');
+
+            return { tema, nivel, etiquetas };
+        }
+
+        // ============================================================
+        // RECOMENDADOR DE HERRAMIENTAS
+        // ============================================================
+        function recomendarHerramientas(tema, nivel) {
+            let principal = '';
+            let alternativa = '';
+            let urlPrincipal = '';
+
+            if (tema === 'Programación') {
+                principal = 'LongCut (workspace interactivo con chat)';
+                urlPrincipal = 'https://longcut.ai';
+                alternativa = 'Miyagi Labs para ejercicios prácticos';
+            } else if (tema === 'Diseño') {
+                principal = 'Ainee (notas, mapas, flashcards)';
+                urlPrincipal = 'https://ainee.com';
+                alternativa = 'NotebookLM para podcast';
+            } else if (tema === 'IA y ML') {
+                principal = 'NotebookLM (resúmenes y podcast)';
+                urlPrincipal = 'https://notebooklm.google.com';
+                alternativa = 'Miyagi Labs para cursos estructurados';
+            } else {
+                principal = 'Miyagi Labs (cursos completos)';
+                urlPrincipal = 'https://miyagilabs.ai';
+                alternativa = 'LongCut para workspace interactivo';
+            }
+
+            return { principal, alternativa, urlPrincipal };
+        }
+
+        // ============================================================
+        // GENERADOR DE GUÍAS
+        // ============================================================
+        function generarGuia(herramienta, videoId) {
+            let pasos = [];
+            
+            if (herramienta.includes('LongCut')) {
+                pasos = [
+                    '1. Haz clic en "Abrir herramienta"',
+                    '2. En LongCut, pega el mismo link del video',
+                    '3. Usa el chat para preguntar: "explícame los conceptos clave"',
+                    '4. Guarda las respuestas en tu workspace',
+                    '5. Exporta tus notas cuando termines'
+                ];
+            } else if (herramienta.includes('Ainee')) {
+                pasos = [
+                    '1. Abre Ainee con el botón de abajo',
+                    '2. Pega el link del video',
+                    '3. Espera a que genere notas, mapas y flashcards',
+                    '4. Revisa el material y guarda lo que te sirva',
+                    '5. Practica con los quizzes generados'
+                ];
+            } else if (herramienta.includes('NotebookLM')) {
+                pasos = [
+                    '1. Ve a NotebookLM',
+                    '2. Crea un nuevo notebook',
+                    '3. Añade fuente: "YouTube" y pega el link',
+                    '4. Escucha el podcast generado',
+                    '5. Revisa el resumen y el mapa mental'
+                ];
+            } else {
+                pasos = [
+                    '1. Abre Miyagi Labs',
+                    '2. Pega el link del video',
+                    '3. Completa los quizzes generados',
+                    '4. Revisa el feedback de la IA',
+                    '5. Guarda tu progreso'
+                ];
+            }
+
+            return pasos;
+        }
+
+        // ============================================================
+        // MANEJADOR DE ÁGORA·VIDEO
+        // ============================================================
+        document.getElementById('analizarVideoBtn').addEventListener('click', () => {
+            const url = document.getElementById('youtubeUrl').value;
+            if (!url) {
+                alert('Pega un enlace de YouTube');
+                return;
+            }
+
+            // Extraer ID del video
             let videoId = '';
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             const match = url.match(regExp);
-            if (match && match[2].length === 11) videoId = match[2];
-            else { alert('URL no válida'); return; }
-
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('resultadoCurso').style.display = 'none';
-            document.getElementById('errorMsg').style.display = 'none';
-
-            try {
-                SecurityOfficer.logSafeDecision('Llamada a YouTube API (1 unidad)');
-                const snippet = await obtenerInfoVideo(videoId);
-                
-                document.getElementById('videoTitulo').innerText = snippet.title;
-                document.getElementById('videoIframe').src = `https://www.youtube.com/embed/${videoId}`;
-                
-                const descripcion = snippet.description.substring(0, 300) + (snippet.description.length > 300 ? '...' : '');
-                document.getElementById('videoDescripcion').innerHTML = `<strong>📝 Descripción:</strong> ${descripcion}`;
-
-                const textoCompleto = (snippet.title + ' ' + snippet.description).toLowerCase();
-                let pasosGenerados = textoCompleto.includes('firebase') ? pasosFirebase : pasosArquitectura;
-
-                cursoActual = { pasos: pasosGenerados };
-                progresoPasos = new Array(pasosGenerados.length).fill(false);
-                
-                renderizarPasos(pasosGenerados);
-                document.getElementById('resultadoCurso').style.display = 'block';
-                actualizarProgreso();
-                
-            } catch (error) {
-                document.getElementById('errorMsg').style.display = 'block';
-                document.getElementById('errorMsg').innerHTML = `❌ Error: ${error.message}. Verifica la URL.`;
-                SecurityOfficer.logWarning('Error al obtener datos');
-            } finally {
-                document.getElementById('loading').style.display = 'none';
+            if (match && match[2].length === 11) {
+                videoId = match[2];
+            } else {
+                alert('URL no válida');
+                return;
             }
+
+            // Simular título (en producción podrías pedirlo al usuario)
+            const tituloSimulado = prompt('¿Cuál es el título del video? (para análisis)', 'Aprende React en 1 hora');
+            if (!tituloSimulado) return;
+
+            const analisis = analizarVideo(tituloSimulado);
+            const recomendacion = recomendarHerramientas(analisis.tema, analisis.nivel);
+            const guia = generarGuia(recomendacion.principal, videoId);
+
+            // Mostrar resultados
+            document.getElementById('videoTitulo').innerText = tituloSimulado;
+            document.getElementById('videoTema').innerText = analisis.tema;
+            document.getElementById('videoNivel').innerText = analisis.nivel;
+            document.getElementById('videoEtiquetas').innerText = analisis.etiquetas.join(' · ');
+            
+            document.getElementById('recomendacionPrincipal').innerHTML = `<strong>${recomendacion.principal}</strong>`;
+            document.getElementById('recomendacionAlternativa').innerHTML = `<small>${recomendacion.alternativa}</small>`;
+            
+            let guiaHtml = '<ol>';
+            guia.forEach(paso => { guiaHtml += `<li>${paso}</li>`; });
+            guiaHtml += '</ol>';
+            document.getElementById('guiaPasos').innerHTML = guiaHtml;
+
+            document.getElementById('abrirRecomendacionBtn').onclick = () => {
+                window.open(recomendacion.urlPrincipal, '_blank');
+                SecurityOfficer.logSafeDecision('Usuario abrió herramienta recomendada');
+            };
+
+            document.getElementById('guardarProgresoBtn').onclick = () => {
+                // Guardar en historial
+                const entradaHistorial = {
+                    id: Date.now(),
+                    fecha: new Date().toISOString().split('T')[0],
+                    hora: new Date().toLocaleTimeString(),
+                    titulo: tituloSimulado,
+                    videoId: videoId,
+                    herramienta: recomendacion.principal,
+                    tema: analisis.tema,
+                    etiquetas: analisis.etiquetas,
+                    completado: false
+                };
+                estado.historial.unshift(entradaHistorial);
+                
+                // Actualizar progreso
+                estado.progreso.totalVideos++;
+                const hoy = new Date().toDateString();
+                if (estado.progreso.ultimoAcceso === hoy) {
+                    // Ya registró hoy
+                } else if (estado.progreso.ultimoAcceso === new Date(Date.now() - 86400000).toDateString()) {
+                    estado.progreso.rachaActual++;
+                    if (estado.progreso.rachaActual > estado.progreso.mejorRacha) {
+                        estado.progreso.mejorRacha = estado.progreso.rachaActual;
+                    }
+                } else {
+                    estado.progreso.rachaActual = 1;
+                }
+                estado.progreso.ultimoAcceso = hoy;
+
+                guardarTodo();
+                SecurityOfficer.logSafeDecision('Progreso guardado correctamente');
+                toast('✅ Progreso guardado');
+            };
+
+            document.getElementById('analisisResultado').style.display = 'block';
+            SecurityOfficer.logSafeDecision('Video analizado correctamente');
         });
 
-        function renderizarPasos(pasos) {
-            const container = document.getElementById('pasosContainer');
+        // ============================================================
+        // CATEGORÍAS (CRUD COMPLETO)
+        // ============================================================
+        function renderCategorias() {
+            const container = document.getElementById('categoriasContainer');
             let html = '';
-            
-            pasos.forEach((paso, index) => {
-                const checkIcon = progresoPasos[index] ? 'fa-check-circle' : 'fa-circle';
-                
+
+            estado.categorias.forEach(cat => {
                 html += `
-                    <div class="step-container">
-                        <div class="step-header" onclick="togglePaso(${index})">
-                            <span><i class="fas ${checkIcon}" style="color: ${progresoPasos[index] ? 'var(--success)' : 'var(--accent)'};"></i> Paso ${index+1}: ${paso.titulo}</span>
-                            <i class="fas fa-chevron-right"></i>
+                    <div class="categoria-container">
+                        <div class="categoria-header" onclick="toggleCategoria(${cat.id})">
+                            <h4><i class="fas fa-folder" style="color: ${cat.color};"></i> ${cat.nombre} (${cat.enlaces.length})</h4>
+                            <div class="fila-acciones">
+                                <i class="fas fa-edit" onclick="editarCategoria(${cat.id}); event.stopPropagation();"></i>
+                                <i class="fas fa-trash" onclick="eliminarCategoria(${cat.id}); event.stopPropagation();"></i>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
                         </div>
-                        <div class="step-content" id="paso-${index}" style="display: none;">
-                            
-                            <div class="step-section">
-                                <h5><i class="fas fa-tools"></i> HERRAMIENTAS</h5>
-                                <ul class="step-checklist">
-                                    ${paso.herramientas.map(h => `<li><input type="checkbox"> ${h}</li>`).join('')}
-                                </ul>
-                            </div>
-                            
-                            <div class="step-section">
-                                <h5><i class="fas fa-list-check"></i> QUÉ HACER</h5>
-                                <ul class="step-checklist">
-                                    ${paso.queHacer.map(q => `<li><input type="checkbox"> ${q}</li>`).join('')}
-                                </ul>
-                            </div>
-                            
-                            <div class="step-warning">
-                                <h5><i class="fas fa-exclamation-triangle"></i> CUIDADOS</h5>
-                                <ul>${paso.cuidados.map(c => `<li>${c}</li>`).join('')}</ul>
-                            </div>
-                            
-                            <div class="step-section">
-                                <h5><i class="fas fa-flask"></i> EJEMPLO</h5>
-                                <p>${paso.ejemplo}</p>
-                            </div>
-                            
-                            <button class="btn btn-sm" onclick="marcarPasoCompletado(${index})">
-                                <i class="fas fa-check-circle"></i> Marcar completado
-                            </button>
+                        <div class="categoria-content" id="cat-${cat.id}" style="display: none;">
+                            <button class="btn btn-sm btn-primary" onclick="nuevoEnlace(${cat.id})">+ Añadir enlace</button>
+                            ${cat.enlaces.map(enlace => `
+                                <div class="enlace-item">
+                                    <div>
+                                        <strong>${enlace.titulo}</strong><br>
+                                        <small>${enlace.fecha} · ${enlace.herramienta}</small>
+                                    </div>
+                                    <div class="fila-acciones">
+                                        <i class="fas fa-check-circle" style="color: var(--success);" onclick="marcarCompletado(${cat.id}, ${enlace.id})"></i>
+                                        <i class="fas fa-trash" onclick="eliminarEnlace(${cat.id}, ${enlace.id})"></i>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 `;
             });
-            
+
             container.innerHTML = html;
         }
 
-        window.togglePaso = (index) => {
-            const content = document.getElementById(`paso-${index}`);
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
+        window.toggleCategoria = (id) => {
+            const elem = document.getElementById(`cat-${id}`);
+            if (elem.style.display === 'none') {
+                elem.style.display = 'block';
             } else {
-                content.style.display = 'none';
+                elem.style.display = 'none';
             }
         };
 
-        window.marcarPasoCompletado = (index) => {
-            progresoPasos[index] = true;
-            renderizarPasos(cursoActual.pasos);
-            actualizarProgreso();
-            SecurityOfficer.logSafeDecision(`Paso ${index+1} completado`);
+        window.editarCategoria = (id) => {
+            const cat = estado.categorias.find(c => c.id === id);
+            const nuevoNombre = prompt('Nuevo nombre', cat.nombre);
+            if (nuevoNombre) {
+                cat.nombre = nuevoNombre;
+                guardarTodo();
+                renderCategorias();
+                SecurityOfficer.logSafeDecision('Categoría editada');
+            }
         };
 
-        function actualizarProgreso() {
-            const completados = progresoPasos.filter(p => p).length;
-            document.getElementById('cursoProgreso').innerText = `${completados}/${progresoPasos.length} completado`;
-        }
+        window.eliminarCategoria = (id) => {
+            if (confirm('¿Eliminar categoría? Los enlaces se perderán')) {
+                estado.categorias = estado.categorias.filter(c => c.id !== id);
+                guardarTodo();
+                renderCategorias();
+                SecurityOfficer.logSafeDecision('Categoría eliminada');
+            }
+        };
 
-        window.guardarCurso = function() {
-            if(!cursoActual) return;
-            let guardados = JSON.parse(localStorage.getItem('misCursos')) || [];
-            guardados.push({
-                titulo: document.getElementById('videoTitulo').innerText,
-                videoId: document.getElementById('videoIframe').src.split('/').pop().split('?')[0],
+        window.nuevoEnlace = (catId) => {
+            const titulo = prompt('Título del video');
+            if (!titulo) return;
+            
+            const cat = estado.categorias.find(c => c.id === catId);
+            cat.enlaces.push({
+                id: Date.now(),
+                titulo: titulo,
                 fecha: new Date().toLocaleDateString(),
-                progreso: progresoPasos
+                herramienta: 'Pendiente',
+                completado: false
             });
-            localStorage.setItem('misCursos', JSON.stringify(guardados));
-            mostrarCursosGuardados();
-            toast('📚 Curso guardado');
+            
+            guardarTodo();
+            renderCategorias();
+            SecurityOfficer.logSafeDecision('Enlace añadido a categoría');
         };
 
-        function mostrarCursosGuardados() {
-            const div = document.getElementById('cursosGuardados');
-            const guardados = JSON.parse(localStorage.getItem('misCursos')) || [];
-            if(guardados.length === 0) { 
-                div.innerHTML = '<p>Tu ágora está vacía.</p>'; 
-                return; 
+        window.eliminarEnlace = (catId, enlaceId) => {
+            const cat = estado.categorias.find(c => c.id === catId);
+            cat.enlaces = cat.enlaces.filter(e => e.id !== enlaceId);
+            guardarTodo();
+            renderCategorias();
+            SecurityOfficer.logSafeDecision('Enlace eliminado');
+        };
+
+        window.marcarCompletado = (catId, enlaceId) => {
+            const cat = estado.categorias.find(c => c.id === catId);
+            const enlace = cat.enlaces.find(e => e.id === enlaceId);
+            enlace.completado = !enlace.completado;
+            guardarTodo();
+            renderCategorias();
+            SecurityOfficer.logSafeDecision('Progreso actualizado');
+        };
+
+        document.getElementById('nuevaCategoriaBtn').addEventListener('click', () => {
+            const nombre = prompt('Nombre de la categoría');
+            if (nombre) {
+                estado.categorias.push({
+                    id: Date.now(),
+                    nombre: nombre,
+                    color: '#b68b40',
+                    enlaces: []
+                });
+                guardarTodo();
+                renderCategorias();
+                SecurityOfficer.logSafeDecision('Nueva categoría creada');
             }
+        });
+
+        // ============================================================
+        // HISTORIAL
+        // ============================================================
+        function renderHistorial() {
+            const container = document.getElementById('historialContainer');
+            if (estado.historial.length === 0) {
+                container.innerHTML = '<p class="step-section">No hay historial aún. Analiza un video en Ágora·Video.</p>';
+                return;
+            }
+
             let html = '';
-            guardados.forEach((c, i) => {
-                html += `<div style="padding:1rem; border-bottom:1px solid var(--border);">
-                    <strong>${c.titulo}</strong> (${c.fecha})<br>
-                    <iframe src="https://www.youtube.com/embed/${c.videoId}" style="width:100%; height:200px; border-radius:15px; margin-top:0.5rem;" frameborder="0" allowfullscreen></iframe>
-                </div>`;
+            const historialPorFecha = {};
+            estado.historial.forEach(entry => {
+                if (!historialPorFecha[entry.fecha]) {
+                    historialPorFecha[entry.fecha] = [];
+                }
+                historialPorFecha[entry.fecha].push(entry);
             });
-            div.innerHTML = html;
+
+            Object.keys(historialPorFecha).sort((a,b) => new Date(b) - new Date(a)).forEach(fecha => {
+                html += `<div class="historial-dia">`;
+                html += `<div class="historial-fecha">📅 ${fecha}</div>`;
+                
+                historialPorFecha[fecha].forEach(entry => {
+                    html += `
+                        <div class="enlace-item">
+                            <div>
+                                <strong>${entry.titulo}</strong><br>
+                                <small>${entry.hora} · ${entry.herramienta} · ${entry.tema}</small>
+                            </div>
+                            <div class="fila-acciones">
+                                <i class="fas fa-book-open" onclick="añadirABitacora(${entry.id})" title="Añadir a bitácora"></i>
+                                <i class="fas fa-folder-plus" onclick="añadirACategoria(${entry.id})" title="Añadir a categoría"></i>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        window.añadirABitacora = (id) => {
+            const entry = estado.historial.find(e => e.id === id);
+            if (!entry) return;
+
+            const aprendido = prompt('¿Qué aprendiste?');
+            if (!aprendido) return;
+
+            estado.bitacora.unshift({
+                id: Date.now(),
+                fecha: new Date().toLocaleDateString(),
+                titulo: entry.titulo,
+                videoId: entry.videoId,
+                aprendido: aprendido,
+                dificultades: prompt('¿Qué dificultades tuviste?', 'Ninguna'),
+                etiquetas: entry.etiquetas
+            });
+
+            estado.progreso.totalNotas++;
+            guardarTodo();
+            renderBitacora();
+            SecurityOfficer.logSafeDecision('Entrada añadida a bitácora');
+            toast('✅ Añadido a bitácora');
+        };
+
+        window.añadirACategoria = (id) => {
+            const entry = estado.historial.find(e => e.id === id);
+            if (!entry) return;
+
+            const catIndex = prompt('ID de categoría (1-4):\n1: Programación\n2: Diseño\n3: IA\n4: Pendientes');
+            if (!catIndex) return;
+
+            const cat = estado.categorias[parseInt(catIndex) - 1];
+            if (cat) {
+                cat.enlaces.push({
+                    id: Date.now(),
+                    titulo: entry.titulo,
+                    fecha: entry.fecha,
+                    herramienta: entry.herramienta,
+                    completado: false
+                });
+                guardarTodo();
+                renderCategorias();
+                SecurityOfficer.logSafeDecision('Video añadido a categoría');
+                toast('✅ Añadido a categoría');
+            }
+        };
+
+        // ============================================================
+        // BITÁCORA
+        // ============================================================
+        function renderBitacora() {
+            const container = document.getElementById('bitacoraContainer');
+            if (estado.bitacora.length === 0) {
+                container.innerHTML = '<p class="step-section">No hay entradas en la bitácora.</p>';
+                return;
+            }
+
+            let html = '';
+            estado.bitacora.forEach(entry => {
+                html += `
+                    <div class="bitacora-entrada">
+                        <div style="display: flex; justify-content: space-between;">
+                            <strong>${entry.titulo}</strong>
+                            <small>${entry.fecha}</small>
+                        </div>
+                        <p><strong>📝 Aprendido:</strong> ${entry.aprendido}</p>
+                        <p><strong>⚠️ Dificultades:</strong> ${entry.dificultades || 'Ninguna'}</p>
+                        <div class="bitacora-tags">
+                            ${entry.etiquetas ? entry.etiquetas.map(e => `<span>${e}</span>`).join('') : ''}
+                        </div>
+                        <div class="fila-acciones" style="margin-top: 0.5rem;">
+                            <i class="fas fa-edit" onclick="editarBitacora(${entry.id})"></i>
+                            <i class="fas fa-trash" onclick="eliminarBitacora(${entry.id})"></i>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        window.editarBitacora = (id) => {
+            const entry = estado.bitacora.find(e => e.id === id);
+            const nuevoAprendido = prompt('¿Qué aprendiste?', entry.aprendido);
+            if (nuevoAprendido) {
+                entry.aprendido = nuevoAprendido;
+                guardarTodo();
+                renderBitacora();
+                SecurityOfficer.logSafeDecision('Entrada editada');
+            }
+        };
+
+        window.eliminarBitacora = (id) => {
+            if (confirm('¿Eliminar entrada?')) {
+                estado.bitacora = estado.bitacora.filter(e => e.id !== id);
+                estado.progreso.totalNotas--;
+                guardarTodo();
+                renderBitacora();
+                SecurityOfficer.logSafeDecision('Entrada eliminada');
+            }
+        };
+
+        document.getElementById('nuevaEntradaBitacoraBtn').addEventListener('click', () => {
+            const titulo = prompt('Título del video');
+            if (!titulo) return;
+            const aprendido = prompt('¿Qué aprendiste?');
+            if (!aprendido) return;
+
+            estado.bitacora.unshift({
+                id: Date.now(),
+                fecha: new Date().toLocaleDateString(),
+                titulo: titulo,
+                aprendido: aprendido,
+                dificultades: prompt('¿Qué dificultades tuviste?', 'Ninguna'),
+                etiquetas: []
+            });
+
+            estado.progreso.totalNotas++;
+            guardarTodo();
+            renderBitacora();
+            SecurityOfficer.logSafeDecision('Nueva entrada en bitácora');
+        });
+
+        // ============================================================
+        // PROGRESO
+        // ============================================================
+        function actualizarProgreso() {
+            document.getElementById('totalVideos').innerText = estado.progreso.totalVideos;
+            document.getElementById('totalNotas').innerText = estado.progreso.totalNotas;
+            document.getElementById('rachaActual').innerText = estado.progreso.rachaActual;
+            document.getElementById('mejorRacha').innerText = estado.progreso.mejorRacha;
+
+            // Mostrar detalle de actividad reciente
+            const detalle = document.getElementById('progresoDetalle');
+            if (estado.historial.length > 0) {
+                const ultimos = estado.historial.slice(0, 5);
+                detalle.innerHTML = `
+                    <h4>Actividad reciente</h4>
+                    ${ultimos.map(v => `
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px dashed var(--border);">
+                            <span>${v.titulo.substring(0, 30)}...</span>
+                            <small>${v.fecha}</small>
+                        </div>
+                    `).join('')}
+                `;
+            }
         }
 
         // ============================================================
-        // FUNCIONES AUXILIARES
+        // UTILIDADES
         // ============================================================
-        function toast(msg) { 
-            let t = document.getElementById('toastMsg'); 
-            t.style.display = 'block'; 
-            t.innerText = msg; 
-            setTimeout(() => t.style.display = 'none', 2000); 
+        function toast(msg) {
+            const t = document.getElementById('toastMsg');
+            t.style.display = 'block';
+            t.innerText = msg;
+            setTimeout(() => t.style.display = 'none', 2000);
         }
 
-        document.getElementById('toggleModo').addEventListener('click', ()=> document.body.classList.toggle('dark'));
+        // ============================================================
+        // NAVEGACIÓN Y MODO OSCURO
+        // ============================================================
+        document.getElementById('toggleModo').addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+        });
 
         document.querySelectorAll('#menuNav button').forEach(b => {
             b.addEventListener('click', (e) => {
@@ -565,23 +953,21 @@ npm install -g @google/gemini-cli
                 b.classList.add('active');
                 document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
                 document.getElementById(b.dataset.tab).classList.add('active');
-                if(b.dataset.tab === 'tab8') mostrarCursosGuardados();
+                
+                // Renderizar según pestaña
+                if (b.dataset.tab === 'tab2') renderCategorias();
+                if (b.dataset.tab === 'tab3') renderHistorial();
+                if (b.dataset.tab === 'tab4') renderBitacora();
+                if (b.dataset.tab === 'tab5') actualizarProgreso();
             });
         });
 
-        window.descargarPlantilla = function() {
-            const plantilla = `ROL: "Arquitecta senior"\nCONTEXTO: "App para ..."\nRESTRICCIONES: "...";`;
-            const blob = new Blob([plantilla], {type:'text/plain'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'plantilla-contexto.txt'; a.click();
-        };
-
-        window.descargarSpec = function() {
-            const spec = `# SPEC\n## Visión\n## Arquitectura\n## Flujos`;
-            const blob = new Blob([spec], {type:'text/markdown'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'spec.md'; a.click();
-        };
-
-        mostrarCursosGuardados();
+        // Inicializar
+        SecurityOfficer.updateUI();
+        renderCategorias();
+        renderHistorial();
+        renderBitacora();
+        actualizarProgreso();
     </script>
 </body>
 </html>
