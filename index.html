@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>🏛️ ÁGORA · Plaza del Conocimiento IA</title>
+    <title>🏛️ ÁGORA · Curso Inteligente desde YouTube</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,272 +13,132 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', 'Palatino', Georgia, serif, system-ui;
         }
-
         :root {
-            --bg: #faf7f2;           /* Mármol cálido */
-            --sidebar: #2c3e4e;       /* Piedra oscura */
-            --sidebar-hover: #3e5a6b;
-            --card: #ffffff;
-            --text: #2d3e4f;
-            --text-light: #5b6f82;
-            --border: #dcd3c9;         /* Tono papiro */
-            --accent: #b68b40;         /* Dorado ágora */
-            --accent-light: #f5e7d3;
-            --success: #2b7a4b;
-            --warning: #b95e0a;
-            --danger: #c13e3e;
-            --shadow: 0 12px 30px rgba(99, 70, 40, 0.1);
-            --header-bg: #fff9f0;
-            --input-bg: #ffffff;
-            --security-bg: #2c3e4e;
-            --security-text: #f0e9de;
+            --bg: #faf7f2; --sidebar: #2c3e4e; --sidebar-hover: #3e5a6b; --card: #ffffff;
+            --text: #2d3e4f; --text-light: #5b6f82; --border: #dcd3c9; --accent: #b68b40;
+            --accent-light: #f5e7d3; --success: #2b7a4b; --warning: #b95e0a; --danger: #c13e3e;
+            --shadow: 0 12px 30px rgba(99, 70, 40, 0.1); --header-bg: #fff9f0; --input-bg: #ffffff;
+            --security-bg: #2c3e4e; --security-text: #f0e9de;
         }
-
         .dark {
-            --bg: #1e2a32;
-            --sidebar: #1a2a35;
-            --card: #2a3a45;
-            --text: #ece5d8;
-            --text-light: #cbb99f;
-            --border: #5a4e42;
-            --accent: #d4a95c;
-            --accent-light: #3f4e5d;
-            --header-bg: #26343f;
-            --input-bg: #2f4050;
-            --shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-            --security-bg: #1a2a35;
-            --security-text: #e0d6c8;
+            --bg: #1e2a32; --sidebar: #1a2a35; --card: #2a3a45; --text: #ece5d8;
+            --text-light: #cbb99f; --border: #5a4e42; --accent: #d4a95c; --accent-light: #3f4e5d;
+            --header-bg: #26343f; --input-bg: #2f4050; --shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            --security-bg: #1a2a35; --security-text: #e0d6c8;
         }
-
         body {
-            background: var(--bg);
-            color: var(--text);
-            display: flex;
-            min-height: 100vh;
+            background: var(--bg); color: var(--text); display: flex; min-height: 100vh;
             transition: background 0.2s, color 0.2s;
         }
-
-        /* SIDEBAR con toque clásico */
         .sidebar {
-            width: 280px;
-            background: var(--sidebar);
-            color: #f0e9de;
-            padding: 2rem 1rem;
-            overflow-y: auto;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-            z-index: 100;
-            transition: 0.3s;
-            border-right: 1px solid var(--accent);
+            width: 280px; background: var(--sidebar); color: #f0e9de; padding: 2rem 1rem;
+            overflow-y: auto; border-right: 1px solid var(--accent); display: flex;
+            flex-direction: column; z-index: 100;
         }
-
         .sidebar h2 {
-            font-weight: 400;
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid var(--accent);
-            padding-bottom: 1.2rem;
+            font-weight: 400; font-size: 1.8rem; margin-bottom: 2rem;
+            display: flex; align-items: center; gap: 12px;
+            border-bottom: 1px solid var(--accent); padding-bottom: 1.2rem;
             font-family: 'Georgia', serif;
-            letter-spacing: 2px;
         }
-
         .sidebar h2 i { color: var(--accent); }
-
-        .sidebar nav {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-            flex: 1;
-        }
-
+        .sidebar nav { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
         .sidebar button {
-            background: none;
-            border: none;
-            color: #dcd3c9;
-            text-align: left;
-            padding: 1rem 1.2rem;
-            font-size: 1rem;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            width: 100%;
+            background: none; border: none; color: #dcd3c9; text-align: left;
+            padding: 1rem 1.2rem; font-size: 1rem; border-radius: 14px; cursor: pointer;
+            display: flex; align-items: center; gap: 14px; width: 100%;
         }
-
-        .sidebar button i { width: 26px; font-size: 1.2rem; color: var(--accent); }
+        .sidebar button i { width: 26px; color: var(--accent); }
         .sidebar button:hover { background: var(--sidebar-hover); color: white; }
-        .sidebar button.active { background: var(--accent); color: #1e2a32; font-weight: 500; box-shadow: 0 6px 12px rgba(180, 140, 60, 0.5); }
-        .sidebar button.active i { color: #1e2a32; }
-        .sidebar-footer { font-size: 0.9rem; color: #b8aa99; padding-top: 2rem; border-top: 1px solid var(--accent); }
-
-        .main-content {
-            flex: 1;
-            padding: 2rem;
-            overflow-y: auto;
-            max-height: 100vh;
+        .sidebar button.active { background: var(--accent); color: #1e2a32; font-weight: 500; }
+        .sidebar-footer {
+            font-size: 0.9rem; color: #b8aa99; padding-top: 2rem;
+            border-top: 1px solid var(--accent);
         }
-
+        .main-content { flex: 1; padding: 2rem; overflow-y: auto; max-height: 100vh; }
         .header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            background: var(--header-bg);
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            box-shadow: var(--shadow);
-            flex-wrap: wrap;
-            gap: 1rem;
-            border-left: 8px solid var(--accent);
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 2rem; background: var(--header-bg); padding: 1rem 2rem;
+            border-radius: 50px; box-shadow: var(--shadow); border-left: 8px solid var(--accent);
+            flex-wrap: wrap; gap: 1rem;
         }
-
-        .header-bar h1 { 
-            font-size: 1.8rem; 
-            font-weight: 400; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px;
-            font-family: 'Georgia', serif;
+        .header-bar h1 {
+            font-size: 1.8rem; font-family: 'Georgia', serif;
+            display: flex; align-items: center; gap: 10px;
         }
         .header-bar h1 i { color: var(--accent); }
-        .modo-toggle { background: var(--card); border: 1px solid var(--border); padding: 0.6rem 1.4rem; border-radius: 40px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-
+        .modo-toggle {
+            background: var(--card); border: 1px solid var(--border);
+            padding: 0.6rem 1.4rem; border-radius: 40px; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+        }
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }
-
         .card {
-            background: var(--card);
-            border-radius: 32px;
-            padding: 2rem;
-            box-shadow: var(--shadow);
-            margin-bottom: 2rem;
-            border: 1px solid var(--border);
+            background: var(--card); border-radius: 32px; padding: 2rem;
+            box-shadow: var(--shadow); margin-bottom: 2rem; border: 1px solid var(--border);
         }
-
         .card h3 {
-            margin-bottom: 1.8rem;
-            font-weight: 500;
-            border-left: 6px solid var(--accent);
-            padding-left: 1.2rem;
-            font-size: 1.5rem;
-            font-family: 'Georgia', serif;
+            margin-bottom: 1.8rem; border-left: 6px solid var(--accent);
+            padding-left: 1.2rem; font-size: 1.5rem; font-family: 'Georgia', serif;
         }
-
         .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.8rem; }
         .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
-        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
-
         .btn {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 0.7rem 1.5rem;
-            border-radius: 40px;
-            cursor: pointer;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-            color: var(--text);
-            font-size: 0.95rem;
+            background: var(--card); border: 1px solid var(--border);
+            padding: 0.7rem 1.5rem; border-radius: 40px; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 8px; color: var(--text);
         }
-
         .btn-primary { background: var(--accent); color: #1e2a32; border: none; }
-        .btn-primary:hover { background: #c9a04b; }
         .btn-success { background: var(--success); color: white; border: none; }
         .btn-warning { background: var(--warning); color: white; border: none; }
-        .btn-danger { background: var(--danger); color: white; border: none; }
-        .btn-sm { padding: 0.5rem 1.2rem; font-size: 0.85rem; }
-
-        input, select, textarea {
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            padding: 0.8rem 1.2rem;
-            border-radius: 30px;
-            width: 100%;
-            margin-bottom: 1rem;
-            color: var(--text);
-            font-size: 0.95rem;
-        }
-
-        label { font-weight: 600; margin-bottom: 0.4rem; display: block; color: var(--text-light); font-size: 0.9rem; }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--card);
-            border-radius: 20px;
-            overflow: hidden;
-            margin: 1rem 0;
-            display: block;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        .table th { background: var(--accent-light); text-align: left; padding: 1rem; }
-        .table td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); }
-
-        .badge { padding: 0.3rem 0.8rem; border-radius: 30px; font-size: 0.75rem; background: var(--accent-light); color: var(--accent); font-weight: 600; }
-        .fila-acciones i { margin: 0 6px; cursor: pointer; opacity: 0.7; font-size: 1rem; }
-        .fila-acciones i:hover { opacity: 1; color: var(--accent); }
-        .barra-acciones { display: flex; gap: 10px; flex-wrap: wrap; margin: 1.5rem 0; }
-
-        .toast {
-            position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: #1e2a32; padding: 1rem 2rem; border-radius: 60px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; z-index: 9999; font-weight: 500;
-        }
-
-        .alert { padding: 1rem 1.5rem; border-radius: 30px; margin: 1rem 0; border-left: 8px solid; }
-        .alert-warning { background: #fef3c7; border-color: var(--warning); color: #92400e; }
-
-        /* OFICIAL DE SEGURIDAD con estilo ágora */
         .security-officer {
-            background: var(--security-bg);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            color: var(--security-text);
-            border-left: 8px solid var(--accent);
-            position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            background: var(--security-bg); border-radius: 20px; padding: 1.5rem;
+            margin-bottom: 2rem; color: var(--security-text); border-left: 8px solid var(--accent);
         }
-        .security-officer.warning { border-left-color: var(--warning); }
-        .security-officer.danger { border-left-color: var(--danger); }
-        .security-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-        .security-avatar { width: 60px; height: 60px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #1e2a32; }
-        .security-title { font-size: 1.5rem; font-weight: 600; }
-        .security-message { font-size: 1.1rem; margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px; border-left: 4px solid var(--accent); }
-        .security-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-right: 0.5rem; }
-        .badge-safe { background: #10b981; color: white; }
-        .badge-warning { background: #f59e0b; color: white; }
-        .badge-danger { background: #ef4444; color: white; }
-        .badge-info { background: var(--accent); color: #1e2a32; }
+        .security-header { display: flex; align-items: center; gap: 1rem; }
+        .security-avatar {
+            width: 60px; height: 60px; background: var(--accent); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #1e2a32;
+        }
+        .security-message { margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px; }
         .security-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem; }
         .security-stat { background: rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 10px; text-align: center; }
-        .security-checklist { background: rgba(0,0,0,0.2); border-radius: 15px; padding: 1rem; margin-top: 1rem; }
-        .checklist-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
-        .checklist-item.completed { color: var(--success); text-decoration: line-through; opacity: 0.7; }
-
-        /* Responsive móvil */
+        .step-container { margin: 1.5rem 0; border: 2px solid var(--accent-light); border-radius: 20px; overflow: hidden; }
+        .step-header {
+            background: var(--accent-light); padding: 1rem 1.5rem; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 600; font-size: 1.1rem; transition: 0.2s;
+        }
+        .step-header:hover { background: #e8d6b0; }
+        .step-header i { transition: transform 0.3s; }
+        .step-header.open i { transform: rotate(90deg); }
+        .step-content { padding: 1.5rem; background: var(--card); border-top: 1px solid var(--border); }
+        .step-section { margin-bottom: 1.5rem; padding: 1rem; background: var(--bg); border-radius: 15px; }
+        .step-section h5 { color: var(--accent); margin-bottom: 0.8rem; font-size: 1rem; text-transform: uppercase; }
+        .step-checklist { list-style: none; padding: 0; }
+        .step-checklist li { padding: 0.5rem 0; display: flex; align-items: center; gap: 0.8rem; border-bottom: 1px dashed var(--border); }
+        .step-checklist input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
+        .step-warning { background: #fff3cd; border-left: 4px solid var(--warning); padding: 1rem; border-radius: 10px; margin: 1rem 0; color: #856404; }
+        .code-block { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 10px; font-family: monospace; overflow-x: auto; margin: 1rem 0; }
+        .progress-badge { background: var(--accent); color: #1e2a32; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .toast {
+            position: fixed; bottom: 20px; right: 20px; background: var(--accent);
+            color: #1e2a32; padding: 1rem 2rem; border-radius: 60px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; z-index: 9999;
+        }
         @media (max-width: 768px) {
             body { flex-direction: column; }
             .sidebar {
-                width: 100%; padding: 1rem; max-height: 80px; overflow: visible; flex-direction: row; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000;
+                width: 100%; padding: 1rem; max-height: 80px; overflow: visible;
+                flex-direction: row; align-items: center; justify-content: space-between;
+                position: sticky; top: 0;
             }
-            .sidebar h2 { margin-bottom: 0; border-bottom: none; padding-bottom: 0; font-size: 1.2rem; }
-            .sidebar nav { flex-direction: row; overflow-x: auto; gap: 0.2rem; }
+            .sidebar h2 { margin-bottom: 0; border-bottom: none; font-size: 1.2rem; }
+            .sidebar nav { flex-direction: row; overflow-x: auto; }
             .sidebar button { padding: 0.5rem 0.8rem; font-size: 0.8rem; white-space: nowrap; }
             .sidebar-footer { display: none; }
             .main-content { padding: 1rem; max-height: none; }
-            .header-bar { flex-direction: column; align-items: flex-start; padding: 1rem; }
-            .grid-2, .grid-3 { grid-template-columns: 1fr; }
-            .barra-acciones { flex-direction: column; align-items: stretch; }
-            .btn { justify-content: center; }
         }
     </style>
 </head>
@@ -292,9 +150,9 @@
             <button data-tab="tab2"><i class="fas fa-landmark"></i> Arquitectura</button>
             <button data-tab="tab3"><i class="fas fa-microchip"></i> Modelos IA</button>
             <button data-tab="tab4"><i class="fas fa-dollar-sign"></i> Casos Áureos</button>
-            <button data-tab="tab5"><i class="fas fa-scroll"></i> SPEC Técnico</button>
-            <button data-tab="tab6"><i class="fas fa-terminal"></i> Gemini CLI</button>
-            <button data-tab="tab7"><i class="fas fa-shield-alt"></i> Ágora·Seguridad</button>
+            <button data-tab="tab5"><i class="fas fa-scroll"></i> SPEC</button>
+            <button data-tab="tab6"><i class="fas fa-terminal"></i> Gemini</button>
+            <button data-tab="tab7"><i class="fas fa-shield-alt"></i> Seguridad</button>
             <button data-tab="tab8"><i class="fas fa-book"></i> Mi Ágora</button>
         </nav>
         <div class="sidebar-footer"><i class="fas fa-leaf"></i> Siempre gratuito · Sabiduría colectiva</div>
@@ -302,74 +160,72 @@
 
     <div class="main-content">
         <div class="header-bar">
-            <h1><i class="fas fa-columns"></i> ÁGORA · La plaza del conocimiento IA</h1>
+            <h1><i class="fas fa-columns"></i> ÁGORA · Curso Inteligente desde YouTube</h1>
             <div class="modo-toggle" id="toggleModo"><i class="fas fa-moon"></i> <span>Claroscuro</span></div>
         </div>
 
-        <!-- ========== PANEL 1: TRANSFORMADOR YOUTUBE (ÁGORA·VIDEO) ========== -->
+        <!-- ========== PANEL 1: ÁGORA·VIDEO CON YOUTUBE API REAL ========== -->
         <div id="tab1" class="tab-panel active">
             <div class="card">
-                <h3><i class="fas fa-youtube" style="color: var(--accent);"></i> Ágora·Video: Convierte YouTube en Sabiduría</h3>
-                <p>Pega cualquier enlace y extraeremos su esencia en un curso guiado, paso a paso, con arquitectura profesional.</p>
+                <h3><i class="fas fa-youtube" style="color: var(--accent);"></i> Ágora·Video con YouTube API</h3>
+                <p>Pega cualquier enlace de YouTube y obtendrás el título real, descripción y un curso generado con IA paso a paso.</p>
                 
                 <div style="background: linear-gradient(135deg, #b68b40, #8a6a30); padding: 2rem; border-radius: 20px; margin: 2rem 0; color: white;">
-                    <label style="color: white; font-weight: 600;">Enlace del video (YouTube)</label>
-                    <input type="url" id="youtubeUrl" placeholder="https://youtube.com/watch?v=..." style="background: white; color: black; border: none;">
-                    <button class="btn" id="generarCursoBtn" style="background: #1e2a32; color: white; border: none;"><i class="fas fa-magic"></i> Transformar en Curso</button>
+                    <label style="color: white;">🔗 Enlace del video</label>
+                    <input type="url" id="youtubeUrl" placeholder="https://youtube.com/watch?v=..." style="background: white; color: black;">
+                    <button class="btn" id="generarCursoBtn" style="background: #1e2a32; color: white; margin-top: 1rem;">
+                        <i class="fas fa-magic"></i> Obtener datos y generar curso
+                    </button>
                 </div>
 
+                <div id="loading" style="display: none; text-align: center; padding: 2rem;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--accent);"></i>
+                    <p>Obteniendo información del video...</p>
+                </div>
+
+                <div id="errorMsg" style="display: none; background: #fee2e2; color: #991b1b; padding: 1rem; border-radius: 10px; margin: 1rem 0;"></div>
+
                 <div id="resultadoCurso" style="display: none;">
-                    <h4 id="videoTitulo" style="font-family: Georgia; color: var(--accent);"></h4>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h4 id="videoTitulo" style="color: var(--accent); font-family: Georgia;"></h4>
+                        <span class="progress-badge" id="cursoProgreso">0/5 completado</span>
+                    </div>
+                    
                     <div style="position: relative; padding-bottom: 56.25%; margin: 1rem 0;">
                         <iframe id="videoIframe" style="position: absolute; top:0; left:0; width:100%; height:100%; border-radius:15px;" frameborder="0" allowfullscreen></iframe>
                     </div>
-                    
-                    <div class="security-officer" style="margin-top: 1rem;">
-                        <div class="security-header">
-                            <div class="security-avatar"><i class="fas fa-shield-alt"></i></div>
-                            <div><span class="security-badge badge-safe">Simulación educativa</span> <span class="security-badge badge-info">Ágora·Guía</span></div>
-                        </div>
-                        <div class="security-message" id="seguridadCurso">✅ Curso generado sin costo. Explora con libertad.</div>
-                    </div>
 
-                    <div id="cursoGenerado" style="margin-top: 2rem;"></div>
+                    <div id="videoDescripcion" style="background: var(--bg); padding: 1rem; border-radius: 15px; margin: 1rem 0;"></div>
                     
-                    <button class="btn btn-success" onclick="guardarCurso()" style="margin-top: 1rem;">
-                        <i class="fas fa-save"></i> Guardar en Mi Ágora
+                    <div id="pasosContainer"></div>
+                    
+                    <button class="btn btn-success" onclick="guardarCurso()" style="margin-top: 1rem; width: 100%;">
+                        <i class="fas fa-save"></i> Guardar curso en Mi Ágora
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- ========== PANEL 2: ARQUITECTURA PROFESIONAL ========== -->
+        <!-- ========== PANEL 2: ARQUITECTURA ========== -->
         <div id="tab2" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-landmark"></i> Arquitectura Ágora</h3>
-                
-                <div style="background: linear-gradient(135deg, #2c3e4e, #1a2a35); color: white; padding: 2rem; border-radius: 20px; margin-bottom: 2rem;">
-                    <h4 style="color: #b68b40;"><i class="fas fa-quote-right"></i> El secreto de las apps que perduran</h4>
-                    <p style="margin: 1rem 0;">Los arquitectos no solo programan: diseñan contextos. Aquí tienes la plantilla que usan en las startups que alcanzan el oro.</p>
-                </div>
-
+                <h3><i class="fas fa-landmark"></i> Arquitectura Profesional</h3>
                 <div class="grid-2">
-                    <div style="background: var(--card); padding: 1.5rem; border-radius: 20px;">
-                        <h4><i class="fas fa-brain" style="color: #b68b40;"></i> Plantilla de Contexto Áureo</h4>
-                        <pre style="background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 10px; margin: 1rem 0; overflow-x: auto;">
-// ROL: "Eres arquitecta senior en [tecnología]"
-// CONTEXTO: "App que servirá a [X] personas"
-// RESTRICCIONES: "Funciona offline, luego sincroniza"
-// EJEMPLOS: "Como [app exitosa] (URL)"
-// FORMATO: "SPEC en markdown + diagrama"
-                        </pre>
-                        <button class="btn btn-primary" onclick="descargarPlantillaContexto()"><i class="fas fa-download"></i> Descargar papiro</button>
+                    <div>
+                        <h4>Plantilla de Contexto</h4>
+                        <div class="code-block">
+// ROL: "Eres arquitecta senior"
+// CONTEXTO: "App que escalará a 1M usuarios"
+// RESTRICCIONES: "Offline-first"
+// EJEMPLOS: "Como Uber, pero para..."
+                        </div>
+                        <button class="btn btn-primary" onclick="descargarPlantilla()">Descargar plantilla</button>
                     </div>
-                    
-                    <div style="background: var(--card); padding: 1.5rem; border-radius: 20px;">
-                        <h4><i class="fas fa-video"></i> Lección: Antigravity + Contexto</h4>
-                        <div style="position: relative; padding-bottom: 56.25%; margin: 1rem 0;">
+                    <div>
+                        <h4>Video Recomendado</h4>
+                        <div style="position: relative; padding-bottom: 56.25%;">
                             <iframe src="https://www.youtube.com/embed/8BZ2AlerW9c" style="position: absolute; top:0; left:0; width:100%; height:100%; border-radius:15px;" frameborder="0" allowfullscreen></iframe>
                         </div>
-                        <p><small>Alejavi Rivera: arquitectura con Antigravity</small></p>
                     </div>
                 </div>
             </div>
@@ -378,43 +234,24 @@
         <!-- ========== PANEL 3: MODELOS IA ========== -->
         <div id="tab3" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-microchip"></i> Comparativa de Inteligencias (2026)</h3>
-                <table class="table">
-                    <tr><th>Modelo</th><th>Especialidad</th><th>Contexto</th><th>Precio</th></tr>
-                    <tr><td><strong style="color: #b68b40;">Claude 4.5</strong></td><td>Razonamiento, código limpio</td><td>500k tokens</td><td>$20/mes</td></tr>
-                    <tr><td><strong style="color: #b68b40;">Gemini 3.1 Pro</strong></td><td>Contexto masivo (2M), multimodal</td><td>2M tokens</td><td>$22/mes</td></tr>
-                    <tr><td><strong style="color: #b68b40;">ChatGPT-5.2</strong></td><td>Versatilidad, plugins</td><td>128k tokens</td><td>$20/mes</td></tr>
-                    <tr><td><strong style="color: #b68b40;">DeepSeek V3</strong></td><td>STEM, código, bajo costo</td><td>128k tokens</td><td><span class="badge-safe">GRATIS</span></td></tr>
+                <h3>🤖 Comparativa Modelos IA 2026</h3>
+                <table class="step-section" style="width:100%;">
+                    <tr><th>Modelo</th><th>Contexto</th><th>Precio</th></tr>
+                    <tr><td>Claude 4.5</td><td>500k tokens</td><td>$20/mes</td></tr>
+                    <tr><td>Gemini 3.1 Pro</td><td>2M tokens</td><td>$22/mes</td></tr>
+                    <tr><td>DeepSeek V3</td><td>128k tokens</td><td class="badge-safe">GRATIS</td></tr>
                 </table>
-                <div class="security-officer" style="margin-top: 1rem;">
-                    <p><i class="fas fa-shield-alt"></i> DeepSeek es gratuito para uso educativo. Ideal para tu ágora personal.</p>
-                </div>
             </div>
         </div>
 
-        <!-- ========== PANEL 4: CASOS DE ÉXITO (ÁUREOS) ========== -->
+        <!-- ========== PANEL 4: CASOS ÁUREOS ========== -->
         <div id="tab4" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-dollar-sign" style="color: var(--accent);"></i> Casos Áureos: Apps que generaron riqueza</h3>
+                <h3><i class="fas fa-dollar-sign"></i> Casos de Éxito</h3>
                 <div class="grid-3">
-                    <div style="background: #2c3e4e; color: white; padding: 1.5rem; border-radius: 20px;">
-                        <i class="fas fa-store" style="font-size: 2rem; color: #b68b40;"></i>
-                        <h4>GoodBarber Commerce</h4>
-                        <p>+$10M en ventas anuales para marcas de moda</p>
-                        <a href="https://es.goodbarber.com" target="_blank" style="color: #b68b40;">Ver papiro →</a>
-                    </div>
-                    <div style="background: #1a2a35; color: white; padding: 1.5rem; border-radius: 20px;">
-                        <i class="fas fa-calendar-check" style="color: #b68b40;"></i>
-                        <h4>Adalo Startups</h4>
-                        <p>+3M de apps, algunas valoradas en >$50M</p>
-                        <a href="https://adalo.com" target="_blank" style="color: #b68b40;">Ver casos →</a>
-                    </div>
-                    <div style="background: #2c3e4e; color: white; padding: 1.5rem; border-radius: 20px;">
-                        <i class="fas fa-robot" style="color: #b68b40;"></i>
-                        <h4>Bubble SaaS</h4>
-                        <p>Startups que alcanzaron Series A con MVPs</p>
-                        <a href="https://bubble.io/showcase" target="_blank" style="color: #b68b40;">Ver showcase →</a>
-                    </div>
+                    <div class="step-section"><h4>GoodBarber</h4><p>+$10M en ventas</p><a href="https://es.goodbarber.com" target="_blank">Ver →</a></div>
+                    <div class="step-section"><h4>Adalo</h4><p>+3M de apps</p><a href="https://adalo.com" target="_blank">Ver →</a></div>
+                    <div class="step-section"><h4>Bubble</h4><p>Startups Series A</p><a href="https://bubble.io/showcase" target="_blank">Ver →</a></div>
                 </div>
             </div>
         </div>
@@ -422,57 +259,54 @@
         <!-- ========== PANEL 5: SPEC TÉCNICO ========== -->
         <div id="tab5" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-scroll"></i> SPEC Técnico (Papiro del Arquitecto)</h3>
-                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.5rem; border-radius: 15px; overflow-x: auto; font-family: monospace;">
-# SPEC: [Nombre del Proyecto Áureo]
-## 1. Visión (el "por qué")
-## 2. Arquitectura (el "cómo")
-## 3. Flujos de Usuario (el "qué")
-## 4. Modelo de Datos (el "dónde")
-## 5. Seguridad (el "escudo")
-## 6. Escalado (el "crecimiento")
-                </pre>
-                <button class="btn btn-success" onclick="descargarSpec()"><i class="fas fa-download"></i> Descargar SPEC.md</button>
+                <h3><i class="fas fa-scroll"></i> SPEC Técnico</h3>
+                <div class="code-block">
+# SPEC
+## 1. Visión
+## 2. Arquitectura
+## 3. Flujos
+## 4. Datos
+## 5. Seguridad
+                </div>
+                <button class="btn btn-primary" onclick="descargarSpec()">Descargar SPEC.md</button>
             </div>
         </div>
 
-        <!-- ========== PANEL 6: GEMINI CLI / PLAN MODE ========== -->
+        <!-- ========== PANEL 6: GEMINI CLI ========== -->
         <div id="tab6" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-terminal"></i> Oráculo Gemini: Plan Mode</h3>
-                <p>Instalación del CLI: <code style="background: var(--accent-light); padding: 0.2rem 0.5rem;">npm install -g @google/gemini-cli</code></p>
-                <pre style="background: #0f172a; color: #e2e8f0; padding: 1rem;">
-/plan  # Invoca el modo Plan
-# Diseña la arquitectura antes de que una línea de código sea escrita.
-                </pre>
+                <h3><i class="fas fa-terminal"></i> Gemini CLI / Plan Mode</h3>
+                <div class="code-block">
+npm install -g @google/gemini-cli
+/plan  # Activar Plan Mode
+                </div>
             </div>
         </div>
 
-        <!-- ========== PANEL 7: OFICIAL DE SEGURIDAD (ÁGORA·SEGURIDAD) ========== -->
+        <!-- ========== PANEL 7: OFICIAL DE SEGURIDAD ========== -->
         <div id="tab7" class="tab-panel">
             <div class="card">
                 <h3><i class="fas fa-shield-alt"></i> Ágora·Seguridad</h3>
                 <div class="security-officer" id="securityOfficer">
                     <div class="security-header">
                         <div class="security-avatar"><i class="fas fa-shield-alt"></i></div>
-                        <div><span class="security-badge badge-safe" id="securityModeBadge">🛡️ MODO ÁGORA SEGURO</span></div>
+                        <span class="badge-safe">🛡️ MODO SEGURO</span>
                     </div>
-                    <div class="security-message" id="securityMessage">Bienvenido a la plaza. Aquí todo es gratuito y protegido.</div>
+                    <div class="security-message" id="securityMessage">Todo gratuito, tú decides si gastar.</div>
                     <div class="security-stats">
-                        <div class="security-stat"><i class="fas fa-check-circle"></i> <span id="safeDecisions">0</span> seguras</div>
-                        <div class="security-stat"><i class="fas fa-exclamation-triangle"></i> <span id="warnings">0</span> alertas</div>
-                        <div class="security-stat"><i class="fas fa-skull-crossbones"></i> <span id="risksAvoided">0</span> riesgos</div>
-                        <div class="security-stat"><i class="fas fa-coins"></i> $<span id="costSavings">0</span> ahorrados</div>
+                        <div class="security-stat">🟢 <span id="safeDecisions">0</span> seguras</div>
+                        <div class="security-stat">🟡 <span id="warnings">0</span> alertas</div>
+                        <div class="security-stat">🔴 <span id="risksAvoided">0</span> riesgos</div>
+                        <div class="security-stat">💰 $<span id="costSavings">0</span> ahorrados</div>
                     </div>
-                    <div class="security-checklist" id="securityChecklist"></div>
                 </div>
             </div>
         </div>
 
-        <!-- ========== PANEL 8: MIS CURSOS (MI ÁGORA) ========== -->
+        <!-- ========== PANEL 8: MI ÁGORA ========== -->
         <div id="tab8" class="tab-panel">
             <div class="card">
-                <h3><i class="fas fa-book"></i> Mi Ágora · Cursos guardados</h3>
+                <h3><i class="fas fa-book"></i> Mis Cursos Guardados</h3>
                 <div id="cursosGuardados"></div>
             </div>
         </div>
@@ -482,109 +316,288 @@
 
     <script>
         // ============================================================
-        // OFICIAL DE SEGURIDAD (GUARDIÁN DE ÁGORA)
+        // CONFIGURACIÓN - PEGA TU API KEY AQUÍ
+        // ============================================================
+        const API_KEY = 'AQUI_PEGA_TU_API_KEY'; // <-- REEMPLAZA ESTO CON TU CLAVE REAL
+        
+        // Verificación amigable
+        if (API_KEY === 'AQUI_PEGA_TU_API_KEY') {
+            alert('🔑 Recuerda pegar tu API Key de YouTube en el código (busca "AQUI_PEGA_TU_API_KEY")');
+        }
+
+        // ============================================================
+        // OFICIAL DE SEGURIDAD
         // ============================================================
         const SecurityOfficer = {
-            stats: { safeDecisions:0, warnings:0, risksAvoided:0, costSavings:0, lastCheck: new Date().toDateString() },
-            checklist: [
-                { id:1, text:"✅ Revisé reglas de seguridad en Firebase", completed:false },
-                { id:2, text:"✅ No expuse API keys en GitHub", completed:false },
-                { id:3, text:"✅ Activé alertas de presupuesto", completed:false },
-                { id:4, text:"✅ Revisé el 'Plan' en Antigravity", completed:false },
-                { id:5, text:"✅ Cerré listeners de Firestore", completed:false }
-            ],
-            logSafeDecision(msg) { this.stats.safeDecisions++; this.stats.costSavings+=50; this.updateUI(); this.showMessage(`✅ ${msg}`,'safe'); },
-            logWarning(msg,risk='medium') { this.stats.warnings++; this.updateUI(); this.showMessage(`⚠️ ${msg}`,risk); },
-            logRiskAvoided(msg) { this.stats.risksAvoided++; this.stats.costSavings+=200; this.updateUI(); this.showMessage(`🛡️ ${msg}`,'safe'); },
-            showMessage(msg,type) { 
-                const el=document.getElementById('securityMessage'); 
-                if(el) el.innerHTML=`<i class="fas fa-${type==='safe'?'check-circle':'exclamation-triangle'}"></i> ${msg}`;
-                const officer=document.getElementById('securityOfficer');
-                if(officer){ officer.classList.remove('warning','danger'); if(type==='high') officer.classList.add('danger'); else if(type==='medium') officer.classList.add('warning'); }
-            },
+            stats: { safeDecisions:0, warnings:0, risksAvoided:0, costSavings:0 },
+            logSafeDecision(msg) { this.stats.safeDecisions++; this.updateUI(); this.showMessage(`✅ ${msg}`); },
+            logWarning(msg) { this.stats.warnings++; this.updateUI(); this.showMessage(`⚠️ ${msg}`); },
+            logRiskAvoided(msg) { this.stats.risksAvoided++; this.stats.costSavings+=200; this.updateUI(); this.showMessage(`🛡️ ${msg}`); },
+            showMessage(msg) { document.getElementById('securityMessage').innerHTML = msg; },
             updateUI() {
-                document.getElementById('safeDecisions').innerText=this.stats.safeDecisions;
-                document.getElementById('warnings').innerText=this.stats.warnings;
-                document.getElementById('risksAvoided').innerText=this.stats.risksAvoided;
-                document.getElementById('costSavings').innerText=this.stats.costSavings;
-            },
-            renderChecklist() {
-                const container=document.getElementById('securityChecklist');
-                if(!container) return;
-                let html='<h4><i class="fas fa-clipboard-list"></i> Ritual diario de seguridad</h4>';
-                this.checklist.forEach(item=>{ html+=`<div class="checklist-item ${item.completed?'completed':''}" onclick="SecurityOfficer.toggleChecklistItem(${item.id})"><i class="fas fa-${item.completed?'check-circle':'circle'}"></i> ${item.text}</div>`; });
-                container.innerHTML=html;
-            },
-            toggleChecklistItem(id) { let item=this.checklist.find(i=>i.id===id); if(item){ item.completed=!item.completed; if(item.completed) this.logSafeDecision('Completado ítem del ritual'); this.renderChecklist(); } },
-            init() { this.renderChecklist(); this.updateUI(); }
+                document.getElementById('safeDecisions').innerText = this.stats.safeDecisions;
+                document.getElementById('warnings').innerText = this.stats.warnings;
+                document.getElementById('risksAvoided').innerText = this.stats.risksAvoided;
+                document.getElementById('costSavings').innerText = this.stats.costSavings;
+            }
         };
-        SecurityOfficer.init();
+        SecurityOfficer.updateUI();
 
         // ============================================================
-        // TRANSFORMADOR ÁGORA·VIDEO
+        // FUNCIÓN PARA OBTENER DATOS DE YOUTUBE (VIDEOS.LIST)
         // ============================================================
-        let ultimoCursoGenerado = null;
+        async function obtenerInfoVideo(videoId) {
+            const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
+                
+                if (data.items && data.items.length > 0) {
+                    return data.items[0].snippet;
+                } else {
+                    throw new Error('Video no encontrado');
+                }
+            } catch (error) {
+                console.error('Error al obtener video:', error);
+                throw error;
+            }
+        }
 
-        document.getElementById('generarCursoBtn').addEventListener('click', ()=>{
+        // ============================================================
+        // GENERADOR DE CURSOS (con datos reales de YouTube)
+        // ============================================================
+        let cursoActual = null;
+        let progresoPasos = [];
+
+        document.getElementById('generarCursoBtn').addEventListener('click', async ()=>{
             const url = document.getElementById('youtubeUrl').value;
             if(!url) { alert('Pega un enlace de YouTube'); return; }
             
+            // Extraer ID del video
             let videoId = '';
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             const match = url.match(regExp);
             if (match && match[2].length === 11) videoId = match[2];
             else { alert('URL no válida'); return; }
 
-            const titulosSimulados = [
-                'Arquitectura Limpia con Antigravity',
-                'Firebase para Arquitectos',
-                'Contexto Profesional en IA',
-                'Gemini CLI: Plan Mode Avanzado',
-                'Diseño de Sistemas Escalables'
-            ];
-            const titulo = titulosSimulados[Math.floor(Math.random() * titulosSimulados.length)];
-            
-            document.getElementById('videoTitulo').innerText = titulo;
-            document.getElementById('videoIframe').src = `https://www.youtube.com/embed/${videoId}`;
-            
-            const pasos = [
-                '**Paso 1: Análisis de Contexto** – Definir el problema, los actores y las restricciones.',
-                '**Paso 2: Diseño Arquitectónico** – Componentes, flujos, base de datos inicial.',
-                '**Paso 3: Implementación Guiada** – Usar Antigravity en modo Plan para generar código base.',
-                '**Paso 4: Seguridad y Firebase** – Reglas, alertas de presupuesto, buenas prácticas.',
-                '**Paso 5: Pruebas y Escalado** – Validar con usuarios, planificar crecimiento.'
-            ];
-            
-            let cursoHTML = '<h4 style="color: var(--accent);">📜 Curso generado por Ágora</h4>';
-            pasos.forEach(p => { cursoHTML += `<div style="margin:1rem 0; padding:1rem; background:var(--accent-light); border-radius:15px;">${p}</div>`; });
-            cursoHTML += '<p><i class="fas fa-robot"></i> Este curso es una simulación educativa. En producción se usaría YouTube API + IA real.</p>';
-            
-            document.getElementById('cursoGenerado').innerHTML = cursoHTML;
-            document.getElementById('seguridadCurso').innerHTML = '✅ Sabiduría gratuita, como debe ser en el ágora.';
-            document.getElementById('resultadoCurso').style.display = 'block';
-            
-            ultimoCursoGenerado = { titulo, videoId, fecha: new Date().toLocaleDateString(), pasos };
-            SecurityOfficer.logSafeDecision('Curso generado en Ágora·Video');
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultadoCurso').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
+
+            try {
+                // Obtener datos reales de YouTube
+                SecurityOfficer.logSafeDecision('Llamada a YouTube API (costo: 1 unidad)');
+                const snippet = await obtenerInfoVideo(videoId);
+                
+                // Título real
+                const titulo = snippet.title;
+                document.getElementById('videoTitulo').innerText = titulo;
+                document.getElementById('videoIframe').src = `https://www.youtube.com/embed/${videoId}`;
+                
+                // Descripción real (limitada para no saturar)
+                const descripcion = snippet.description.substring(0, 300) + (snippet.description.length > 300 ? '...' : '');
+                document.getElementById('videoDescripcion').innerHTML = `<strong>📝 Descripción:</strong> ${descripcion}`;
+
+                // Generar pasos basados en palabras clave de la descripción/título
+                const textoCompleto = (titulo + ' ' + snippet.description).toLowerCase();
+                
+                // Detectar tema para personalizar pasos
+                let pasosGenerados;
+                if (textoCompleto.includes('firebase') || textoCompleto.includes('base de datos')) {
+                    pasosGenerados = pasosFirebase;
+                } else if (textoCompleto.includes('react') || textoCompleto.includes('frontend')) {
+                    pasosGenerados = pasosReact;
+                } else if (textoCompleto.includes('api') || textoCompleto.includes('backend')) {
+                    pasosGenerados = pasosAPI;
+                } else {
+                    pasosGenerados = pasosArquitectura; // Por defecto
+                }
+
+                cursoActual = { pasos: pasosGenerados };
+                progresoPasos = new Array(pasosGenerados.length).fill(false);
+                
+                renderizarPasos(pasosGenerados);
+                document.getElementById('resultadoCurso').style.display = 'block';
+                actualizarProgreso();
+                
+                SecurityOfficer.logSafeDecision('Curso generado con datos reales de YouTube');
+                
+            } catch (error) {
+                document.getElementById('errorMsg').style.display = 'block';
+                document.getElementById('errorMsg').innerHTML = `❌ Error: ${error.message}. Verifica tu API Key y que el video exista.`;
+                SecurityOfficer.logWarning('Error al obtener datos de YouTube');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
         });
 
+        // ============================================================
+        // BIBLIOTECA DE PASOS SEGÚN TEMAS
+        // ============================================================
+        const pasosArquitectura = [
+            {
+                titulo: "Análisis de Contexto",
+                herramientas: ["Miro o pizarra", "Documentación", "Entrevistas"],
+                queHacer: ["Identificar actores", "Definir alcance", "Listar restricciones"],
+                cuidados: ["No saltarse este paso", "Involucrar a stakeholders"],
+                ejemplo: "Para una app de reservas, los actores son usuarios y dueños de locales."
+            },
+            {
+                titulo: "Diseño de Arquitectura",
+                herramientas: ["Draw.io", "Lucidchart"],
+                queHacer: ["Diagrama de componentes", "Elegir stack tecnológico"],
+                cuidados: ["Evitar sobreingeniería"],
+                ejemplo: "Frontend: React, Backend: Firebase, Base de datos: Firestore"
+            }
+        ];
+
+        const pasosFirebase = [
+            {
+                titulo: "Configurar Firebase",
+                herramientas: ["Cuenta Google", "Firebase Console"],
+                queHacer: ["Crear proyecto", "Registrar app", "Copiar config"],
+                cuidados: ["NUNCA subir credenciales a GitHub", "Activar alertas de presupuesto"],
+                ejemplo: "import { initializeApp } from 'firebase/app';"
+            },
+            {
+                titulo: "Autenticación",
+                herramientas: ["Firebase Auth"],
+                queHacer: ["Habilitar email/password", "Configurar reglas"],
+                cuidados: ["Verificar emails", "Rate limiting"],
+                ejemplo: "createUserWithEmailAndPassword(auth, email, password)"
+            }
+        ];
+
+        const pasosReact = [
+            {
+                titulo: "Crear proyecto React",
+                herramientas: ["Node.js", "npm/yarn"],
+                queHacer: ["npx create-react-app mi-app", "Estructurar carpetas"],
+                cuidados: ["Mantener versión de Node actualizada"],
+                ejemplo: "npx create-react-app mi-app --template typescript"
+            }
+        ];
+
+        const pasosAPI = [
+            {
+                titulo: "Diseñar endpoints",
+                herramientas: ["Postman", "Swagger"],
+                queHacer: ["Definir rutas REST", "Estructurar JSON"],
+                cuidados: ["Versionar API (/v1/...)", "Documentar"],
+                ejemplo: "GET /api/v1/usuarios"
+            }
+        ];
+
+        function renderizarPasos(pasos) {
+            const container = document.getElementById('pasosContainer');
+            let html = '';
+            
+            pasos.forEach((paso, index) => {
+                const completado = progresoPasos[index] ? 'open' : '';
+                const checkIcon = progresoPasos[index] ? 'fa-check-circle' : 'fa-circle';
+                
+                html += `
+                    <div class="step-container">
+                        <div class="step-header" onclick="togglePaso(${index})">
+                            <span><i class="fas ${checkIcon}" style="color: ${progresoPasos[index] ? 'var(--success)' : 'var(--accent)'};"></i> Paso ${index+1}: ${paso.titulo}</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="step-content" id="paso-${index}" style="display: none;">
+                            
+                            <div class="step-section">
+                                <h5><i class="fas fa-tools"></i> HERRAMIENTAS</h5>
+                                <ul class="step-checklist">
+                                    ${paso.herramientas.map(h => `<li><input type="checkbox" onchange="marcarSubtarea(${index}, this)"> ${h}</li>`).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div class="step-section">
+                                <h5><i class="fas fa-list-check"></i> QUÉ HACER</h5>
+                                <ul class="step-checklist">
+                                    ${paso.queHacer.map(q => `<li><input type="checkbox" onchange="marcarSubtarea(${index}, this)"> ${q}</li>`).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div class="step-warning">
+                                <h5><i class="fas fa-exclamation-triangle"></i> CUIDADOS</h5>
+                                <ul>${paso.cuidados.map(c => `<li>${c}</li>`).join('')}</ul>
+                            </div>
+                            
+                            <div class="step-section">
+                                <h5><i class="fas fa-flask"></i> EJEMPLO</h5>
+                                <p>${paso.ejemplo}</p>
+                            </div>
+                            
+                            <button class="btn btn-sm" onclick="marcarPasoCompletado(${index})">
+                                <i class="fas fa-check-circle"></i> Marcar paso completado
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        window.togglePaso = (index) => {
+            const content = document.getElementById(`paso-${index}`);
+            const header = content.previousElementSibling;
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                header.classList.add('open');
+            } else {
+                content.style.display = 'none';
+                header.classList.remove('open');
+            }
+        };
+
+        window.marcarPasoCompletado = (index) => {
+            progresoPasos[index] = true;
+            renderizarPasos(cursoActual.pasos);
+            actualizarProgreso();
+            document.getElementById(`paso-${index}`).style.display = 'none';
+            SecurityOfficer.logSafeDecision(`Paso ${index+1} completado`);
+        };
+
+        function actualizarProgreso() {
+            const completados = progresoPasos.filter(p => p).length;
+            document.getElementById('cursoProgreso').innerText = `${completados}/${progresoPasos.length} completado`;
+        }
+
         window.guardarCurso = function() {
-            if(!ultimoCursoGenerado) return;
+            if(!cursoActual) return;
             let guardados = JSON.parse(localStorage.getItem('misCursos')) || [];
-            guardados.push(ultimoCursoGenerado);
+            guardados.push({
+                titulo: document.getElementById('videoTitulo').innerText,
+                videoId: document.getElementById('videoIframe').src.split('/').pop().split('?')[0],
+                fecha: new Date().toLocaleDateString(),
+                progreso: progresoPasos,
+                pasos: cursoActual.pasos
+            });
             localStorage.setItem('misCursos', JSON.stringify(guardados));
             mostrarCursosGuardados();
-            toast('📚 Curso guardado en tu Ágora');
+            toast('📚 Curso guardado');
         };
 
         function mostrarCursosGuardados() {
             const div = document.getElementById('cursosGuardados');
             const guardados = JSON.parse(localStorage.getItem('misCursos')) || [];
-            if(guardados.length === 0) { div.innerHTML = '<p>Tu ágora personal está vacía. Guarda cursos desde Ágora·Video.</p>'; return; }
+            if(guardados.length === 0) { 
+                div.innerHTML = '<p>Tu ágora personal está vacía.</p>'; 
+                return; 
+            }
             let html = '';
-            guardados.forEach((c,i) => {
+            guardados.forEach((c, i) => {
                 html += `<div style="padding:1rem; border-bottom:1px solid var(--border);">
-                    <strong style="color: var(--accent);">${c.titulo}</strong> (${c.fecha})<br>
+                    <strong>${c.titulo}</strong> (${c.fecha})<br>
                     <iframe src="https://www.youtube.com/embed/${c.videoId}" style="width:100%; height:200px; border-radius:15px; margin-top:0.5rem;" frameborder="0" allowfullscreen></iframe>
+                    <p>Progreso: ${c.progreso?.filter(p=>p).length || 0}/${c.pasos?.length || 0} pasos</p>
                 </div>`;
             });
             div.innerHTML = html;
@@ -593,7 +606,12 @@
         // ============================================================
         // FUNCIONES AUXILIARES
         // ============================================================
-        function toast(msg) { let t=document.getElementById('toastMsg'); t.style.display='block'; t.innerText=msg; setTimeout(()=>t.style.display='none',2000); }
+        function toast(msg) { 
+            let t = document.getElementById('toastMsg'); 
+            t.style.display = 'block'; 
+            t.innerText = msg; 
+            setTimeout(() => t.style.display = 'none', 2000); 
+        }
 
         document.getElementById('toggleModo').addEventListener('click', ()=> document.body.classList.toggle('dark'));
 
@@ -607,29 +625,16 @@
             });
         });
 
-        window.descargarPlantillaContexto = function() {
-            const plantilla = `PLANTILLA DE CONTEXTO ÁUREO
-ROL: "Eres arquitecta senior en ..."
-CONTEXTO: "Construimos ... para ..."
-RESTRICCIONES: "Debe ..."
-EJEMPLOS: "Inspirado en ..."
-FORMATO: "SPEC en markdown"
-`;
-            const blob = new Blob([plantilla],{type:'text/plain'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'contexto- aureo.txt'; a.click();
+        window.descargarPlantilla = function() {
+            const plantilla = `ROL: "Arquitecta senior"\nCONTEXTO: "App para ..."\nRESTRICCIONES: "...";`;
+            const blob = new Blob([plantilla], {type:'text/plain'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'plantilla-contexto.txt'; a.click();
         };
 
         window.descargarSpec = function() {
-            const spec = `# SPEC TÉCNICO - ÁGORA
-## 1. Visión
-## 2. Arquitectura
-## 3. Flujos de Usuario
-## 4. Modelo de Datos
-## 5. Seguridad
-## 6. Escalado
-`;
-            const blob = new Blob([spec],{type:'text/markdown'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'spec-agora.md'; a.click();
+            const spec = `# SPEC TÉCNICO\n## Visión\n## Arquitectura\n## Flujos`;
+            const blob = new Blob([spec], {type:'text/markdown'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'spec.md'; a.click();
         };
 
         // Inicializar
