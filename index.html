@@ -1,973 +1,1008 @@
-<!DOCTYPE html>
+
+html_content = '''<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>🏛️ ÁGORA · Tu compañero de aprendizaje</title>
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'Palatino', Georgia, serif, system-ui;
-        }
-        :root {
-            --bg: #faf7f2; --sidebar: #2c3e4e; --sidebar-hover: #3e5a6b; --card: #ffffff;
-            --text: #2d3e4f; --text-light: #5b6f82; --border: #dcd3c9; --accent: #b68b40;
-            --accent-light: #f5e7d3; --success: #2b7a4b; --warning: #b95e0a; --danger: #c13e3e;
-            --shadow: 0 12px 30px rgba(99, 70, 40, 0.1); --header-bg: #fff9f0; --input-bg: #ffffff;
-            --security-bg: #2c3e4e; --security-text: #f0e9de;
-        }
-        .dark {
-            --bg: #1e2a32; --sidebar: #1a2a35; --card: #2a3a45; --text: #ece5d8;
-            --text-light: #cbb99f; --border: #5a4e42; --accent: #d4a95c; --accent-light: #3f4e5d;
-            --header-bg: #26343f; --input-bg: #2f4050; --shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-            --security-bg: #1a2a35; --security-text: #e0d6c8;
-        }
-        body {
-            background: var(--bg); color: var(--text); display: flex; min-height: 100vh;
-            transition: background 0.2s, color 0.2s;
-        }
-        .sidebar {
-            width: 280px; background: var(--sidebar); color: #f0e9de; padding: 2rem 1rem;
-            overflow-y: auto; border-right: 1px solid var(--accent); display: flex;
-            flex-direction: column; z-index: 100;
-        }
-        .sidebar h2 {
-            font-weight: 400; font-size: 1.8rem; margin-bottom: 2rem;
-            display: flex; align-items: center; gap: 12px;
-            border-bottom: 1px solid var(--accent); padding-bottom: 1.2rem;
-            font-family: 'Georgia', serif;
-        }
-        .sidebar h2 i { color: var(--accent); }
-        .sidebar nav { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
-        .sidebar button {
-            background: none; border: none; color: #dcd3c9; text-align: left;
-            padding: 1rem 1.2rem; font-size: 1rem; border-radius: 14px; cursor: pointer;
-            display: flex; align-items: center; gap: 14px; width: 100%;
-        }
-        .sidebar button i { width: 26px; color: var(--accent); }
-        .sidebar button:hover { background: var(--sidebar-hover); color: white; }
-        .sidebar button.active { background: var(--accent); color: #1e2a32; font-weight: 500; }
-        .sidebar-footer {
-            font-size: 0.9rem; color: #b8aa99; padding-top: 2rem;
-            border-top: 1px solid var(--accent);
-        }
-        .main-content {
-            flex: 1; padding: 2rem; overflow-y: auto; max-height: 100vh;
-        }
-        .header-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 2rem; background: var(--header-bg); padding: 1rem 2rem;
-            border-radius: 50px; box-shadow: var(--shadow); border-left: 8px solid var(--accent);
-            flex-wrap: wrap; gap: 1rem;
-        }
-        .header-bar h1 {
-            font-size: 1.8rem; font-family: 'Georgia', serif;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .header-bar h1 i { color: var(--accent); }
-        .modo-toggle {
-            background: var(--card); border: 1px solid var(--border);
-            padding: 0.6rem 1.4rem; border-radius: 40px; cursor: pointer;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
-        .card {
-            background: var(--card); border-radius: 32px; padding: 2rem;
-            box-shadow: var(--shadow); margin-bottom: 2rem; border: 1px solid var(--border);
-        }
-        .card h3 {
-            margin-bottom: 1.8rem; border-left: 6px solid var(--accent);
-            padding-left: 1.2rem; font-size: 1.5rem; font-family: 'Georgia', serif;
-        }
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.8rem; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
-        .btn {
-            background: var(--card); border: 1px solid var(--border);
-            padding: 0.7rem 1.5rem; border-radius: 40px; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 8px; color: var(--text);
-            font-size: 0.95rem;
-        }
-        .btn-primary { background: var(--accent); color: #1e2a32; border: none; }
-        .btn-primary:hover { background: #c9a04b; }
-        .btn-success { background: var(--success); color: white; border: none; }
-        .btn-warning { background: var(--warning); color: white; border: none; }
-        .btn-danger { background: var(--danger); color: white; border: none; }
-        .btn-sm { padding: 0.5rem 1.2rem; font-size: 0.85rem; }
-        .badge {
-            padding: 0.3rem 0.8rem; border-radius: 30px; font-size: 0.75rem;
-            background: var(--accent-light); color: var(--accent); font-weight: 600;
-        }
-        .badge-safe { background: #10b981; color: white; }
-        .fila-acciones i { margin: 0 6px; cursor: pointer; opacity: 0.7; font-size: 1rem; }
-        .fila-acciones i:hover { opacity: 1; color: var(--accent); }
-        .barra-acciones { display: flex; gap: 10px; flex-wrap: wrap; margin: 1.5rem 0; }
-        .toast {
-            position: fixed; bottom: 20px; right: 20px; background: var(--accent);
-            color: #1e2a32; padding: 1rem 2rem; border-radius: 60px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; z-index: 9999;
-            font-weight: 500;
-        }
-        .security-officer {
-            background: var(--security-bg); border-radius: 20px; padding: 1.5rem;
-            margin-bottom: 2rem; color: var(--security-text); border-left: 8px solid var(--accent);
-        }
-        .security-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-        .security-avatar {
-            width: 60px; height: 60px; background: var(--accent); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #1e2a32;
-        }
-        .security-message { margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px; }
-        .security-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem; }
-        .security-stat { background: rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 10px; text-align: center; }
-
-        /* Estilos para categorías */
-        .categoria-container {
-            background: var(--bg); border-radius: 20px; padding: 1rem; margin-bottom: 1rem;
-        }
-        .categoria-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0.5rem; cursor: pointer; border-bottom: 1px solid var(--border);
-        }
-        .categoria-header h4 { display: flex; align-items: center; gap: 0.5rem; }
-        .categoria-content { padding: 1rem 0; }
-        .enlace-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0.5rem; border-bottom: 1px dashed var(--border);
-        }
-        .enlace-item:last-child { border-bottom: none; }
-
-        /* Estilos para historial */
-        .historial-dia {
-            margin-bottom: 1.5rem; padding: 1rem; background: var(--bg); border-radius: 15px;
-        }
-        .historial-fecha {
-            font-weight: 600; color: var(--accent); margin-bottom: 0.5rem;
-        }
-
-        /* Estilos para bitácora */
-        .bitacora-entrada {
-            background: var(--bg); border-radius: 15px; padding: 1rem; margin-bottom: 1rem;
-        }
-        .bitacora-tags span {
-            background: var(--accent-light); padding: 0.2rem 0.5rem; border-radius: 15px;
-            font-size: 0.8rem; margin-right: 0.3rem;
-        }
-
-        /* Responsive móvil */
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar {
-                width: 100%; padding: 1rem; max-height: 80px; overflow: visible;
-                flex-direction: row; align-items: center; justify-content: space-between;
-                position: sticky; top: 0; z-index: 1000;
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD: AI Learning Hub - Documento de Requisitos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#ec4899',
+                        dark: '#0f172a',
+                        darker: '#020617',
+                    }
+                }
             }
-            .sidebar h2 { margin-bottom: 0; border-bottom: none; padding-bottom: 0; font-size: 1.2rem; }
-            .sidebar nav { flex-direction: row; overflow-x: auto; gap: 0.2rem; }
-            .sidebar button { padding: 0.5rem 0.8rem; font-size: 0.8rem; white-space: nowrap; }
-            .sidebar-footer { display: none; }
-            .main-content { padding: 1rem; max-height: none; }
-            .header-bar { flex-direction: column; align-items: flex-start; padding: 1rem; }
-            .grid-2, .grid-3 { grid-template-columns: 1fr; }
-            .barra-acciones { flex-direction: column; align-items: stretch; }
-            .btn { justify-content: center; }
+        }
+    </script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .resource-card {
+            background: linear-gradient(145deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        .step-number {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .grid-pattern {
+            background-image: radial-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .smooth-scroll {
+            scroll-behavior: smooth;
+        }
+        .active-nav {
+            background: rgba(99, 102, 241, 0.2);
+            border-left: 3px solid #6366f1;
         }
     </style>
 </head>
-<body>
-    <div class="sidebar">
-        <h2><i class="fas fa-columns"></i> ÁGORA</h2>
-        <nav id="menuNav">
-            <button data-tab="tab1" class="active"><i class="fas fa-youtube"></i> Ágora·Video</button>
-            <button data-tab="tab2"><i class="fas fa-folder-tree"></i> Categorías</button>
-            <button data-tab="tab3"><i class="fas fa-history"></i> Historial</button>
-            <button data-tab="tab4"><i class="fas fa-book-open"></i> Bitácora</button>
-            <button data-tab="tab5"><i class="fas fa-chart-line"></i> Progreso</button>
-            <button data-tab="tab6"><i class="fas fa-shield-alt"></i> Seguridad</button>
-            <button data-tab="tab7"><i class="fas fa-info-circle"></i> Guías</button>
-        </nav>
-        <div class="sidebar-footer"><i class="fas fa-leaf"></i> Siempre gratuito · Tu compañero de aprendizaje</div>
-    </div>
-
-    <div class="main-content">
-        <div class="header-bar">
-            <h1><i class="fas fa-columns"></i> ÁGORA · Tu compañero de aprendizaje</h1>
-            <div class="modo-toggle" id="toggleModo"><i class="fas fa-moon"></i> <span>Claroscuro</span></div>
-        </div>
-
-        <!-- ========== PANEL 1: ÁGORA·VIDEO ========== -->
-        <div id="tab1" class="tab-panel active">
-            <div class="card">
-                <h3><i class="fas fa-youtube"></i> Ágora·Video</h3>
-                <p>Pega cualquier enlace de YouTube y obtén recomendaciones personalizadas.</p>
-                
-                <div style="background: linear-gradient(135deg, #b68b40, #8a6a30); padding: 2rem; border-radius: 20px; margin: 2rem 0;">
-                    <label style="color: white;">🔗 Enlace del video</label>
-                    <input type="url" id="youtubeUrl" placeholder="https://youtube.com/watch?v=..." style="background: white; width:100%;">
-                    <button class="btn" id="analizarVideoBtn" style="background: #1e2a32; color: white; margin-top: 1rem; width:100%;">
-                        <i class="fas fa-magic"></i> Analizar video
+<body class="bg-darker text-gray-100 font-sans smooth-scroll">
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-darker/80 backdrop-blur-md border-b border-gray-800 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-brain text-white text-sm"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">AI Learning Hub <span class="text-xs font-normal text-gray-400">PRD v1.0</span></span>
+                </div>
+                <div class="hidden md:flex items-center gap-6 text-sm">
+                    <a href="#overview" class="hover:text-primary transition-colors">Visión General</a>
+                    <a href="#features" class="hover:text-primary transition-colors">Funcionalidades</a>
+                    <a href="#options" class="hover:text-primary transition-colors">Opciones IA</a>
+                    <a href="#resources" class="hover:text-primary transition-colors">Recursos</a>
+                    <a href="#technical" class="hover:text-primary transition-colors">Técnico</a>
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-moon"></i>
                     </button>
                 </div>
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-darker border-t border-gray-800">
+            <div class="px-4 py-3 space-y-2">
+                <a href="#overview" class="block py-2 hover:text-primary">Visión General</a>
+                <a href="#features" class="block py-2 hover:text-primary">Funcionalidades</a>
+                <a href="#options" class="block py-2 hover:text-primary">Opciones IA</a>
+                <a href="#resources" class="block py-2 hover:text-primary">Recursos</a>
+                <a href="#technical" class="block py-2 hover:text-primary">Técnico</a>
+            </div>
+        </div>
+    </nav>
 
-                <div id="analisisResultado" style="display: none;">
-                    <div style="background: var(--accent-light); padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem;">
-                        <h4>📊 Análisis del video</h4>
-                        <p><strong>Título:</strong> <span id="videoTitulo"></span></p>
-                        <p><strong>Tema detectado:</strong> <span id="videoTema"></span></p>
-                        <p><strong>Nivel estimado:</strong> <span id="videoNivel"></span></p>
-                        <p><strong>Etiquetas sugeridas:</strong> <span id="videoEtiquetas"></span></p>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-                        <div style="background: var(--bg); padding: 1rem; border-radius: 15px; text-align: center;">
-                            <h5>🎯 Recomendación principal</h5>
-                            <p id="recomendacionPrincipal"></p>
-                            <button class="btn btn-sm btn-primary" id="abrirRecomendacionBtn">Abrir herramienta</button>
-                        </div>
-                        <div style="background: var(--bg); padding: 1rem; border-radius: 15px; text-align: center;">
-                            <h5>📋 Alternativas</h5>
-                            <p id="recomendacionAlternativa"></p>
-                        </div>
-                    </div>
-
-                    <div style="background: var(--bg); padding: 1.5rem; border-radius: 15px;">
-                        <h4>📋 Guía paso a paso</h4>
-                        <div id="guiaPasos"></div>
-                        <button class="btn btn-success btn-sm" id="guardarProgresoBtn" style="margin-top: 1rem;">Guardar progreso</button>
-                    </div>
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 overflow-hidden grid-pattern">
+        <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm mb-6">
+                    <span class="pulse w-2 h-2 bg-primary rounded-full"></span>
+                    Documento de Requisitos de Producto
                 </div>
-            </div>
-        </div>
-
-        <!-- ========== PANEL 2: CATEGORÍAS ========== -->
-        <div id="tab2" class="tab-panel">
-            <div class="card">
-                <h3><i class="fas fa-folder-tree"></i> Mis categorías</h3>
-                <div class="barra-acciones">
-                    <button class="btn btn-primary" id="nuevaCategoriaBtn"><i class="fas fa-plus"></i> Nueva categoría</button>
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                    <span class="gradient-text">AI Learning Hub</span>
+                    <br>
+                    <span class="text-gray-300 text-3xl md:text-5xl">Centro de Aprendizaje con IA</span>
+                </h1>
+                <p class="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+                    Plataforma frontend gratuita para aprender de múltiples IAs sin backend propio. 
+                    Integración directa con servicios externos, biblioteca de recursos Revolutia y experiencia inmersiva.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="#options" class="px-8 py-4 bg-gradient-to-r from-primary to-secondary rounded-xl font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all hover:-translate-y-1">
+                        <i class="fas fa-rocket mr-2"></i>Explorar Opciones
+                    </a>
+                    <a href="#resources" class="px-8 py-4 glass rounded-xl font-semibold hover:bg-white/10 transition-all">
+                        <i class="fas fa-book mr-2"></i>Ver Recursos
+                    </a>
                 </div>
-                <div id="categoriasContainer"></div>
-            </div>
-        </div>
-
-        <!-- ========== PANEL 3: HISTORIAL ========== -->
-        <div id="tab3" class="tab-panel">
-            <div class="card">
-                <h3><i class="fas fa-history"></i> Historial de aprendizaje</h3>
-                <div id="historialContainer"></div>
-            </div>
-        </div>
-
-        <!-- ========== PANEL 4: BITÁCORA ========== -->
-        <div id="tab4" class="tab-panel">
-            <div class="card">
-                <h3><i class="fas fa-book-open"></i> Mi bitácora</h3>
-                <div class="barra-acciones">
-                    <button class="btn btn-primary" id="nuevaEntradaBitacoraBtn"><i class="fas fa-plus"></i> Nueva entrada</button>
-                </div>
-                <div id="bitacoraContainer"></div>
-            </div>
-        </div>
-
-        <!-- ========== PANEL 5: PROGRESO ========== -->
-        <div id="tab5" class="tab-panel">
-            <div class="card">
-                <h3><i class="fas fa-chart-line"></i> Mi progreso</h3>
-                <div class="security-officer" style="margin-bottom: 2rem;">
-                    <div class="security-stats">
-                        <div class="security-stat">📊 <span id="totalVideos">0</span> videos</div>
-                        <div class="security-stat">📝 <span id="totalNotas">0</span> notas</div>
-                        <div class="security-stat">🔥 <span id="rachaActual">0</span> días seguidos</div>
-                        <div class="security-stat">🏆 <span id="mejorRacha">0</span> mejor racha</div>
-                    </div>
-                </div>
-                <div id="progresoDetalle"></div>
-            </div>
-        </div>
-
-        <!-- ========== PANEL 6: SEGURIDAD ========== -->
-        <div id="tab6" class="tab-panel">
-            <div class="card">
-                <h3><i class="fas fa-shield-alt"></i> Oficial de Seguridad</h3>
-                <div class="security-officer" id="securityOfficer">
-                    <div class="security-header">
-                        <div class="security-avatar"><i class="fas fa-shield-alt"></i></div>
-                        <span class="badge-safe">🛡️ MODO SEGURO</span>
-                    </div>
-                    <div class="security-message" id="securityMessage">
-                        ✅ Sin APIs externas · ✅ Sin costos · ✅ Sin riesgos
-                    </div>
-                    <div class="security-stats">
-                        <div class="security-stat">🟢 <span id="safeDecisions">0</span> seguras</div>
-                        <div class="security-stat">🟡 <span id="warnings">0</span> alertas</div>
-                        <div class="security-stat">🔴 <span id="risksAvoided">0</span> riesgos</div>
-                        <div class="security-stat">💰 $<span id="costSavings">0</span> ahorrados</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========== PANEL 7: GUÍAS ========== -->
-        <div id="tab7" class="tab-panel">
-            <div class="card">
-                <h3><i class="fas fa-info-circle"></i> Guías de herramientas</h3>
-                <div class="grid-3">
-                    <div class="step-section">
-                        <h4>🎯 Miyagi Labs</h4>
-                        <p>Genera cursos completos con quizzes y feedback IA</p>
-                        <a href="https://miyagilabs.ai" target="_blank" class="btn btn-sm">Visitar</a>
-                    </div>
-                    <div class="step-section">
-                        <h4>📝 Ainee</h4>
-                        <p>Notas, mapas mentales, flashcards y podcasts</p>
-                        <a href="https://ainee.com" target="_blank" class="btn btn-sm">Visitar</a>
-                    </div>
-                    <div class="step-section">
-                        <h4>⚡ LongCut</h4>
-                        <p>Workspace interactivo con chat sobre el video</p>
-                        <a href="https://longcut.ai" target="_blank" class="btn btn-sm">Visitar</a>
-                    </div>
-                    <div class="step-section">
-                        <h4>🎧 NotebookLM</h4>
-                        <p>Podcasts, resúmenes y mapas mentales</p>
-                        <a href="https://notebooklm.google.com" target="_blank" class="btn btn-sm">Visitar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="toast" id="toastMsg">✅ Hecho</div>
-    </div>
-
-    <script>
-        // ============================================================
-        // ESTADO GLOBAL (DATOS REALES, NO SIMULADOS)
-        // ============================================================
-        let estado = {
-            categorias: JSON.parse(localStorage.getItem('agora_categorias')) || [
-                { id: 1, nombre: 'Programación', color: '#3b82f6', enlaces: [] },
-                { id: 2, nombre: 'Diseño', color: '#10b981', enlaces: [] },
-                { id: 3, nombre: 'IA y ML', color: '#8b5cf6', enlaces: [] },
-                { id: 4, nombre: 'Pendientes', color: '#f59e0b', enlaces: [] }
-            ],
-            historial: JSON.parse(localStorage.getItem('agora_historial')) || [],
-            bitacora: JSON.parse(localStorage.getItem('agora_bitacora')) || [],
-            progreso: JSON.parse(localStorage.getItem('agora_progreso')) || {
-                totalVideos: 0,
-                totalNotas: 0,
-                rachaActual: 0,
-                mejorRacha: 0,
-                ultimoAcceso: null
-            }
-        };
-
-        // ============================================================
-        // OFICIAL DE SEGURIDAD (SIN APIs, SIN RIESGOS)
-        // ============================================================
-        const SecurityOfficer = {
-            stats: {
-                safeDecisions: parseInt(localStorage.getItem('seguridad_safeDecisions')) || 0,
-                warnings: parseInt(localStorage.getItem('seguridad_warnings')) || 0,
-                risksAvoided: parseInt(localStorage.getItem('seguridad_risksAvoided')) || 0,
-                costSavings: parseInt(localStorage.getItem('seguridad_costSavings')) || 0
-            },
-            logSafeDecision(msg) {
-                this.stats.safeDecisions++;
-                this.stats.costSavings += 50;
-                this.save();
-                this.updateUI();
-                this.showMessage(`✅ ${msg}`);
-            },
-            logWarning(msg) {
-                this.stats.warnings++;
-                this.save();
-                this.updateUI();
-                this.showMessage(`⚠️ ${msg}`);
-            },
-            logRiskAvoided(msg) {
-                this.stats.risksAvoided++;
-                this.stats.costSavings += 200;
-                this.save();
-                this.updateUI();
-                this.showMessage(`🛡️ ${msg}`);
-            },
-            showMessage(msg) {
-                document.getElementById('securityMessage').innerHTML = msg;
-            },
-            save() {
-                localStorage.setItem('seguridad_safeDecisions', this.stats.safeDecisions);
-                localStorage.setItem('seguridad_warnings', this.stats.warnings);
-                localStorage.setItem('seguridad_risksAvoided', this.stats.risksAvoided);
-                localStorage.setItem('seguridad_costSavings', this.stats.costSavings);
-            },
-            updateUI() {
-                document.getElementById('safeDecisions').innerText = this.stats.safeDecisions;
-                document.getElementById('warnings').innerText = this.stats.warnings;
-                document.getElementById('risksAvoided').innerText = this.stats.risksAvoided;
-                document.getElementById('costSavings').innerText = this.stats.costSavings;
-            }
-        };
-        SecurityOfficer.updateUI();
-
-        // ============================================================
-        // FUNCIONES DE PERSISTENCIA
-        // ============================================================
-        function guardarTodo() {
-            localStorage.setItem('agora_categorias', JSON.stringify(estado.categorias));
-            localStorage.setItem('agora_historial', JSON.stringify(estado.historial));
-            localStorage.setItem('agora_bitacora', JSON.stringify(estado.bitacora));
-            localStorage.setItem('agora_progreso', JSON.stringify(estado.progreso));
-            actualizarProgreso();
-        }
-
-        // ============================================================
-        // ANALIZADOR DE VIDEOS (SIN API, BASADO EN TEXTO)
-        // ============================================================
-        function analizarVideo(titulo) {
-            const texto = titulo.toLowerCase();
-            
-            // Detectar tema
-            let tema = 'General';
-            if (texto.includes('react') || texto.includes('javascript') || texto.includes('python') || texto.includes('programación')) {
-                tema = 'Programación';
-            } else if (texto.includes('diseño') || texto.includes('figma') || texto.includes('ux') || texto.includes('ui')) {
-                tema = 'Diseño';
-            } else if (texto.includes('ia') || texto.includes('inteligencia') || texto.includes('machine learning') || texto.includes('ml')) {
-                tema = 'IA y ML';
-            }
-
-            // Detectar nivel
-            let nivel = 'Intermedio';
-            if (texto.includes('principiante') || texto.includes('básico') || texto.includes('desde cero')) {
-                nivel = 'Principiante';
-            } else if (texto.includes('avanzado') || texto.includes('experto') || texto.includes('profesional')) {
-                nivel = 'Avanzado';
-            }
-
-            // Generar etiquetas
-            let etiquetas = [];
-            if (texto.includes('react')) etiquetas.push('#react');
-            if (texto.includes('javascript')) etiquetas.push('#javascript');
-            if (texto.includes('python')) etiquetas.push('#python');
-            if (texto.includes('diseño')) etiquetas.push('#diseño');
-            if (texto.includes('figma')) etiquetas.push('#figma');
-            if (etiquetas.length === 0) etiquetas.push('#aprendizaje');
-
-            return { tema, nivel, etiquetas };
-        }
-
-        // ============================================================
-        // RECOMENDADOR DE HERRAMIENTAS
-        // ============================================================
-        function recomendarHerramientas(tema, nivel) {
-            let principal = '';
-            let alternativa = '';
-            let urlPrincipal = '';
-
-            if (tema === 'Programación') {
-                principal = 'LongCut (workspace interactivo con chat)';
-                urlPrincipal = 'https://longcut.ai';
-                alternativa = 'Miyagi Labs para ejercicios prácticos';
-            } else if (tema === 'Diseño') {
-                principal = 'Ainee (notas, mapas, flashcards)';
-                urlPrincipal = 'https://ainee.com';
-                alternativa = 'NotebookLM para podcast';
-            } else if (tema === 'IA y ML') {
-                principal = 'NotebookLM (resúmenes y podcast)';
-                urlPrincipal = 'https://notebooklm.google.com';
-                alternativa = 'Miyagi Labs para cursos estructurados';
-            } else {
-                principal = 'Miyagi Labs (cursos completos)';
-                urlPrincipal = 'https://miyagilabs.ai';
-                alternativa = 'LongCut para workspace interactivo';
-            }
-
-            return { principal, alternativa, urlPrincipal };
-        }
-
-        // ============================================================
-        // GENERADOR DE GUÍAS
-        // ============================================================
-        function generarGuia(herramienta, videoId) {
-            let pasos = [];
-            
-            if (herramienta.includes('LongCut')) {
-                pasos = [
-                    '1. Haz clic en "Abrir herramienta"',
-                    '2. En LongCut, pega el mismo link del video',
-                    '3. Usa el chat para preguntar: "explícame los conceptos clave"',
-                    '4. Guarda las respuestas en tu workspace',
-                    '5. Exporta tus notas cuando termines'
-                ];
-            } else if (herramienta.includes('Ainee')) {
-                pasos = [
-                    '1. Abre Ainee con el botón de abajo',
-                    '2. Pega el link del video',
-                    '3. Espera a que genere notas, mapas y flashcards',
-                    '4. Revisa el material y guarda lo que te sirva',
-                    '5. Practica con los quizzes generados'
-                ];
-            } else if (herramienta.includes('NotebookLM')) {
-                pasos = [
-                    '1. Ve a NotebookLM',
-                    '2. Crea un nuevo notebook',
-                    '3. Añade fuente: "YouTube" y pega el link',
-                    '4. Escucha el podcast generado',
-                    '5. Revisa el resumen y el mapa mental'
-                ];
-            } else {
-                pasos = [
-                    '1. Abre Miyagi Labs',
-                    '2. Pega el link del video',
-                    '3. Completa los quizzes generados',
-                    '4. Revisa el feedback de la IA',
-                    '5. Guarda tu progreso'
-                ];
-            }
-
-            return pasos;
-        }
-
-        // ============================================================
-        // MANEJADOR DE ÁGORA·VIDEO
-        // ============================================================
-        document.getElementById('analizarVideoBtn').addEventListener('click', () => {
-            const url = document.getElementById('youtubeUrl').value;
-            if (!url) {
-                alert('Pega un enlace de YouTube');
-                return;
-            }
-
-            // Extraer ID del video
-            let videoId = '';
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            if (match && match[2].length === 11) {
-                videoId = match[2];
-            } else {
-                alert('URL no válida');
-                return;
-            }
-
-            // Simular título (en producción podrías pedirlo al usuario)
-            const tituloSimulado = prompt('¿Cuál es el título del video? (para análisis)', 'Aprende React en 1 hora');
-            if (!tituloSimulado) return;
-
-            const analisis = analizarVideo(tituloSimulado);
-            const recomendacion = recomendarHerramientas(analisis.tema, analisis.nivel);
-            const guia = generarGuia(recomendacion.principal, videoId);
-
-            // Mostrar resultados
-            document.getElementById('videoTitulo').innerText = tituloSimulado;
-            document.getElementById('videoTema').innerText = analisis.tema;
-            document.getElementById('videoNivel').innerText = analisis.nivel;
-            document.getElementById('videoEtiquetas').innerText = analisis.etiquetas.join(' · ');
-            
-            document.getElementById('recomendacionPrincipal').innerHTML = `<strong>${recomendacion.principal}</strong>`;
-            document.getElementById('recomendacionAlternativa').innerHTML = `<small>${recomendacion.alternativa}</small>`;
-            
-            let guiaHtml = '<ol>';
-            guia.forEach(paso => { guiaHtml += `<li>${paso}</li>`; });
-            guiaHtml += '</ol>';
-            document.getElementById('guiaPasos').innerHTML = guiaHtml;
-
-            document.getElementById('abrirRecomendacionBtn').onclick = () => {
-                window.open(recomendacion.urlPrincipal, '_blank');
-                SecurityOfficer.logSafeDecision('Usuario abrió herramienta recomendada');
-            };
-
-            document.getElementById('guardarProgresoBtn').onclick = () => {
-                // Guardar en historial
-                const entradaHistorial = {
-                    id: Date.now(),
-                    fecha: new Date().toISOString().split('T')[0],
-                    hora: new Date().toLocaleTimeString(),
-                    titulo: tituloSimulado,
-                    videoId: videoId,
-                    herramienta: recomendacion.principal,
-                    tema: analisis.tema,
-                    etiquetas: analisis.etiquetas,
-                    completado: false
-                };
-                estado.historial.unshift(entradaHistorial);
                 
-                // Actualizar progreso
-                estado.progreso.totalVideos++;
-                const hoy = new Date().toDateString();
-                if (estado.progreso.ultimoAcceso === hoy) {
-                    // Ya registró hoy
-                } else if (estado.progreso.ultimoAcceso === new Date(Date.now() - 86400000).toDateString()) {
-                    estado.progreso.rachaActual++;
-                    if (estado.progreso.rachaActual > estado.progreso.mejorRacha) {
-                        estado.progreso.mejorRacha = estado.progreso.rachaActual;
-                    }
-                } else {
-                    estado.progreso.rachaActual = 1;
-                }
-                estado.progreso.ultimoAcceso = hoy;
+                <!-- Stats -->
+                <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+                    <div class="glass rounded-xl p-4">
+                        <div class="text-2xl font-bold text-primary">4</div>
+                        <div class="text-sm text-gray-400">Opciones IA</div>
+                    </div>
+                    <div class="glass rounded-xl p-4">
+                        <div class="text-2xl font-bold text-secondary">50+</div>
+                        <div class="text-sm text-gray-400">Recursos</div>
+                    </div>
+                    <div class="glass rounded-xl p-4">
+                        <div class="text-2xl font-bold text-accent">0</div>
+                        <div class="text-sm text-gray-400">Backend</div>
+                    </div>
+                    <div class="glass rounded-xl p-4">
+                        <div class="text-2xl font-bold text-green-400">100%</div>
+                        <div class="text-sm text-gray-400">Gratis</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                guardarTodo();
-                SecurityOfficer.logSafeDecision('Progreso guardado correctamente');
-                toast('✅ Progreso guardado');
-            };
-
-            document.getElementById('analisisResultado').style.display = 'block';
-            SecurityOfficer.logSafeDecision('Video analizado correctamente');
-        });
-
-        // ============================================================
-        // CATEGORÍAS (CRUD COMPLETO)
-        // ============================================================
-        function renderCategorias() {
-            const container = document.getElementById('categoriasContainer');
-            let html = '';
-
-            estado.categorias.forEach(cat => {
-                html += `
-                    <div class="categoria-container">
-                        <div class="categoria-header" onclick="toggleCategoria(${cat.id})">
-                            <h4><i class="fas fa-folder" style="color: ${cat.color};"></i> ${cat.nombre} (${cat.enlaces.length})</h4>
-                            <div class="fila-acciones">
-                                <i class="fas fa-edit" onclick="editarCategoria(${cat.id}); event.stopPropagation();"></i>
-                                <i class="fas fa-trash" onclick="eliminarCategoria(${cat.id}); event.stopPropagation();"></i>
-                                <i class="fas fa-chevron-down"></i>
+    <!-- Overview Section -->
+    <section id="overview" class="py-20 bg-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-6">Visión del Producto</h2>
+                    <p class="text-gray-400 mb-6 text-lg">
+                        AI Learning Hub es una aplicación web estática diseñada para centralizar el acceso a herramientas de IA educativas 
+                        sin necesidad de infraestructura backend. Cada servicio mantiene sus propios servidores, 
+                        nosotros solo proporcionamos la interfaz unificada y la biblioteca de recursos.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                                <i class="fas fa-check text-green-400 text-sm"></i>
                             </div>
-                        </div>
-                        <div class="categoria-content" id="cat-${cat.id}" style="display: none;">
-                            <button class="btn btn-sm btn-primary" onclick="nuevoEnlace(${cat.id})">+ Añadir enlace</button>
-                            ${cat.enlaces.map(enlace => `
-                                <div class="enlace-item">
-                                    <div>
-                                        <strong>${enlace.titulo}</strong><br>
-                                        <small>${enlace.fecha} · ${enlace.herramienta}</small>
-                                    </div>
-                                    <div class="fila-acciones">
-                                        <i class="fas fa-check-circle" style="color: var(--success);" onclick="marcarCompletado(${cat.id}, ${enlace.id})"></i>
-                                        <i class="fas fa-trash" onclick="eliminarEnlace(${cat.id}, ${enlace.id})"></i>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        window.toggleCategoria = (id) => {
-            const elem = document.getElementById(`cat-${id}`);
-            if (elem.style.display === 'none') {
-                elem.style.display = 'block';
-            } else {
-                elem.style.display = 'none';
-            }
-        };
-
-        window.editarCategoria = (id) => {
-            const cat = estado.categorias.find(c => c.id === id);
-            const nuevoNombre = prompt('Nuevo nombre', cat.nombre);
-            if (nuevoNombre) {
-                cat.nombre = nuevoNombre;
-                guardarTodo();
-                renderCategorias();
-                SecurityOfficer.logSafeDecision('Categoría editada');
-            }
-        };
-
-        window.eliminarCategoria = (id) => {
-            if (confirm('¿Eliminar categoría? Los enlaces se perderán')) {
-                estado.categorias = estado.categorias.filter(c => c.id !== id);
-                guardarTodo();
-                renderCategorias();
-                SecurityOfficer.logSafeDecision('Categoría eliminada');
-            }
-        };
-
-        window.nuevoEnlace = (catId) => {
-            const titulo = prompt('Título del video');
-            if (!titulo) return;
-            
-            const cat = estado.categorias.find(c => c.id === catId);
-            cat.enlaces.push({
-                id: Date.now(),
-                titulo: titulo,
-                fecha: new Date().toLocaleDateString(),
-                herramienta: 'Pendiente',
-                completado: false
-            });
-            
-            guardarTodo();
-            renderCategorias();
-            SecurityOfficer.logSafeDecision('Enlace añadido a categoría');
-        };
-
-        window.eliminarEnlace = (catId, enlaceId) => {
-            const cat = estado.categorias.find(c => c.id === catId);
-            cat.enlaces = cat.enlaces.filter(e => e.id !== enlaceId);
-            guardarTodo();
-            renderCategorias();
-            SecurityOfficer.logSafeDecision('Enlace eliminado');
-        };
-
-        window.marcarCompletado = (catId, enlaceId) => {
-            const cat = estado.categorias.find(c => c.id === catId);
-            const enlace = cat.enlaces.find(e => e.id === enlaceId);
-            enlace.completado = !enlace.completado;
-            guardarTodo();
-            renderCategorias();
-            SecurityOfficer.logSafeDecision('Progreso actualizado');
-        };
-
-        document.getElementById('nuevaCategoriaBtn').addEventListener('click', () => {
-            const nombre = prompt('Nombre de la categoría');
-            if (nombre) {
-                estado.categorias.push({
-                    id: Date.now(),
-                    nombre: nombre,
-                    color: '#b68b40',
-                    enlaces: []
-                });
-                guardarTodo();
-                renderCategorias();
-                SecurityOfficer.logSafeDecision('Nueva categoría creada');
-            }
-        });
-
-        // ============================================================
-        // HISTORIAL
-        // ============================================================
-        function renderHistorial() {
-            const container = document.getElementById('historialContainer');
-            if (estado.historial.length === 0) {
-                container.innerHTML = '<p class="step-section">No hay historial aún. Analiza un video en Ágora·Video.</p>';
-                return;
-            }
-
-            let html = '';
-            const historialPorFecha = {};
-            estado.historial.forEach(entry => {
-                if (!historialPorFecha[entry.fecha]) {
-                    historialPorFecha[entry.fecha] = [];
-                }
-                historialPorFecha[entry.fecha].push(entry);
-            });
-
-            Object.keys(historialPorFecha).sort((a,b) => new Date(b) - new Date(a)).forEach(fecha => {
-                html += `<div class="historial-dia">`;
-                html += `<div class="historial-fecha">📅 ${fecha}</div>`;
-                
-                historialPorFecha[fecha].forEach(entry => {
-                    html += `
-                        <div class="enlace-item">
                             <div>
-                                <strong>${entry.titulo}</strong><br>
-                                <small>${entry.hora} · ${entry.herramienta} · ${entry.tema}</small>
-                            </div>
-                            <div class="fila-acciones">
-                                <i class="fas fa-book-open" onclick="añadirABitacora(${entry.id})" title="Añadir a bitácora"></i>
-                                <i class="fas fa-folder-plus" onclick="añadirACategoria(${entry.id})" title="Añadir a categoría"></i>
+                                <h4 class="font-semibold mb-1">Sin Costos de Servidor</h4>
+                                <p class="text-sm text-gray-500">GitHub Pages + servicios externos = $0 infraestructura</p>
                             </div>
                         </div>
-                    `;
-                });
-                
-                html += `</div>`;
-            });
-
-            container.innerHTML = html;
-        }
-
-        window.añadirABitacora = (id) => {
-            const entry = estado.historial.find(e => e.id === id);
-            if (!entry) return;
-
-            const aprendido = prompt('¿Qué aprendiste?');
-            if (!aprendido) return;
-
-            estado.bitacora.unshift({
-                id: Date.now(),
-                fecha: new Date().toLocaleDateString(),
-                titulo: entry.titulo,
-                videoId: entry.videoId,
-                aprendido: aprendido,
-                dificultades: prompt('¿Qué dificultades tuviste?', 'Ninguna'),
-                etiquetas: entry.etiquetas
-            });
-
-            estado.progreso.totalNotas++;
-            guardarTodo();
-            renderBitacora();
-            SecurityOfficer.logSafeDecision('Entrada añadida a bitácora');
-            toast('✅ Añadido a bitácora');
-        };
-
-        window.añadirACategoria = (id) => {
-            const entry = estado.historial.find(e => e.id === id);
-            if (!entry) return;
-
-            const catIndex = prompt('ID de categoría (1-4):\n1: Programación\n2: Diseño\n3: IA\n4: Pendientes');
-            if (!catIndex) return;
-
-            const cat = estado.categorias[parseInt(catIndex) - 1];
-            if (cat) {
-                cat.enlaces.push({
-                    id: Date.now(),
-                    titulo: entry.titulo,
-                    fecha: entry.fecha,
-                    herramienta: entry.herramienta,
-                    completado: false
-                });
-                guardarTodo();
-                renderCategorias();
-                SecurityOfficer.logSafeDecision('Video añadido a categoría');
-                toast('✅ Añadido a categoría');
-            }
-        };
-
-        // ============================================================
-        // BITÁCORA
-        // ============================================================
-        function renderBitacora() {
-            const container = document.getElementById('bitacoraContainer');
-            if (estado.bitacora.length === 0) {
-                container.innerHTML = '<p class="step-section">No hay entradas en la bitácora.</p>';
-                return;
-            }
-
-            let html = '';
-            estado.bitacora.forEach(entry => {
-                html += `
-                    <div class="bitacora-entrada">
-                        <div style="display: flex; justify-content: space-between;">
-                            <strong>${entry.titulo}</strong>
-                            <small>${entry.fecha}</small>
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                                <i class="fas fa-bolt text-blue-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-1">Escalabilidad Infinita</h4>
+                                <p class="text-sm text-gray-500">CDN global de GitHub, carga instantánea</p>
+                            </div>
                         </div>
-                        <p><strong>📝 Aprendido:</strong> ${entry.aprendido}</p>
-                        <p><strong>⚠️ Dificultades:</strong> ${entry.dificultades || 'Ninguna'}</p>
-                        <div class="bitacora-tags">
-                            ${entry.etiquetas ? entry.etiquetas.map(e => `<span>${e}</span>`).join('') : ''}
-                        </div>
-                        <div class="fila-acciones" style="margin-top: 0.5rem;">
-                            <i class="fas fa-edit" onclick="editarBitacora(${entry.id})"></i>
-                            <i class="fas fa-trash" onclick="eliminarBitacora(${entry.id})"></i>
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                                <i class="fas fa-shield-alt text-purple-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-1">Mantenimiento Cero</h4>
+                                <p class="text-sm text-gray-500">No hay servidores que actualizar ni bases de datos que respaldar</p>
+                            </div>
                         </div>
                     </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        window.editarBitacora = (id) => {
-            const entry = estado.bitacora.find(e => e.id === id);
-            const nuevoAprendido = prompt('¿Qué aprendiste?', entry.aprendido);
-            if (nuevoAprendido) {
-                entry.aprendido = nuevoAprendido;
-                guardarTodo();
-                renderBitacora();
-                SecurityOfficer.logSafeDecision('Entrada editada');
-            }
-        };
-
-        window.eliminarBitacora = (id) => {
-            if (confirm('¿Eliminar entrada?')) {
-                estado.bitacora = estado.bitacora.filter(e => e.id !== id);
-                estado.progreso.totalNotas--;
-                guardarTodo();
-                renderBitacora();
-                SecurityOfficer.logSafeDecision('Entrada eliminada');
-            }
-        };
-
-        document.getElementById('nuevaEntradaBitacoraBtn').addEventListener('click', () => {
-            const titulo = prompt('Título del video');
-            if (!titulo) return;
-            const aprendido = prompt('¿Qué aprendiste?');
-            if (!aprendido) return;
-
-            estado.bitacora.unshift({
-                id: Date.now(),
-                fecha: new Date().toLocaleDateString(),
-                titulo: titulo,
-                aprendido: aprendido,
-                dificultades: prompt('¿Qué dificultades tuviste?', 'Ninguna'),
-                etiquetas: []
-            });
-
-            estado.progreso.totalNotas++;
-            guardarTodo();
-            renderBitacora();
-            SecurityOfficer.logSafeDecision('Nueva entrada en bitácora');
-        });
-
-        // ============================================================
-        // PROGRESO
-        // ============================================================
-        function actualizarProgreso() {
-            document.getElementById('totalVideos').innerText = estado.progreso.totalVideos;
-            document.getElementById('totalNotas').innerText = estado.progreso.totalNotas;
-            document.getElementById('rachaActual').innerText = estado.progreso.rachaActual;
-            document.getElementById('mejorRacha').innerText = estado.progreso.mejorRacha;
-
-            // Mostrar detalle de actividad reciente
-            const detalle = document.getElementById('progresoDetalle');
-            if (estado.historial.length > 0) {
-                const ultimos = estado.historial.slice(0, 5);
-                detalle.innerHTML = `
-                    <h4>Actividad reciente</h4>
-                    ${ultimos.map(v => `
-                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px dashed var(--border);">
-                            <span>${v.titulo.substring(0, 30)}...</span>
-                            <small>${v.fecha}</small>
-                        </div>
-                    `).join('')}
-                `;
-            }
-        }
-
-        // ============================================================
-        // UTILIDADES
-        // ============================================================
-        function toast(msg) {
-            const t = document.getElementById('toastMsg');
-            t.style.display = 'block';
-            t.innerText = msg;
-            setTimeout(() => t.style.display = 'none', 2000);
-        }
-
-        // ============================================================
-        // NAVEGACIÓN Y MODO OSCURO
-        // ============================================================
-        document.getElementById('toggleModo').addEventListener('click', () => {
-            document.body.classList.toggle('dark');
-        });
-
-        document.querySelectorAll('#menuNav button').forEach(b => {
-            b.addEventListener('click', (e) => {
-                document.querySelectorAll('#menuNav button').forEach(bb => bb.classList.remove('active'));
-                b.classList.add('active');
-                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-                document.getElementById(b.dataset.tab).classList.add('active');
+                </div>
                 
-                // Renderizar según pestaña
-                if (b.dataset.tab === 'tab2') renderCategorias();
-                if (b.dataset.tab === 'tab3') renderHistorial();
-                if (b.dataset.tab === 'tab4') renderBitacora();
-                if (b.dataset.tab === 'tab5') actualizarProgreso();
-            });
+                <div class="glass rounded-2xl p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                    <h3 class="text-xl font-bold mb-6 relative z-10">Arquitectura Frontend-Only</h3>
+                    
+                    <div class="space-y-4 relative z-10">
+                        <div class="flex items-center gap-4 p-4 bg-darker rounded-lg border border-gray-800">
+                            <i class="fas fa-laptop-code text-primary text-xl"></i>
+                            <div class="flex-1">
+                                <div class="font-medium">Cliente (Navegador)</div>
+                                <div class="text-xs text-gray-500">HTML5 + Tailwind + Vanilla JS</div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-600"></i>
+                        </div>
+                        
+                        <div class="flex items-center gap-4 p-4 bg-darker rounded-lg border border-gray-800 opacity-50">
+                            <i class="fas fa-server text-gray-600 text-xl"></i>
+                            <div class="flex-1">
+                                <div class="font-medium line-through">Servidor Propio</div>
+                                <div class="text-xs text-gray-600">No necesario</div>
+                            </div>
+                            <i class="fas fa-times text-gray-600"></i>
+                        </div>
+                        
+                        <div class="flex items-center gap-4 p-4 bg-darker rounded-lg border border-primary/30">
+                            <i class="fas fa-cloud text-primary text-xl"></i>
+                            <div class="flex-1">
+                                <div class="font-medium">Servicios IA Externos</div>
+                                <div class="text-xs text-gray-500">NotebookLM, Miyagi, Ainee, LongCut</div>
+                            </div>
+                            <i class="fas fa-check text-green-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4 Real Options Section -->
+    <section id="options" class="py-20 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">4 Opciones Reales de IA</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    Integraciones directas con servicios gratuitos que procesan tu contenido y generan materiales de aprendizaje.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Option A: NotebookLM -->
+                <div class="resource-card rounded-2xl p-8 hover-lift relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl group-hover:bg-yellow-500/20 transition-all"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white font-bold text-xl">
+                                A
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold">NotebookLM</h3>
+                                <span class="text-sm text-gray-400">Google Labs</span>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4 mb-6">
+                            <div class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-link text-yellow-400"></i>
+                                <span class="font-mono text-gray-300">notebooklm.google.com</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-upload text-yellow-400"></i>
+                                <span>Pega tu video o documento</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3 mb-6">
+                            <div class="bg-darker rounded-lg p-3 text-center">
+                                <i class="fas fa-podcast text-yellow-400 mb-2"></i>
+                                <div class="text-xs">Podcast</div>
+                            </div>
+                            <div class="bg-darker rounded-lg p-3 text-center">
+                                <i class="fas fa-file-alt text-yellow-400 mb-2"></i>
+                                <div class="text-xs">Resumen</div>
+                            </div>
+                            <div class="bg-darker rounded-lg p-3 text-center">
+                                <i class="fas fa-question-circle text-yellow-400 mb-2"></i>
+                                <div class="text-xs">Preguntas</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-400 text-sm font-semibold">
+                                <i class="fas fa-check-circle mr-1"></i>Gratis
+                            </span>
+                            <a href="https://notebooklm.google.com" target="_blank" class="px-4 py-2 bg-yellow-500/20 text-yellow-400 rounded-lg hover:bg-yellow-500/30 transition-colors text-sm">
+                                Acceder <i class="fas fa-external-link-alt ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Option B: Miyagi Labs -->
+                <div class="resource-card rounded-2xl p-8 hover-lift relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center text-white font-bold text-xl">
+                                B
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold">Miyagi Labs</h3>
+                                <span class="text-sm text-gray-400">AI Education</span>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4 mb-6">
+                            <div class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-link text-blue-400"></i>
+                                <span class="font-mono text-gray-300">miyagilabs.ai</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-video text-blue-400"></i>
+                                <span>Pega tu video</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-darker rounded-lg p-4 mb-6">
+                            <div class="flex items-center gap-3 mb-2">
+                                <i class="fas fa-graduation-cap text-blue-400"></i>
+                                <span class="font-semibold">Obtienes: Cursos con Quizzes</span>
+                            </div>
+                            <p class="text-sm text-gray-500">Generación automática de cursos estructurados con evaluaciones interactivas</p>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-400 text-sm font-semibold">
+                                <i class="fas fa-check-circle mr-1"></i>Gratis
+                            </span>
+                            <a href="https://miyagilabs.ai" target="_blank" class="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors text-sm">
+                                Acceder <i class="fas fa-external-link-alt ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Option C: Ainee -->
+                <div class="resource-card rounded-2xl p-8 hover-lift relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-white font-bold text-xl">
+                                C
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold">Ainee</h3>
+                                <span class="text-sm text-gray-400">Study Assistant</span>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4 mb-6">
+                            <div class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-link text-purple-400"></i>
+                                <span class="font-mono text-gray-300">ainee.com</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-paste text-purple-400"></i>
+                                <span>Pega tu video</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3 mb-6">
+                            <div class="bg-darker rounded-lg p-3 text-center">
+                                <i class="fas fa-sticky-note text-purple-400 mb-2"></i>
+                                <div class="text-xs">Notas</div>
+                            </div>
+                            <div class="bg-darker rounded-lg p-3 text-center">
+                                <i class="fas fa-project-diagram text-purple-400 mb-2"></i>
+                                <div class="text-xs">Mapas</div>
+                            </div>
+                            <div class="bg-darker rounded-lg p-3 text-center">
+                                <i class="fas fa-clone text-purple-400 mb-2"></i>
+                                <div class="text-xs">Flashcards</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-400 text-sm font-semibold">
+                                <i class="fas fa-check-circle mr-1"></i>Gratis
+                            </span>
+                            <a href="https://ainee.com" target="_blank" class="px-4 py-2 bg-purple-500/20 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-colors text-sm">
+                                Acceder <i class="fas fa-external-link-alt ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Option D: LongCut -->
+                <div class="resource-card rounded-2xl p-8 hover-lift relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-2xl group-hover:bg-green-500/20 transition-all"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white font-bold text-xl">
+                                D
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold">LongCut</h3>
+                                <span class="text-sm text-gray-400">AI Workspace</span>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4 mb-6">
+                            <div class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-link text-green-400"></i>
+                                <span class="font-mono text-gray-300">longcut.ai</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-video text-green-400"></i>
+                                <span>Pega tu video</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-darker rounded-lg p-4 mb-6">
+                            <div class="flex items-center gap-3 mb-2">
+                                <i class="fas fa-comments text-green-400"></i>
+                                <span class="font-semibold">Workspace con Chat</span>
+                            </div>
+                            <p class="text-sm text-gray-500">Espacio de trabajo colaborativo con asistente de IA integrado para análisis profundo</p>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-400 text-sm font-semibold">
+                                <i class="fas fa-check-circle mr-1"></i>Gratis
+                            </span>
+                            <a href="https://longcut.ai" target="_blank" class="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors text-sm">
+                                Acceder <i class="fas fa-external-link-alt ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Access Widget -->
+            <div class="mt-12 glass rounded-2xl p-8">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i class="fas fa-bolt text-yellow-400"></i>
+                    Acceso Rápido a Servicios
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button onclick="openService('notebooklm')" class="p-4 bg-darker rounded-xl border border-gray-800 hover:border-yellow-500/50 transition-all group">
+                        <i class="fas fa-book text-yellow-400 text-2xl mb-2 group-hover:scale-110 transition-transform"></i>
+                        <div class="text-sm font-medium">NotebookLM</div>
+                    </button>
+                    <button onclick="openService('miyagi')" class="p-4 bg-darker rounded-xl border border-gray-800 hover:border-blue-500/50 transition-all group">
+                        <i class="fas fa-graduation-cap text-blue-400 text-2xl mb-2 group-hover:scale-110 transition-transform"></i>
+                        <div class="text-sm font-medium">Miyagi Labs</div>
+                    </button>
+                    <button onclick="openService('ainee')" class="p-4 bg-darker rounded-xl border border-gray-800 hover:border-purple-500/50 transition-all group">
+                        <i class="fas fa-brain text-purple-400 text-2xl mb-2 group-hover:scale-110 transition-transform"></i>
+                        <div class="text-sm font-medium">Ainee</div>
+                    </button>
+                    <button onclick="openService('longcut')" class="p-4 bg-darker rounded-xl border border-gray-800 hover:border-green-500/50 transition-all group">
+                        <i class="fas fa-robot text-green-400 text-2xl mb-2 group-hover:scale-110 transition-transform"></i>
+                        <div class="text-sm font-medium">LongCut</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Library Section -->
+    <section id="resources" class="py-20 bg-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-12">
+                <div>
+                    <h2 class="text-4xl font-bold mb-2">Biblioteca de Recursos</h2>
+                    <p class="text-gray-400">Colección completa de herramientas y guías de Revolutia</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex gap-2">
+                    <input type="text" id="searchResources" placeholder="Buscar recursos..." 
+                           class="px-4 py-2 bg-darker border border-gray-700 rounded-lg focus:border-primary focus:outline-none text-sm"
+                           onkeyup="filterResources()">
+                    <button onclick="toggleView()" class="px-4 py-2 bg-darker border border-gray-700 rounded-lg hover:border-primary transition-colors">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Filters -->
+            <div class="flex flex-wrap gap-2 mb-8" id="categoryFilters">
+                <button onclick="filterCategory('all')" class="px-4 py-2 rounded-full bg-primary text-white text-sm font-medium transition-all">Todos</button>
+                <button onclick="filterCategory('productividad')" class="px-4 py-2 rounded-full bg-darker border border-gray-700 hover:border-primary text-sm transition-all">Productividad</button>
+                <button onclick="filterCategory('automatizacion')" class="px-4 py-2 rounded-full bg-darker border border-gray-700 hover:border-primary text-sm transition-all">Automatización</button>
+                <button onclick="filterCategory('contenido')" class="px-4 py-2 rounded-full bg-darker border border-gray-700 hover:border-primary text-sm transition-all">Contenido</button>
+                <button onclick="filterCategory('desarrollo')" class="px-4 py-2 rounded-full bg-darker border border-gray-700 hover:border-primary text-sm transition-all">Desarrollo</button>
+                <button onclick="filterCategory('ventas')" class="px-4 py-2 rounded-full bg-darker border border-gray-700 hover:border-primary text-sm transition-all">Ventas</button>
+            </div>
+
+            <!-- Resources Grid -->
+            <div id="resourcesGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Resource items will be populated by JavaScript -->
+            </div>
+
+            <!-- Load More -->
+            <div class="text-center mt-12">
+                <button onclick="loadMoreResources()" class="px-6 py-3 glass rounded-xl hover:bg-white/10 transition-all">
+                    Cargar más recursos <i class="fas fa-chevron-down ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Specs Section -->
+    <section id="technical" class="py-20 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-12 text-center">Especificaciones Técnicas</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Frontend Stack -->
+                <div class="glass rounded-2xl p-6">
+                    <div class="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center mb-4">
+                        <i class="fas fa-code text-orange-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Stack Frontend</h3>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
+                            HTML5 Semántico
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
+                            Tailwind CSS (CDN)
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
+                            Vanilla JavaScript ES6+
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
+                            Font Awesome Icons
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
+                            Google Fonts (Inter)
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Hosting -->
+                <div class="glass rounded-2xl p-6">
+                    <div class="w-12 h-12 rounded-xl bg-gray-700/50 flex items-center justify-center mb-4">
+                        <i class="fab fa-github text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Hosting & Deploy</h3>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
+                            GitHub Pages
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
+                            HTTPS gratuito
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
+                            CI/CD automático
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
+                            Dominio personalizado
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
+                            100GB ancho de banda/mes
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- External APIs -->
+                <div class="glass rounded-2xl p-6">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4">
+                        <i class="fas fa-plug text-blue-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Integraciones</h3>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-external-link-alt text-blue-400 text-xs"></i>
+                            NotebookLM API
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-external-link-alt text-blue-400 text-xs"></i>
+                            Miyagi Labs Embed
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-external-link-alt text-blue-400 text-xs"></i>
+                            Ainee Widget
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-external-link-alt text-blue-400 text-xs"></i>
+                            LongCut Workspace
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-external-link-alt text-blue-400 text-xs"></i>
+                            Deep Links a servicios
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- File Structure -->
+            <div class="mt-12 glass rounded-2xl p-8">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i class="fas fa-folder-tree text-yellow-400"></i>
+                    Estructura de Archivos
+                </h3>
+                <div class="font-mono text-sm bg-darker rounded-xl p-6 overflow-x-auto">
+                    <div class="text-gray-500">ai-learning-hub/</div>
+                    <div class="ml-4 text-blue-400">├── index.html</div>
+                    <div class="ml-4 text-gray-400">├── assets/</div>
+                    <div class="ml-8 text-gray-400">│   ├── css/</div>
+                    <div class="ml-12 text-gray-500">│   │   └── styles.css (opcional)</div>
+                    <div class="ml-8 text-gray-400">│   ├── js/</div>
+                    <div class="ml-12 text-gray-500">│   │   ├── app.js</div>
+                    <div class="ml-12 text-gray-500">│   │   ├── resources.js</div>
+                    <div class="ml-12 text-gray-500">│   │   └── filters.js</div>
+                    <div class="ml-8 text-gray-400">│   └── images/</div>
+                    <div class="ml-4 text-gray-400">├── README.md</div>
+                    <div class="ml-4 text-gray-400">└── .github/</div>
+                    <div class="ml-8 text-gray-500">└── workflows/</div>
+                    <div class="ml-12 text-gray-500">└── deploy.yml</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Implementation Guide -->
+    <section class="py-20 bg-dark">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-12 text-center">Guía de Implementación</h2>
+            
+            <div class="space-y-8">
+                <!-- Step 1 -->
+                <div class="flex gap-6">
+                    <div class="flex-shrink-0">
+                        <div class="step-number w-12 h-12 rounded-full flex items-center justify-center text-white font-bold">1</div>
+                    </div>
+                    <div class="flex-1 glass rounded-xl p-6">
+                        <h3 class="text-xl font-bold mb-2">Crear Repositorio en GitHub</h3>
+                        <p class="text-gray-400 mb-4">Inicializa un nuevo repositorio público con nombre <code class="bg-darker px-2 py-1 rounded text-primary">ai-learning-hub</code></p>
+                        <div class="bg-darker rounded-lg p-4 font-mono text-sm text-gray-300">
+                            git init<br>
+                            git add .<br>
+                            git commit -m "Initial commit: PRD v1.0"<br>
+                            git branch -M main<br>
+                            git remote add origin https://github.com/tuusuario/ai-learning-hub.git
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex gap-6">
+                    <div class="flex-shrink-0">
+                        <div class="step-number w-12 h-12 rounded-full flex items-center justify-center text-white font-bold">2</div>
+                    </div>
+                    <div class="flex-1 glass rounded-xl p-6">
+                        <h3 class="text-xl font-bold mb-2">Configurar GitHub Pages</h3>
+                        <p class="text-gray-400 mb-4">Ve a Settings > Pages y selecciona deploy desde branch <code class="bg-darker px-2 py-1 rounded text-primary">main</code> carpeta <code class="bg-darker px-2 py-1 rounded text-primary">/(root)</code></p>
+                        <div class="flex items-center gap-4 text-sm">
+                            <span class="flex items-center gap-2 text-green-400">
+                                <i class="fas fa-check-circle"></i>
+                                Source: Deploy from a branch
+                            </span>
+                            <span class="flex items-center gap-2 text-green-400">
+                                <i class="fas fa-check-circle"></i>
+                                Branch: main
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex gap-6">
+                    <div class="flex-shrink-0">
+                        <div class="step-number w-12 h-12 rounded-full flex items-center justify-center text-white font-bold">3</div>
+                    </div>
+                    <div class="flex-1 glass rounded-xl p-6">
+                        <h3 class="text-xl font-bold mb-2">Personalizar Contenido</h3>
+                        <p class="text-gray-400 mb-4">Edita el archivo HTML para añadir tus propios recursos y enlaces personalizados</p>
+                        <ul class="list-disc list-inside text-sm text-gray-400 space-y-1">
+                            <li>Modifica el array <code class="text-primary">resourcesData</code> en el script</li>
+                            <li>Actualiza los enlaces de afiliados si aplica</li>
+                            <li>Añade tu branding personalizado</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="flex gap-6">
+                    <div class="flex-shrink-0">
+                        <div class="step-number w-12 h-12 rounded-full flex items-center justify-center text-white font-bold">4</div>
+                    </div>
+                    <div class="flex-1 glass rounded-xl p-6">
+                        <h3 class="text-xl font-bold mb-2">Deploy Automático</h3>
+                        <p class="text-gray-400 mb-4">Cada push a main actualizará automáticamente el sitio en segundos</p>
+                        <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4 flex items-center gap-3">
+                            <i class="fas fa-rocket text-green-400 text-xl"></i>
+                            <div>
+                                <div class="font-semibold text-green-400">Tu sitio estará en:</div>
+                                <div class="text-sm text-gray-400">https://tuusuario.github.io/ai-learning-hub</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-darker border-t border-gray-800 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-brain text-white text-sm"></i>
+                        </div>
+                        <span class="font-bold">AI Learning Hub</span>
+                    </div>
+                    <p class="text-sm text-gray-500">
+                        Plataforma educativa frontend-only para aprender con IA sin costos de infraestructura.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Opciones IA</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="https://notebooklm.google.com" class="hover:text-primary transition-colors">NotebookLM</a></li>
+                        <li><a href="https://miyagilabs.ai" class="hover:text-primary transition-colors">Miyagi Labs</a></li>
+                        <li><a href="https://ainee.com" class="hover:text-primary transition-colors">Ainee</a></li>
+                        <li><a href="https://longcut.ai" class="hover:text-primary transition-colors">LongCut</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Recursos</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#resources" class="hover:text-primary transition-colors">Biblioteca Revolutia</a></li>
+                        <li><a href="#technical" class="hover:text-primary transition-colors">Documentación</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">GitHub Repo</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-primary transition-colors">Términos de Uso</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Privacidad</a></li>
+                        <li class="text-xs text-gray-600 mt-4">© 2025 AI Learning Hub. Open Source.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-gray-500">
+                    Desarrollado con <i class="fas fa-heart text-red-400 mx-1"></i> para la comunidad de aprendizaje con IA
+                </p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-400 transition-colors">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Resources Data
+        const resourcesData = [
+            { name: "APIFY", desc: "Conexión de buscador de clientes en Claude", category: "automatizacion", icon: "fa-search", color: "blue" },
+            { name: "Guía de Claude Code", desc: "Documentación oficial de Claude Code", category: "desarrollo", icon: "fa-code", color: "purple" },
+            { name: "Vibe Coding Checklist", desc: "Lista de verificación para coding con IA", category: "desarrollo", icon: "fa-list-check", color: "green" },
+            { name: "NotebookLM", desc: "Plataforma de aprendizaje de Google", category: "productividad", icon: "fa-book", color: "yellow" },
+            { name: "Small PPT", desc: "Presentaciones con IA", category: "contenido", icon: "fa-presentation", color: "orange" },
+            { name: "Ovi 1.1", desc: "Generador de Video con IA", category: "contenido", icon: "fa-video", color: "red" },
+            { name: "Prompts Filtrados", desc: "Prompts de empresas de IA", category: "productividad", icon: "fa-filter", color: "indigo" },
+            { name: "Chat GPT Blindado", desc: "Configuración segura de ChatGPT", category: "productividad", icon: "fa-shield-alt", color: "green" },
+            { name: "Formulario Negocios", desc: "Potenciar negocios en ChatGPT", category: "ventas", icon: "fa-briefcase", color: "blue" },
+            { name: "NANO BANANA", desc: "Herramienta de generación de imágenes", category: "contenido", icon: "fa-image", color: "yellow" },
+            { name: "Gemini Canvas", desc: "Espacio de trabajo visual de Google", category: "productividad", icon: "fa-palette", color: "blue" },
+            { name: "Pomelli Google", desc: "Herramienta de productividad Google", category: "productividad", icon: "fa-tasks", color: "red" },
+            { name: "Opal Google", desc: "Solución de IA de Google", category: "productividad", icon: "fa-gem", color: "purple" },
+            { name: "Build by AI Studio", desc: "Constructor de aplicaciones con IA", category: "desarrollo", icon: "fa-cube", color: "indigo" },
+            { name: "Google Stitch", desc: "Herramienta de diseño con IA", category: "contenido", icon: "fa-cut", color: "orange" },
+            { name: "12 Soluciones 2025", desc: "Las soluciones más vendidas", category: "ventas", icon: "fa-trophy", color: "yellow" },
+            { name: "Guía Automatización", desc: "Empezar a automatizar desde cero", category: "automatizacion", icon: "fa-robot", color: "blue" },
+            { name: "Skywork AI", desc: "Analista de Negocios con IA", category: "ventas", icon: "fa-chart-line", color: "cyan" },
+            { name: "Sales AI Agent", desc: "Sistema de agentes de ventas IA", category: "ventas", icon: "fa-headset", color: "green" },
+            { name: "Code Kiwi", desc: "Dashboards interactivos con IA", category: "desarrollo", icon: "fa-chart-pie", color: "teal" },
+            { name: "DeepSeek", desc: "IA open-source alternativa a ChatGPT", category: "productividad", icon: "fa-brain", color: "purple" },
+            { name: "Kimi K2 Thinking", desc: "Modelo de razonamiento avanzado", category: "productividad", icon: "fa-lightbulb", color: "blue" },
+            { name: "N8N Plantillas", desc: "5 Plantillas N8N con IA", category: "automatizacion", icon: "fa-project-diagram", color: "orange" },
+            { name: "Scripts Venta", desc: "Scripts completos de venta", category: "ventas", icon: "fa-phone", color: "green" },
+            { name: "Calculadora Precios", desc: "Calculadora de precios Revolutia", category: "ventas", icon: "fa-calculator", color: "blue" },
+            { name: "Google Skills", desc: "Aprende IA con Google", category: "productividad", icon: "fa-graduation-cap", color: "red" },
+            { name: "TikTok Viral", desc: "Automatización de TikToks", category: "contenido", icon: "fa-music", color: "pink" },
+            { name: "Clips Podcast", desc: "Automatización n8n para podcasts", category: "automatizacion", icon: "fa-podcast", color: "purple" },
+            { name: "Waver 1.0", desc: "Generador de videos IA Bytedance", category: "contenido", icon: "fa-film", color: "red" },
+            { name: "Jules", desc: "Agente de Programación con IA", category: "desarrollo", icon: "fa-terminal", color: "indigo" },
+            { name: "Perplexity Comet", desc: "Navegador con IA", category: "productividad", icon: "fa-globe", color: "teal" },
+            { name: "GenSpark AI", desc: "Navegador con IA alternativo", category: "productividad", icon: "fa-compass", color: "orange" },
+            { name: "Fellou Ce", desc: "Navegador con IA mejorado", category: "productividad", icon: "fa-window-maximize", color: "blue" },
+            { name: "Agents Builder", desc: "Agentes de IA de OpenAI", category: "automatizacion", icon: "fa-users-cog", color: "green" },
+            { name: "Kimi AI", desc: "Creador de Presentaciones", category: "contenido", icon: "fa-file-powerpoint", color: "blue" },
+            { name: "300 Prompts", desc: "Prompts gratuitos de ChatGPT", category: "productividad", icon: "fa-comments", color: "yellow" },
+            { name: "Abacus AI", desc: "1 suscripción, todos los modelos", category: "productividad", icon: "fa-layer-group", color: "purple" },
+            { name: "Nanobanana", desc: "Generación de imágenes gratis", category: "contenido", icon: "fa-image", color: "green" },
+            { name: "Mixboard", desc: "Nueva herramienta de Google", category: "productividad", icon: "fa-sliders-h", color: "red" },
+            { name: "Kimi 2.0", desc: "Sustituto gratuito de ChatGPT", category: "productividad", icon: "fa-comment-dots", color: "blue" },
+            { name: "Z-AI", desc: "Agente de última generación", category: "automatizacion", icon: "fa-robot", color: "indigo" },
+            { name: "DreamMachine", desc: "Ánima imágenes en segundos", category: "contenido", icon: "fa-magic", color: "purple" },
+            { name: "Orchid AI", desc: "Crea tu Web con IA", category: "desarrollo", icon: "fa-laptop-code", color: "pink" },
+            { name: "WhatsApp ChatGPT", desc: "Chat-GPT en WhatsApp: +1 800 242 8478", category: "productividad", icon: "fa-whatsapp", color: "green" },
+            { name: "WhatsApp Perplexity", desc: "Perplexity en WhatsApp: +1 833 436 3285", category: "productividad", icon: "fa-whatsapp", color: "blue" },
+            { name: "WhatsApp Copilot", desc: "Copilot en WhatsApp: +1 877 224 1042", category: "productividad", icon: "fa-whatsapp", color: "cyan" },
+            { name: "Mejora Prompts", desc: "Mejora tus Prompts con OpenAI", category: "productividad", icon: "fa-wand-magic-sparkles", color: "yellow" },
+            { name: "Flowith Neo", desc: "Agente de IA 24/7", category: "automatizacion", icon: "fa-infinity", color: "purple" },
+            { name: "OpenAI Offline", desc: "IA open-source de OpenAI", category: "desarrollo", icon: "fa-server", color: "green" },
+            { name: "Vapi.ai", desc: "Llamadas automáticas con IA", category: "automatizacion", icon: "fa-phone-volume", color: "blue" },
+            { name: "Cluely", desc: "Asistente trampa invisible", category: "productividad", icon: "fa-user-secret", color: "gray" },
+            { name: "Arc Browser", desc: "Navegador con IA moderno", category: "productividad", icon: "fa-compass", color: "orange" },
+            { name: "Dia Browser", desc: "Navegador con IA alternativo", category: "productividad", icon: "fa-globe-americas", color: "blue" },
+            { name: "Skyreels", desc: "Generar videos con IA", category: "contenido", icon: "fa-video", color: "purple" },
+            { name: "Higgsfield", desc: "Video IA con efectos", category: "contenido", icon: "fa-atom", color: "red" },
+            { name: "Seedream", desc: "Generación de video IA", category: "contenido", icon: "fa-seedling", color: "green" },
+            { name: "Sora", desc: "Generador de video OpenAI", category: "contenido", icon: "fa-circle-play", color: "blue" },
+            { name: "Stitch", desc: "Creador de interfaces con IA", category: "desarrollo", icon: "fa-object-group", color: "pink" },
+            { name: "Chatterbox", desc: "Alternativa gratuita a Eleven Labs", category: "contenido", icon: "fa-microphone", color: "orange" },
+            { name: "Qwen 3", desc: "Diseño Web con IA", category: "desarrollo", icon: "fa-paint-brush", color: "cyan" }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderResources(resourcesData.slice(0, 24));
+            setupNavigation();
         });
 
-        // Inicializar
-        SecurityOfficer.updateUI();
-        renderCategorias();
-        renderHistorial();
-        renderBitacora();
-        actualizarProgreso();
+        // Render Resources
+        function renderResources(resources) {
+            const grid = document.getElementById('resourcesGrid');
+            grid.innerHTML = resources.map(resource => `
+                <div class="resource-card rounded-xl p-6 hover-lift group" data-category="${resource.category}">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-${resource.color}-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                            <i class="fas ${resource.icon} text-${resource.color}-400 text-xl"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-lg mb-1 truncate">${resource.name}</h4>
+                            <p class="text-sm text-gray-400 mb-3">${resource.desc}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs px-2 py-1 rounded-full bg-darker border border-gray-700 text-gray-400 capitalize">
+                                    ${resource.category}
+                                </span>
+                                <button class="text-primary hover:text-white transition-colors">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter Resources
+        function filterResources() {
+            const searchTerm = document.getElementById('searchResources').value.toLowerCase();
+            const filtered = resourcesData.filter(r => 
+                r.name.toLowerCase().includes(searchTerm) || 
+                r.desc.toLowerCase().includes(searchTerm)
+            );
+            renderResources(filtered.slice(0, 24));
+        }
+
+        // Filter by Category
+        function filterCategory(category) {
+            // Update active button
+            document.querySelectorAll('#categoryFilters button').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('bg-darker', 'border-gray-700');
+            });
+            event.target.classList.remove('bg-darker', 'border-gray-700');
+            event.target.classList.add('bg-primary', 'text-white');
+
+            // Filter resources
+            if (category === 'all') {
+                renderResources(resourcesData.slice(0, 24));
+            } else {
+                const filtered = resourcesData.filter(r => r.category === category);
+                renderResources(filtered);
+            }
+        }
+
+        // Load More
+        let currentCount = 24;
+        function loadMoreResources() {
+            currentCount += 12;
+            renderResources(resourcesData.slice(0, currentCount));
+        }
+
+        // Open Service
+        function openService(service) {
+            const urls = {
+                'notebooklm': 'https://notebooklm.google.com',
+                'miyagi': 'https://miyagilabs.ai',
+                'ainee': 'https://ainee.com',
+                'longcut': 'https://longcut.ai'
+            };
+            window.open(urls[service], '_blank');
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+        }
+
+        // Navigation Active State
+        function setupNavigation() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 200) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('text-primary');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('text-primary');
+                    }
+                });
+            });
+        }
+
+        // Toggle View (Grid/List)
+        let isGridView = true;
+        function toggleView() {
+            const grid = document.getElementById('resourcesGrid');
+            isGridView = !isGridView;
+            if (isGridView) {
+                grid.classList.remove('grid-cols-1');
+                grid.classList.add('md:grid-cols-2', 'lg:grid-cols-3');
+            } else {
+                grid.classList.remove('md:grid-cols-2', 'lg:grid-cols-3');
+                grid.classList.add('grid-cols-1');
+            }
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // Close mobile menu if open
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
     </script>
 </body>
-</html>
+</html>'''
+
+# Save the file
+with open('/mnt/kimi/output/index.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print("✅ Archivo PRD generado exitosamente")
+print("📄 Ubicación: /mnt/kimi/output/index.html")
+print("\n📋 Características incluidas:")
+print("  • Diseño moderno con Tailwind CSS")
+print("  • 4 opciones reales de IA (NotebookLM, Miyagi, Ainee, LongCut)")
+print("  • Biblioteca completa de recursos Revolutia (50+ herramientas)")
+print("  • Filtros por categoría y búsqueda en tiempo real")
+print("  • Totalmente responsive")
+print("  • Sin backend - listo para GitHub Pages")
+print("  • Código JavaScript vanilla para interactividad")
+print("  • Guía de implementación paso a paso")
