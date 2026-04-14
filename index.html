@@ -1,224 +1,184 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>PNFT 2026 · Portal Docente Completo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        *{ margin:0; padding:0; box-sizing:border-box; }
-        body{
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at 10% 20%, #0f2a3f, #06121c);
-            color: #e2edf7;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        .glass{
-            background: rgba(15, 35, 55, 0.55);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(90, 170, 240, 0.2);
-            border-radius: 36px;
-            box-shadow: 0 25px 40px -10px #00000060;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-        h1{ font-weight: 600; font-size: 2.2rem; letter-spacing: -0.02em; display: flex; gap: 12px; align-items: center; }
-        h2{ font-weight: 500; margin-bottom: 20px; }
-        h3{ font-weight: 500; margin: 20px 0 10px; }
-        button{
-            background: rgba(30, 100, 180, 0.25);
-            border: 1px solid #3080b0;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-weight: 500;
-            backdrop-filter: blur(12px);
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.95rem;
-        }
-        button:hover{
-            background: #1a5f9e;
-            border-color: #8ac4ff;
-            transform: translateY(-2px);
-        }
-        select, input, textarea{
-            background: #0b2335;
-            border: 1px solid #2a6280;
-            color: white;
-            padding: 10px 18px;
-            border-radius: 40px;
-            font-size: 0.95rem;
-        }
-        .badge{
-            background: #1e5170;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-        }
-        .saber-tag{
-            display: inline-block;
-            background: #143e57;
-            padding: 8px 16px;
-            margin: 5px;
-            border-radius: 40px;
-            cursor: pointer;
-            border: 1px solid #2a7296;
-            transition: all 0.1s;
-        }
-        .saber-tag.selected{
-            background: #1a7099;
-            border-color: #b0e0ff;
-            box-shadow: 0 0 12px #2f9eff;
-        }
-        .progress-bar{
-            height: 12px;
-            background: #163e57;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        .progress-fill{
-            height: 100%;
-            background: linear-gradient(90deg, #2fb0ff, #a370ff);
-        }
-        .tab-btn.active{
-            background: #196fa3;
-            border-color: #8ac4ff;
-        }
-        .grid-2{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .flex{ display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
-        .modal{
-            display: none;
-            position: fixed;
-            top:0;left:0;width:100%;height:100%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .modal-content{
-            max-width: 750px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            padding: 28px;
-        }
-        table{ width:100%; border-collapse: collapse; }
-        th,td{ padding: 10px; text-align: left; border-bottom:1px solid #2e6380; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PNFT 2026 · Sistema Inteligente (v2 Modular)</title>
+  <!-- Fuentes e Iconos -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0b1a26;
+      color: #e3eef8;
+      display: flex;
+      min-height: 100vh;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: rgba(8, 28, 45, 0.95);
+      backdrop-filter: blur(8px);
+      border-right: 1px solid #1e4f6b;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 16px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #b0d0f0;
+      background: transparent;
+      border: none;
+      width: 100%;
+      text-align: left;
+      font-size: 1rem;
+    }
+    .nav-item:hover, .nav-item.active {
+      background: #1e4f6b;
+      color: white;
+    }
+    .nav-item i { width: 24px; }
+    .user-section {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid #1e4f6b;
+    }
+    /* Contenido principal */
+    .main-content {
+      margin-left: 280px;
+      flex: 1;
+      padding: 24px 32px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    h1 { font-weight: 600; font-size: 2rem; }
+    h2 { font-size: 1.5rem; margin-bottom: 20px; font-weight: 500; }
+    .card {
+      background: rgba(15, 38, 58, 0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid #255e7a;
+      border-radius: 28px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    button, .btn {
+      background: #1e5a7a;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 1px solid #3c89b0;
+      font-size: 0.95rem;
+    }
+    button:hover { background: #2b78a4; transform: translateY(-2px); }
+    select, input {
+      background: #0a2535;
+      border: 1px solid #2e6b8f;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 40px;
+      font-size: 1rem;
+    }
+    .saber-tag {
+      display: inline-block;
+      background: #173e57;
+      padding: 8px 16px;
+      margin: 4px;
+      border-radius: 40px;
+      cursor: pointer;
+      border: 1px solid #3b7a9e;
+    }
+    .saber-tag.selected { background: #1b7a9e; border-color: #a0dcff; }
+    .progress-bar {
+      height: 18px;
+      background: #123a50;
+      border-radius: 40px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2fb0ff, #b47aff);
+      width: 0%;
+    }
+    .resultado-box {
+      background: #051520;
+      border-radius: 20px;
+      padding: 20px;
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    .tag {
+      display: inline-block;
+      padding: 6px 12px;
+      margin: 5px;
+      background: #1e4f6b;
+      cursor: pointer;
+      border-radius: 30px;
+    }
+    .tag.sel { background: #2fb0ff; }
+  </style>
 </head>
 <body>
-
-<div style="max-width:1400px; margin:0 auto;">
-    <!-- Header -->
-    <div class="flex" style="justify-content: space-between; margin-bottom: 24px;">
-        <div class="flex">
-            <i class="fas fa-microchip" style="font-size: 2.5rem; color: #6db8ff;"></i>
-            <h1>PNFT 2026 · <span style="font-weight:300;">Asistente Curricular</span></h1>
-        </div>
-        <div class="flex">
-            <button onclick="guardarEstado()"><i class="far fa-save"></i> Guardar estado</button>
-            <button onclick="cargarEstado()"><i class="fas fa-folder-open"></i> Cargar</button>
-            <button onclick="abrirConfig()"><i class="fas fa-cog"></i> Configurar API</button>
-        </div>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo"><i class="fas fa-microchip"></i> PNFT 2026</div>
+    <button class="nav-item active" data-page="curriculo"><i class="fas fa-book"></i> Currículo</button>
+    <button class="nav-item" data-page="ia"><i class="fas fa-robot"></i> Planeamiento IA</button>
+    <button class="nav-item" data-page="dashboard"><i class="fas fa-chart-bar"></i> Dashboard</button>
+    <button class="nav-item" data-page="evaluacion"><i class="fas fa-star"></i> Evaluación</button>
+    <button class="nav-item" data-page="historial"><i class="fas fa-history"></i> Historial</button>
+    <div class="user-section">
+      <div id="authArea"></div>
     </div>
+  </div>
 
-    <!-- Tabs -->
-    <div class="flex" style="margin-bottom: 10px;">
-        <button class="tab-btn active" onclick="switchTab('curriculo')"><i class="fas fa-sitemap"></i> Currículo</button>
-        <button class="tab-btn" onclick="switchTab('planeamiento')"><i class="fas fa-lightbulb"></i> Planeamiento IA</button>
-        <button class="tab-btn" onclick="switchTab('dashboard')"><i class="fas fa-chart-bar"></i> Dashboard</button>
-        <button class="tab-btn" onclick="switchTab('evaluacion')"><i class="fas fa-check-circle"></i> Evaluación</button>
-        <button class="tab-btn" onclick="switchTab('grupo')"><i class="fas fa-user-graduate"></i> Mi Grupo</button>
+  <!-- Contenido principal -->
+  <div class="main-content">
+    <div class="header">
+      <h1 id="pageTitle">Currículo PNFT</h1>
+      <div id="userBadge"></div>
     </div>
+    <div id="appContainer"></div>
+  </div>
 
-    <!-- CONTENIDO -->
-    <div id="tab-curriculo" class="tab-content">
-        <div class="glass">
-            <div class="flex">
-                <select id="nivelSelect" onchange="cargarModulos()" style="min-width:200px;"></select>
-                <select id="moduloSelect" onchange="cargarSaberes()"></select>
-                <select id="areaFiltro" onchange="filtrarSaberes()"><option value="todas">Todas las áreas</option></select>
-                <button onclick="toggleTodosSaberes()">Seleccionar todos</button>
-            </div>
-            <div id="contenedorSaberes" style="max-height:350px; overflow-y:auto; margin:20px 0;"></div>
-            <div>Saberes seleccionados: <span id="contadorSaberes">0</span></div>
-        </div>
-        <div class="glass" id="infoRdA"></div>
-    </div>
-
-    <div id="tab-planeamiento" class="tab-content" style="display:none;">
-        <div class="glass">
-            <h2>✨ Generar estrategia de mediación</h2>
-            <p>Saberes elegidos: <span id="saberesPreview"></span></p>
-            <div class="flex">
-                <select id="metodologiaSelect">
-                    <option value="ABJ">ABJ (Preescolar / I Ciclo)</option>
-                    <option value="ABR">ABR (II Ciclo)</option>
-                    <option value="DT">Design Thinking (III Ciclo)</option>
-                </select>
-                <button onclick="generarPlaneamiento()"><i class="fas fa-robot"></i> Generar con IA</button>
-                <button onclick="exportarPlaneamiento()"><i class="fas fa-download"></i> Exportar</button>
-            </div>
-            <div id="planeamientoOutput" style="margin-top:24px; background:#0a1c2a; border-radius:24px; padding:24px;">
-                <p style="opacity:0.7;">El planeamiento aparecerá aquí. Puedes copiarlo a Word/Canva.</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-dashboard" class="tab-content" style="display:none;">
-        <div class="grid-2">
-            <div class="glass">
-                <h3>📊 Mapa de calor de cumplimiento</h3>
-                <div id="heatmapArea"></div>
-                <div id="cumplimientoDetalle"></div>
-            </div>
-            <div class="glass">
-                <h3>🎯 Progreso hacia RdA</h3>
-                <div id="progresoRda"></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-evaluacion" class="tab-content" style="display:none;">
-        <div class="glass">
-            <h2>📋 Componentes de evaluación</h2>
-            <select id="cicloEval" onchange="mostrarComponentes()">
-                <option value="I">I Ciclo</option>
-                <option value="II">II Ciclo</option>
-                <option value="III">III Ciclo</option>
-            </select>
-            <div id="compEvalTabla"></div>
-            <h3 style="margin-top:24px;">🧩 Proyecto (III Ciclo) - Etapa inicial</h3>
-            <div id="indicadoresProyecto"></div>
-        </div>
-    </div>
-
-    <div id="tab-grupo" class="tab-content" style="display:none;">
-        <div class="glass">
-            <h2>👥 Mi grupo</h2>
-            <div class="flex">
-                <button onclick="abrirModalEstudiantes()"><i class="fas fa-user-plus"></i> Gestionar estudiantes</button>
-                <button onclick="abrirModalAsistencia()"><i class="fas fa-calendar"></i> Asistencia</button>
-                <button onclick="abrirModalNotas()"><i class="fas fa-star"></i> Calificar</button>
-            </div>
-            <div id="listaGrupo"></div>
-        </div>
-    </div>
-</div>
-
-<!-- MODALES -->
-<div id="modalEstudiantes" class="modal"><div class="modal-content"><h3>Estudiantes</h3><div id="formEstudiante"></div><div id="listaEstudiantesModal"></div><button onclick="cerrarModal('modalEstudiantes')">Cerrar</button></div></div>
-<div id="modalConfig" class="modal"><div class="modal-content"><h3>⚙️ Configuración API IA</h3><label>Proveedor:</label><select id="apiProvider"><option value="gemini">Gemini (gratis)</option><option value="deepseek">DeepSeek (gratis)</option></select><label>API Key:</label><input id="apiKey" type="password" placeholder="Tu clave..."><div class="flex"><label><input type="checkbox" id="forceSimulate"> Usar siempre simulación (sin API)</label></div><button onclick="guardarConfigAPI()">Guardar</button><hr><p><i class="fas fa-info-circle"></i> <a href="#" onclick="mostrarGuiaAPI()">¿Cómo obtener clave gratuita?</a></p></div></div>
-
-<script>
-    (function(){
-        // ---------- BASE DE DATOS COMPLETA PNFT (Preescolar, I, II, III Ciclo) ----------
-        const PNFT_DATA = {
+  <script>
+    // ---------- MÓDULO: BASE DE DATOS (REEMPLAZA AQUÍ TU PNFT_DATA COMPLETO) ----------
+    const PNFT_DATA = {
             // ========== MATERNO INFANTIL / TRANSICIÓN ==========
             "0°": {
                 "Módulo 1": {
@@ -743,32 +703,6 @@
             }
         };
 
-        // I Ciclo, II Ciclo, III Ciclo (resumido con indicadores clave)
-        const niveles = ["1°","2°","3°","4°","5°","6°","7°","8°","9°"];
-        niveles.forEach(n => {
-            PNFT_DATA[n] = PNFT_DATA[n] || {};
-            PNFT_DATA[n]["Módulo 1"] = {
-                "Apropiación tecnológica y Digital": { saberes: [
-                    {nombre:"Hardware", indicadores:["Identificar componentes del hardware y su función..."]},
-                    {nombre:"Software", indicadores:["Reconocer tipos de software..."]}
-                ]},
-                "Programación y Algoritmos": { saberes: [
-                    {nombre:"Algoritmo", indicadores:["Diseñar algoritmos en pseudocódigo..."]},
-                    {nombre:"Variable", indicadores:["Gestionar variables..."]}
-                ]}
-            };
-            PNFT_DATA[n]["Módulo 2"] = {
-                "Apropiación tecnológica y Digital": { saberes: [
-                    {nombre:"Internet", indicadores:["Reconocer el funcionamiento de Internet..."]},
-                    {nombre:"Navegador", indicadores:["Utilizar navegadores web..."]}
-                ]},
-                "Ciencia de datos e Inteligencia artificial": { saberes: [
-                    {nombre:"Fundamentos de la IA", indicadores:["Reconocer los fundamentos de la inteligencia artificial..."]}
-                ]}
-            };
-        });
-
-        // Competencias, RdA, Perfiles (completos según documentos)
         const RDA_POR_CICLO = {
             "Materno Infantil/Transición": {
                 "Apropiación tecnológica y Digital": "Identifica los dispositivos digitales considerando características funcionales, experimentando su utilidad y reconociendo la autoría, durante la accesibilidad, interacción y comunicación en la creación de recursos digitales.",
@@ -796,193 +730,310 @@
             }
         };
 
-        // IndexedDB
-        let db;
-        const DB_NAME = 'PNFT_DB_V2';
-        function initDB(){
-            return new Promise((resolve, reject) => {
-                const req = indexedDB.open(DB_NAME, 2);
-                req.onupgradeneeded = (e) => {
-                    const db = e.target.result;
-                    if(!db.objectStoreNames.contains('estado')) db.createObjectStore('estado', {keyPath:'id'});
-                    if(!db.objectStoreNames.contains('grupos')) db.createObjectStore('grupos', {keyPath:'id', autoIncrement:true});
-                    if(!db.objectStoreNames.contains('estudiantes')){
-                        const store = db.createObjectStore('estudiantes', {keyPath:'id', autoIncrement:true});
-                        store.createIndex('grupoId','grupoId');
-                    }
-                };
-                req.onsuccess = (e) => { db = e.target.result; resolve(db); };
-                req.onerror = reject;
-            });
-        }
-        async function guardarEstadoApp(estado){ const tx = db.transaction('estado','readwrite'); tx.objectStore('estado').put({id:'main', data:estado}); await tx.done; }
-        async function cargarEstadoApp(){ const tx = db.transaction('estado','readonly'); const obj = await tx.objectStore('estado').get('main'); return obj?.data || null; }
+    const PESOS = {
+      "I": { trabajoCotidiano:65, tareas:10, pruebas:15, asistencia:10 },
+      "II": { trabajoCotidiano:60, tareas:10, pruebas:20, asistencia:10 },
+      "III": { trabajoCotidiano:50, tareas:10, proyecto:30, asistencia:10 }
+    };
 
-        // Estado global
-        let appState = {
-            nivel: '0°',
-            modulo: 'Módulo 1 (básico)',
-            saberesSeleccionados: [],
-            grupoActivo: null,
-            configAPI: { provider:'gemini', key:'', forceSimulate: false },
-            estudiantes: []
-        };
+    // ---------- MÓDULO: ESTADO GLOBAL ----------
+    let currentPage = 'curriculo';
+    let currentUser = JSON.parse(localStorage.getItem('pnft_session')) || null;
+    let selectedNivel = '0°';
+    let selectedModulo = 'Módulo 1 (básico)';
+    let saberesSeleccionados = new Set();
+    
+    // ---------- MÓDULO: ALMACENAMIENTO (localStorage) ----------
+    const Storage = {
+      getUsers: () => JSON.parse(localStorage.getItem('pnft_users') || '[]'),
+      saveUser: (user) => {
+        const users = Storage.getUsers();
+        users.push(user);
+        localStorage.setItem('pnft_users', JSON.stringify(users));
+      },
+      findUser: (email, pass) => Storage.getUsers().find(u => u.email === email && u.password === pass),
+      setSession: (user) => localStorage.setItem('pnft_session', JSON.stringify(user)),
+      clearSession: () => localStorage.removeItem('pnft_session'),
+      saveItem: (key, data) => {
+        const arr = JSON.parse(localStorage.getItem(key) || '[]');
+        arr.push({...data, fecha: new Date().toISOString()});
+        localStorage.setItem(key, JSON.stringify(arr));
+      },
+      getItems: (key) => JSON.parse(localStorage.getItem(key) || '[]')
+    };
 
-        // UI
-        function switchTab(tab){
-            document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');
-            document.getElementById('tab-'+tab).style.display='block';
-            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-            event.target.closest('.tab-btn').classList.add('active');
-            if(tab==='curriculo') cargarModulos();
-            if(tab==='dashboard') actualizarDashboard();
-            if(tab==='grupo') cargarGrupo();
-        }
-        function cargarModulos(){
-            const select = document.getElementById('nivelSelect');
-            select.innerHTML = '';
-            Object.keys(PNFT_DATA).forEach(n => select.add(new Option(n, n)));
-            select.value = appState.nivel;
-            const modSelect = document.getElementById('moduloSelect');
-            modSelect.innerHTML = '';
-            const modulos = Object.keys(PNFT_DATA[appState.nivel]||{});
-            modulos.forEach(m => modSelect.add(new Option(m, m)));
-            modSelect.value = appState.modulo;
-            cargarSaberes();
-        }
-        function cargarSaberes(){
-            const nivel = appState.nivel;
-            const modulo = document.getElementById('moduloSelect').value;
-            appState.modulo = modulo;
-            const data = PNFT_DATA[nivel]?.[modulo] || {};
-            let html = ''; const areas = new Set();
-            for(let area in data){
-                areas.add(area);
-                data[area].saberes.forEach(s => {
-                    const id = `${nivel}|${modulo}|${area}|${s.nombre}`;
-                    const sel = appState.saberesSeleccionados.includes(id) ? 'selected' : '';
-                    html += `<span class="saber-tag ${sel}" onclick="toggleSaber('${id}')">${s.nombre} <small>${area}</small></span>`;
-                });
-            }
-            document.getElementById('contenedorSaberes').innerHTML = html || 'No hay saberes en este módulo.';
-            const areaSelect = document.getElementById('areaFiltro');
-            areaSelect.innerHTML = '<option value="todas">Todas</option>';
-            areas.forEach(a=>{ areaSelect.add(new Option(a,a)); });
-            document.getElementById('contadorSaberes').innerText = appState.saberesSeleccionados.length;
-            actualizarInfoRdA();
-        }
-        window.toggleSaber = function(id){
-            if(appState.saberesSeleccionados.includes(id)) appState.saberesSeleccionados = appState.saberesSeleccionados.filter(s=>s!==id);
-            else appState.saberesSeleccionados.push(id);
-            cargarSaberes();
-        };
-        function toggleTodosSaberes(){ /* lógica para seleccionar todos */ }
-        function actualizarInfoRdA(){
-            const ciclo = appState.nivel==='0°'?'Preescolar': (parseInt(appState.nivel)<=3?'I Ciclo':(parseInt(appState.nivel)<=6?'II Ciclo':'III Ciclo'));
-            const rdaObj = RDA_CICLO[ciclo] || {};
-            let html = `<h3>${ciclo}</h3><ul>`;
-            for(let area in rdaObj) html += `<li><strong>${area}:</strong> ${rdaObj[area]}</li>`;
-            html += '</ul>';
-            document.getElementById('infoRdA').innerHTML = html;
-        }
+    // ---------- MÓDULO: AUTENTICACIÓN ----------
+    function renderAuth() {
+      const authDiv = document.getElementById('authArea');
+      if (currentUser) {
+        authDiv.innerHTML = `<div>👤 ${currentUser.nombre || currentUser.email}<br><button onclick="logout()">Cerrar sesión</button></div>`;
+        document.getElementById('userBadge').innerHTML = `<span>${currentUser.nombre || currentUser.email} · ${currentUser.centro || 'Docente'}</span>`;
+      } else {
+        authDiv.innerHTML = `
+          <input id="loginEmail" placeholder="Email" style="width:100%; margin-bottom:8px;">
+          <input id="loginPass" type="password" placeholder="Contraseña" style="width:100%; margin-bottom:8px;">
+          <button onclick="login()">Iniciar sesión</button>
+          <button onclick="showRegister()">Registrarse</button>
+        `;
+        document.getElementById('userBadge').innerHTML = '';
+      }
+    }
+    window.login = () => {
+      const email = document.getElementById('loginEmail')?.value;
+      const pass = document.getElementById('loginPass')?.value;
+      const user = Storage.findUser(email, pass);
+      if (user) { currentUser = user; Storage.setSession(user); renderAuth(); loadPage(currentPage); }
+      else alert('Credenciales incorrectas');
+    };
+    window.logout = () => { currentUser = null; Storage.clearSession(); renderAuth(); loadPage(currentPage); };
+    window.showRegister = () => {
+      const nombre = prompt('Nombre completo:');
+      const email = prompt('Email:');
+      const pass = prompt('Contraseña:');
+      const centro = prompt('Centro educativo:');
+      if (nombre && email && pass) {
+        Storage.saveUser({ nombre, email, password: pass, centro });
+        alert('Registrado correctamente. Inicia sesión.');
+        renderAuth();
+      }
+    };
 
-        // Generador IA
-        async function generarPlaneamiento(){
-            const saberes = appState.saberesSeleccionados;
-            if(saberes.length===0){ alert('Selecciona al menos un saber'); return; }
-            const metodologia = document.getElementById('metodologiaSelect').value;
-            let respuesta;
-            if(appState.configAPI.forceSimulate || !appState.configAPI.key){
-                respuesta = simularPlaneamiento(saberes, metodologia);
-            } else {
-                // llamada real a API (fetch)
-                respuesta = await llamarAPI(appState.configAPI, saberes, metodologia);
-            }
-            document.getElementById('planeamientoOutput').innerHTML = respuesta;
+    // ---------- MÓDULO: NAVEGACIÓN ----------
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentPage = btn.dataset.page;
+        loadPage(currentPage);
+      });
+    });
+    function loadPage(page) {
+      const container = document.getElementById('appContainer');
+      const title = document.getElementById('pageTitle');
+      const titles = { curriculo:'Currículo PNFT', ia:'Generador de Estrategias', dashboard:'Dashboard de Progreso', evaluacion:'Evaluación MEP', historial:'Historial' };
+      title.innerText = titles[page] || page;
+      if (page === 'curriculo') renderCurriculo(container);
+      else if (page === 'ia') renderIA(container);
+      else if (page === 'dashboard') renderDashboard(container);
+      else if (page === 'evaluacion') renderEvaluacion(container);
+      else if (page === 'historial') renderHistorial(container);
+    }
+
+    // ---------- MÓDULO: CURRÍCULO ----------
+    function renderCurriculo(container) {
+      const niveles = Object.keys(DATA);
+      let html = `<div class="card"><div class="flex-row">
+        <select id="nivelSelect">${niveles.map(n => `<option ${n===selectedNivel?'selected':''}>${n}</option>`).join('')}</select>
+        <select id="moduloSelect"></select>
+        <select id="areaFiltro"><option value="todas">Todas las áreas</option></select>
+        <button onclick="seleccionarTodosSaberes()">Todos</button>
+      </div>
+      <div id="saberesContainer" style="margin-top:20px;"></div>
+      <p>Saberes seleccionados: <span id="contador">0</span></p></div>`;
+      container.innerHTML = html;
+      actualizarModulos();
+      document.getElementById('nivelSelect').addEventListener('change', (e) => { selectedNivel = e.target.value; actualizarModulos(); });
+    }
+    function actualizarModulos() {
+      const modSelect = document.getElementById('moduloSelect');
+      const modulos = Object.keys(DATA[selectedNivel] || {});
+      modSelect.innerHTML = modulos.map(m => `<option>${m}</option>`).join('');
+      selectedModulo = modulos[0];
+      cargarSaberes();
+      modSelect.addEventListener('change', (e) => { selectedModulo = e.target.value; cargarSaberes(); });
+    }
+    function cargarSaberes() {
+      const data = DATA[selectedNivel]?.[selectedModulo] || {};
+      let html = ''; const areas = new Set();
+      for (let area in data) {
+        areas.add(area);
+        data[area].saberes.forEach(s => {
+          const selected = saberesSeleccionados.has(s.id) ? 'selected' : '';
+          html += `<span class="saber-tag ${selected}" onclick="toggleSaber('${s.id}')">${s.nombre}</span>`;
+        });
+      }
+      document.getElementById('saberesContainer').innerHTML = html;
+      const areaSelect = document.getElementById('areaFiltro');
+      areaSelect.innerHTML = '<option value="todas">Todas</option>';
+      areas.forEach(a => areaSelect.add(new Option(a,a)));
+      document.getElementById('contador').innerText = saberesSeleccionados.size;
+    }
+    window.toggleSaber = (id) => {
+      if (saberesSeleccionados.has(id)) saberesSeleccionados.delete(id);
+      else saberesSeleccionados.add(id);
+      cargarSaberes();
+    };
+    window.seleccionarTodosSaberes = () => {
+      const data = DATA[selectedNivel]?.[selectedModulo] || {};
+      for (let area in data) data[area].saberes.forEach(s => saberesSeleccionados.add(s.id));
+      cargarSaberes();
+    };
+
+    // ---------- MÓDULO: IA (MULTI-PROVEEDOR) ----------
+    function renderIA(container) {
+      if (!currentUser) { container.innerHTML = '<div class="card">Inicia sesión para usar el generador.</div>'; return; }
+      container.innerHTML = `
+        <div class="card">
+          <h2>✨ Generar estrategia</h2>
+          <p>Saberes seleccionados: ${saberesSeleccionados.size}</p>
+          <div class="flex-row">
+            <select id="metodologia">
+              <option value="ABJ">ABJ (Preescolar/I Ciclo)</option>
+              <option value="ABR">ABR (II Ciclo)</option>
+              <option value="DT">Design Thinking (III Ciclo)</option>
+            </select>
+            <select id="iaProvider">
+              <option value="simulado">Simulación local</option>
+              <option value="chatgpt">ChatGPT</option>
+              <option value="gemini">Gemini</option>
+              <option value="claude">Claude</option>
+              <option value="deepseek">DeepSeek</option>
+            </select>
+            <button onclick="generarEstrategia()">Generar</button>
+            <button onclick="exportarTXT()">Descargar TXT</button>
+            <button onclick="exportarHTML()">Imprimir HTML</button>
+          </div>
+          <div id="resultadoEstrategia" class="resultado-box"></div>
+        </div>
+      `;
+    }
+    window.generarEstrategia = async () => {
+      if (saberesSeleccionados.size === 0) { alert('Selecciona al menos un saber'); return; }
+      const provider = document.getElementById('iaProvider').value;
+      const metodologia = document.getElementById('metodologia').value;
+      const saberesIds = Array.from(saberesSeleccionados);
+      let respuesta = '';
+      
+      if (provider === 'simulado') {
+        respuesta = `🧪 Estrategia simulada (${metodologia})\n\nFocalización: Actividad lúdica con preguntas generadoras.\nExploración: Descubrimiento guiado.\nAplicación: Reto colaborativo.\nReflexión: Puesta en común.\n\nRúbrica analítica:\n- Inicial: ...\n- Intermedio: ...\n- Avanzado: ...\n\nRecomendaciones DUA incluidas.`;
+      } else {
+        let apiKey = prompt(`Ingresa tu API Key para ${provider}:`);
+        if (!apiKey) return;
+        const prompt = crearPrompt(provider, metodologia, saberesIds);
+        try {
+          respuesta = await llamarAPI(provider, apiKey, prompt);
+        } catch(e) {
+          respuesta = `Error al conectar con ${provider}. Verifica tu clave o conexión.`;
         }
-        function simularPlaneamiento(saberes, met){
-            return `<h3>🧪 Planeamiento (Simulación)</h3>
-            <p><strong>Focalización:</strong> Actividad lúdica con preguntas generadoras. (10 min)</p>
-            <p><strong>Exploración:</strong> Descubrimiento guiado con bloques. (15 min)</p>
-            <p><strong>Aplicación:</strong> Reto colaborativo de programación. (10 min)</p>
-            <p><strong>Reflexión:</strong> Puesta en común y autoevaluación. (5 min)</p>
-            <p><em>Rúbrica analítica (Inicial/Intermedio/Avanzado) basada en indicadores.</em></p>
-            <p><strong>Recomendaciones DUA:</strong> múltiples formas de representación, expresión y motivación.</p>`;
-        }
-        async function llamarAPI(config, saberes, met){
-            try{
-                const prompt = `Eres especialista PNFT MEP 2026. Nivel ${appState.nivel}. Metodología ${met}. Saberes: ${saberes.join(', ')}. Genera estrategia completa con momentos, rúbrica DUA.`;
-                // fetch simulado
-                return simularPlaneamiento(saberes, met) + '<br/><i>(Respuesta simulada - configura tu API Key para IA real)</i>';
-            }catch(e){ return simularPlaneamiento(saberes, met); }
-        }
-        window.generarPlaneamiento = generarPlaneamiento;
+      }
+      document.getElementById('resultadoEstrategia').innerText = respuesta;
+      Storage.saveItem('pnft_estrategias', { nivel: selectedNivel, saberes: saberesIds, respuesta, metodologia, provider });
+    };
+    function crearPrompt(provider, metodologia, saberesIds) {
+      const ciclo = obtenerCiclo(selectedNivel);
+      const rda = RDA[ciclo]?.['Apropiación tecnológica y Digital'] || 'RdA no definido';
+      return `Actúa como especialista en mediación pedagógica del MEP Costa Rica - PNFT 2026.
+Nivel: ${selectedNivel}. Ciclo: ${ciclo}. Metodología: ${metodologia}.
+Saberes seleccionados: ${saberesIds.join(', ')}.
+Resultado de Aprendizaje: ${rda}.
+TAREA: Diseñar una estrategia de mediación completa con momentos pedagógicos, rúbrica analítica y recomendaciones DUA. NO omitas secciones.`;
+    }
+    async function llamarAPI(provider, apiKey, prompt) {
+      // Simulación de endpoints (puedes extender con fetch reales)
+      if (provider === 'gemini') {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        });
+        const data = await res.json();
+        return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sin respuesta.';
+      }
+      // Para ChatGPT/Claude/DeepSeek se simula (puedes agregar fetch a sus endpoints)
+      return `[Simulación ${provider}] Respuesta a: "${prompt.substring(0,100)}..."\n\nEstrategia generada con éxito.`;
+    }
+    function obtenerCiclo(nivel) {
+      if (nivel==='0°') return 'Preescolar';
+      const g = parseInt(nivel);
+      if (g<=3) return 'I Ciclo';
+      if (g<=6) return 'II Ciclo';
+      return 'III Ciclo';
+    }
+    window.exportarTXT = () => {
+      const contenido = document.getElementById('resultadoEstrategia')?.innerText || '';
+      const blob = new Blob([contenido], {type: 'text/plain'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `estrategia_pnft_${new Date().toISOString().slice(0,10)}.txt`;
+      a.click();
+    };
+    window.exportarHTML = () => {
+      const contenido = document.getElementById('resultadoEstrategia')?.innerText || '';
+      const ventana = window.open('', '_blank');
+      ventana.document.write(`<html><head><title>Estrategia PNFT</title></head><body><pre>${contenido}</pre></body></html>`);
+      ventana.document.close();
+      ventana.print();
+    };
 
-        // Dashboard
-        function actualizarDashboard(){
-            const total = Object.values(PNFT_DATA[appState.nivel]?.[appState.modulo]||{}).reduce((acc,area)=> acc + area.saberes.length,0);
-            const sel = appState.saberesSeleccionados.length;
-            const pct = total? Math.round((sel/total)*100) : 0;
-            document.getElementById('heatmapArea').innerHTML = `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%;"></div></div><p>${pct}% del módulo cubierto</p>`;
-        }
+    // ---------- MÓDULO: DASHBOARD ----------
+    function renderDashboard(container) {
+      const totalSaberes = Object.values(DATA[selectedNivel]?.[selectedModulo]||{}).reduce((acc,area)=> acc+area.saberes.length,0);
+      const seleccionados = saberesSeleccionados.size;
+      const pct = totalSaberes ? Math.round((seleccionados/totalSaberes)*100) : 0;
+      const ciclo = obtenerCiclo(selectedNivel);
+      container.innerHTML = `
+        <div class="card">
+          <h2>📊 Progreso en ${selectedNivel} (${ciclo})</h2>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;"></div></div>
+          <p>${pct}% completado (${seleccionados}/${totalSaberes} saberes)</p>
+          <h3>🎯 RdA del ciclo</h3>
+          <p>${RDA[ciclo]?.['Apropiación tecnológica y Digital'] || 'No definido'}</p>
+        </div>
+      `;
+    }
 
-        // Evaluación
-        function mostrarComponentes(){
-            const ciclo = document.getElementById('cicloEval').value;
-            let texto = '';
-            if(ciclo==='I') texto = 'Trabajo cotidiano 65%, Tareas 10%, Prueba 15%, Asistencia 10%';
-            else if(ciclo==='II') texto = 'Trabajo cotidiano 60%, Tareas 10%, Prueba 20%, Asistencia 10%';
-            else texto = 'Trabajo cotidiano 50%, Tareas 10%, Proyecto 30%, Asistencia 10%';
-            document.getElementById('compEvalTabla').innerHTML = `<p>${texto}</p>`;
-            if(ciclo==='III'){
-                document.getElementById('indicadoresProyecto').innerHTML = `<ul><li><strong>Empatizar:</strong> Describe un problema o situación por resolver que es importante para un usuario o cliente.</li><li><strong>Definir:</strong> Sintetiza los intereses y necesidades del usuario o cliente en la construcción de un producto comunicativo.</li><li><strong>Idear:</strong> Selecciona la idea que ofrezca la solución más eficiente para resolver el problema o situación.</li></ul>`;
-            } else document.getElementById('indicadoresProyecto').innerHTML = '';
-        }
+    // ---------- MÓDULO: EVALUACIÓN MEP ----------
+    function renderEvaluacion(container) {
+      const ciclo = obtenerCiclo(selectedNivel).includes('I')?'I': (obtenerCiclo(selectedNivel).includes('II')?'II':'III');
+      const pesos = PESOS[ciclo];
+      container.innerHTML = `
+        <div class="card">
+          <h2>Evaluación (${ciclo} Ciclo)</h2>
+          <div class="flex-row">
+            <label>Trabajo Cotidiano (1-4): <input id="tc" type="number" min="1" max="4" step="0.1" value="3"></label>
+            <label>Tareas: <input id="tareas" type="number" min="0" max="100" value="80"></label>
+            ${ciclo==='III'? '<label>Proyecto: <input id="proy" type="number" min="0" max="100" value="85"></label>' : '<label>Pruebas: <input id="pruebas" type="number" min="0" max="100" value="75"></label>'}
+            <label>Asistencia %: <input id="asis" type="number" min="0" max="100" value="100"></label>
+            <button onclick="calcularNota()">Calcular</button>
+          </div>
+          <h3>Nota Final: <span id="notaFinal">-</span></h3>
+        </div>
+      `;
+    }
+    window.calcularNota = () => {
+      const ciclo = obtenerCiclo(selectedNivel).includes('I')?'I': (obtenerCiclo(selectedNivel).includes('II')?'II':'III');
+      const pesos = PESOS[ciclo];
+      const tcRaw = parseFloat(document.getElementById('tc')?.value) || 3;
+      const tc = ((tcRaw-1)/3)*100;
+      const tareas = parseFloat(document.getElementById('tareas')?.value) || 0;
+      const pruebas = ciclo==='III' ? 0 : (parseFloat(document.getElementById('pruebas')?.value) || 0);
+      const proyecto = ciclo==='III' ? (parseFloat(document.getElementById('proy')?.value) || 0) : 0;
+      const asis = parseFloat(document.getElementById('asis')?.value) || 100;
+      let nota = 0, pesoTotal = 0;
+      if (pesos.trabajoCotidiano) { nota += tc * pesos.trabajoCotidiano; pesoTotal += pesos.trabajoCotidiano; }
+      if (pesos.tareas) { nota += tareas * pesos.tareas; pesoTotal += pesos.tareas; }
+      if (pesos.pruebas) { nota += pruebas * pesos.pruebas; pesoTotal += pesos.pruebas; }
+      if (pesos.proyecto) { nota += proyecto * pesos.proyecto; pesoTotal += pesos.proyecto; }
+      if (pesos.asistencia) { nota += asis * pesos.asistencia; pesoTotal += pesos.asistencia; }
+      const final = pesoTotal ? Math.round((nota / pesoTotal) * 100) / 100 : 0;
+      document.getElementById('notaFinal').innerText = final;
+      Storage.saveItem('pnft_evaluaciones', { nivel: selectedNivel, ciclo, componentes: {tc, tareas, pruebas, proyecto, asis}, notaFinal: final });
+    };
 
-        // Grupo estudiantes (simplificado)
-        function cargarGrupo(){ document.getElementById('listaGrupo').innerHTML = '<p>Gestión de estudiantes activa (IndexedDB).</p>'; }
+    // ---------- MÓDULO: HISTORIAL ----------
+    function renderHistorial(container) {
+      const estrategias = Storage.getItems('pnft_estrategias');
+      const evaluaciones = Storage.getItems('pnft_evaluaciones');
+      container.innerHTML = `<div class="card">
+        <h2>📜 Últimas estrategias generadas</h2>
+        ${estrategias.slice(-5).reverse().map(e => `<p>${e.fecha?.slice(0,10)} - Nivel ${e.nivel} (${e.metodologia})</p>`).join('')}
+        <h2>📋 Últimas evaluaciones</h2>
+        ${evaluaciones.slice(-5).reverse().map(ev => `<p>${ev.fecha?.slice(0,10)} - Nota: ${ev.notaFinal}</p>`).join('')}
+      </div>`;
+    }
 
-        // Configuración API
-        window.abrirConfig = function(){ document.getElementById('modalConfig').style.display='flex'; };
-        window.guardarConfigAPI = function(){
-            appState.configAPI.provider = document.getElementById('apiProvider').value;
-            appState.configAPI.key = document.getElementById('apiKey').value;
-            appState.configAPI.forceSimulate = document.getElementById('forceSimulate').checked;
-            guardarEstadoApp(appState);
-            alert('Configuración guardada');
-            document.getElementById('modalConfig').style.display='none';
-        };
-        window.mostrarGuiaAPI = function(){
-            alert('📌 Guía para obtener clave gratuita:\n\n🔹 Gemini: ve a aistudio.google.com/app/apikey (solo cuenta Google).\n🔹 DeepSeek: platform.deepseek.com/api_keys (registro gratuito).\n\nNinguno requiere tarjeta.');
-        };
-
-        // Exportar
-        window.exportarPlaneamiento = function(){
-            const contenido = document.getElementById('planeamientoOutput').innerText;
-            navigator.clipboard.writeText(contenido).then(()=>alert('Copiado al portapapeles. Pégalo en Word/Canva/Google Docs.'));
-        };
-
-        // Persistencia
-        async function guardarEstado(){ await guardarEstadoApp(appState); alert('Estado guardado'); }
-        async function cargarEstado(){
-            const saved = await cargarEstadoApp();
-            if(saved){ appState = saved; cargarModulos(); alert('Estado cargado'); }
-        }
-        window.guardarEstado = guardarEstado; window.cargarEstado = cargarEstado;
-
-        // Init
-        (async function(){
-            await initDB();
-            const saved = await cargarEstadoApp();
-            if(saved) appState = saved;
-            cargarModulos();
-            switchTab('curriculo');
-            mostrarComponentes();
-        })();
-
-        window.switchTab = switchTab; window.cargarModulos = cargarModulos; window.cargarSaberes = cargarSaberes;
-        window.actualizarDashboard = actualizarDashboard; window.mostrarComponentes = mostrarComponentes;
-    })();
-</script>
+    // ---------- INICIALIZACIÓN ----------
+    renderAuth();
+    loadPage('curriculo');
+  </script>
 </body>
 </html>
