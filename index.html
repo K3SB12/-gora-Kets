@@ -75,13 +75,22 @@
     .saber-tag[data-area="Computación física y Robótica"] { background: #8b5e3c; }
     .saber-tag[data-area="Ciencia de datos e Inteligencia artificial"] { background: #6a4e6b; }
     
+    /* Estilo base: todos los saberes ligeramente apagados */
+    .saber-tag {
+      opacity: 0.7;
+      transition: all 0.2s ease;
+    }
+    
+    /* Al seleccionar: se ilumina, borde dorado, check */
     .saber-tag.selected {
+      opacity: 1;
       border: 3px solid #ffd966 !important;
       box-shadow: 0 0 12px #ffd966cc;
       transform: scale(1.02);
       font-weight: 600;
-      position: relative;
     }
+    
+    /* El check (✓) que ya tienes con ::after se mantiene */
     .saber-tag.selected::after {
       content: " ✓";
       font-weight: bold;
@@ -910,6 +919,14 @@
       saberesSeleccionados.clear();
       guardarProgreso();
       cargarSaberes();
+      // Forzar actualización visual extra
+      setTimeout(() => {
+        document.querySelectorAll('.saber-tag').forEach(el => {
+          el.classList.remove('selected');
+          // El pseudo-elemento ::after se encarga del check, no es necesario manipular innerHTML
+        });
+        document.getElementById('contador').innerText = '0';
+      }, 10);
     };
     
 // ---------- IA: GENERACIÓN DE PROMPT + EDITOR EDITABLE (VERSIÓN CORREGIDA) ----------
