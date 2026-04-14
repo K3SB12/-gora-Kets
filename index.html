@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PNFT 2026 · Sistema Inteligente (v2 Modular)</title>
+  <title>PNFT 2026 · Sistema Inteligente (vFinal)</title>
   <!-- Fuentes e Iconos -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -142,15 +142,6 @@
       overflow-y: auto;
       margin-top: 20px;
     }
-    .tag {
-      display: inline-block;
-      padding: 6px 12px;
-      margin: 5px;
-      background: #1e4f6b;
-      cursor: pointer;
-      border-radius: 30px;
-    }
-    .tag.sel { background: #2fb0ff; }
   </style>
 </head>
 <body>
@@ -177,7 +168,7 @@
   </div>
 
   <script>
-    // ---------- MÓDULO: BASE DE DATOS (REEMPLAZA AQUÍ TU PNFT_DATA COMPLETO) ----------
+    // ---------- BASE DE DATOS (REEMPLAZA CON TU PNFT_DATA COMPLETO) ----------
     const PNFT_DATA = {
             // ========== MATERNO INFANTIL / TRANSICIÓN ==========
             "0°": {
@@ -736,14 +727,14 @@
       "III": { trabajoCotidiano:50, tareas:10, proyecto:30, asistencia:10 }
     };
 
-    // ---------- MÓDULO: ESTADO GLOBAL ----------
+    // ---------- ESTADO GLOBAL ----------
     let currentPage = 'curriculo';
     let currentUser = JSON.parse(localStorage.getItem('pnft_session')) || null;
     let selectedNivel = '0°';
     let selectedModulo = 'Módulo 1 (básico)';
     let saberesSeleccionados = new Set();
     
-    // ---------- MÓDULO: ALMACENAMIENTO (localStorage) ----------
+    // ---------- ALMACENAMIENTO ----------
     const Storage = {
       getUsers: () => JSON.parse(localStorage.getItem('pnft_users') || '[]'),
       saveUser: (user) => {
@@ -762,7 +753,7 @@
       getItems: (key) => JSON.parse(localStorage.getItem(key) || '[]')
     };
 
-    // ---------- MÓDULO: AUTENTICACIÓN ----------
+    // ---------- AUTENTICACIÓN ----------
     function renderAuth() {
       const authDiv = document.getElementById('authArea');
       if (currentUser) {
@@ -798,7 +789,7 @@
       }
     };
 
-    // ---------- MÓDULO: NAVEGACIÓN ----------
+    // ---------- NAVEGACIÓN ----------
     document.querySelectorAll('.nav-item').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
@@ -819,7 +810,23 @@
       else if (page === 'historial') renderHistorial(container);
     }
 
-    // ---------- MÓDULO: CURRÍCULO ----------
+    // ---------- GUARDAR / CARGAR PROGRESO ----------
+    function guardarProgreso() {
+      localStorage.setItem('pnft_progreso', JSON.stringify({
+        nivel: selectedNivel,
+        modulo: selectedModulo,
+        saberes: Array.from(saberesSeleccionados)
+      }));
+    }
+    function cargarProgreso() {
+      const data = JSON.parse(localStorage.getItem('pnft_progreso') || 'null');
+      if (!data) return;
+      selectedNivel = data.nivel || selectedNivel;
+      selectedModulo = data.modulo || selectedModulo;
+      saberesSeleccionados = new Set(data.saberes || []);
+    }
+
+    // ---------- CURRÍCULO ----------
     function renderCurriculo(container) {
       const niveles = Object.keys(DATA);
       let html = `<div class="card"><div class="flex-row">
@@ -832,15 +839,15 @@
       <p>Saberes seleccionados: <span id="contador">0</span></p></div>`;
       container.innerHTML = html;
       actualizarModulos();
-      document.getElementById('nivelSelect').addEventListener('change', (e) => { selectedNivel = e.target.value; actualizarModulos(); });
+      document.getElementById('nivelSelect').addEventListener('change', (e) => { selectedNivel = e.target.value; actualizarModulos(); guardarProgreso(); });
     }
     function actualizarModulos() {
       const modSelect = document.getElementById('moduloSelect');
       const modulos = Object.keys(DATA[selectedNivel] || {});
-      modSelect.innerHTML = modulos.map(m => `<option>${m}</option>`).join('');
+      modSelect.innerHTML = modulos.map(m => `<option ${m===selectedModulo?'selected':''}>${m}</option>`).join('');
       selectedModulo = modulos[0];
       cargarSaberes();
-      modSelect.addEventListener('change', (e) => { selectedModulo = e.target.value; cargarSaberes(); });
+      modSelect.addEventListener('change', (e) => { selectedModulo = e.target.value; cargarSaberes(); guardarProgreso(); });
     }
     function cargarSaberes() {
       const data = DATA[selectedNivel]?.[selectedModulo] || {};
@@ -861,15 +868,17 @@
     window.toggleSaber = (id) => {
       if (saberesSeleccionados.has(id)) saberesSeleccionados.delete(id);
       else saberesSeleccionados.add(id);
+      guardarProgreso();
       cargarSaberes();
     };
     window.seleccionarTodosSaberes = () => {
       const data = DATA[selectedNivel]?.[selectedModulo] || {};
       for (let area in data) data[area].saberes.forEach(s => saberesSeleccionados.add(s.id));
+      guardarProgreso();
       cargarSaberes();
     };
 
-    // ---------- MÓDULO: IA (MULTI-PROVEEDOR) ----------
+    // ---------- IA ----------
     function renderIA(container) {
       if (!currentUser) { container.innerHTML = '<div class="card">Inicia sesión para usar el generador.</div>'; return; }
       container.innerHTML = `
@@ -905,7 +914,7 @@
       let respuesta = '';
       
       if (provider === 'simulado') {
-        respuesta = `🧪 Estrategia simulada (${metodologia})\n\nFocalización: Actividad lúdica con preguntas generadoras.\nExploración: Descubrimiento guiado.\nAplicación: Reto colaborativo.\nReflexión: Puesta en común.\n\nRúbrica analítica:\n- Inicial: ...\n- Intermedio: ...\n- Avanzado: ...\n\nRecomendaciones DUA incluidas.`;
+        respuesta = `🧪 Estrategia simulada (${metodologia})\n\nFocalización: Actividad lúdica.\nExploración: Descubrimiento guiado.\nAplicación: Reto colaborativo.\nReflexión: Puesta en común.\n\nRúbrica analítica:\n- Inicial: ...\n- Intermedio: ...\n- Avanzado: ...`;
       } else {
         let apiKey = prompt(`Ingresa tu API Key para ${provider}:`);
         if (!apiKey) return;
@@ -922,14 +931,50 @@
     function crearPrompt(provider, metodologia, saberesIds) {
       const ciclo = obtenerCiclo(selectedNivel);
       const rda = RDA[ciclo]?.['Apropiación tecnológica y Digital'] || 'RdA no definido';
-      return `Actúa como especialista en mediación pedagógica del MEP Costa Rica - PNFT 2026.
-Nivel: ${selectedNivel}. Ciclo: ${ciclo}. Metodología: ${metodologia}.
-Saberes seleccionados: ${saberesIds.join(', ')}.
-Resultado de Aprendizaje: ${rda}.
-TAREA: Diseñar una estrategia de mediación completa con momentos pedagógicos, rúbrica analítica y recomendaciones DUA. NO omitas secciones.`;
+      return `
+Actúa como especialista en mediación pedagógica del MEP Costa Rica - PNFT 2026.
+
+📌 Nivel: ${selectedNivel}
+📌 Ciclo: ${ciclo}
+📌 Metodología: ${metodologia}
+
+📚 Saberes seleccionados:
+${saberesIds.join(', ')}
+
+🎯 Resultado de Aprendizaje:
+${rda}
+
+---
+
+🎯 TAREA:
+
+Diseñar una ESTRATEGIA DE MEDIACIÓN PEDAGÓGICA COMPLETA que incluya:
+
+1. Título de la estrategia
+2. Propósito de aprendizaje
+3. Momentos pedagógicos:
+   - Focalización
+   - Exploración
+   - Aplicación
+   - Reflexión
+4. Actividades detalladas
+5. Recursos
+6. Evaluación:
+   - Rúbrica analítica (Inicial, Intermedio, Avanzado)
+7. Recomendaciones DUA:
+   - Representación
+   - Acción y expresión
+   - Motivación
+8. Justificación pedagógica alineada al PNFT
+
+⚠️ REGLAS:
+- No omitir ninguna sección
+- Redacción clara y profesional
+- Adaptado a estudiantes
+- En formato estructurado
+`;
     }
     async function llamarAPI(provider, apiKey, prompt) {
-      // Simulación de endpoints (puedes extender con fetch reales)
       if (provider === 'gemini') {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
           method: 'POST', headers: {'Content-Type':'application/json'},
@@ -938,7 +983,6 @@ TAREA: Diseñar una estrategia de mediación completa con momentos pedagógicos,
         const data = await res.json();
         return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sin respuesta.';
       }
-      // Para ChatGPT/Claude/DeepSeek se simula (puedes agregar fetch a sus endpoints)
       return `[Simulación ${provider}] Respuesta a: "${prompt.substring(0,100)}..."\n\nEstrategia generada con éxito.`;
     }
     function obtenerCiclo(nivel) {
@@ -958,13 +1002,32 @@ TAREA: Diseñar una estrategia de mediación completa con momentos pedagógicos,
     };
     window.exportarHTML = () => {
       const contenido = document.getElementById('resultadoEstrategia')?.innerText || '';
+      const html = `
+      <html>
+      <head>
+        <title>Estrategia PNFT</title>
+        <style>
+          body { font-family: Arial; padding: 40px; }
+          h1 { text-align: center; }
+          pre { white-space: pre-wrap; line-height: 1.5; }
+        </style>
+      </head>
+      <body>
+        <h1>📘 Estrategia de Mediación Pedagógica</h1>
+        <p><strong>Nivel:</strong> ${selectedNivel}</p>
+        <p><strong>Fecha:</strong> ${new Date().toLocaleDateString()}</p>
+        <hr>
+        <pre>${contenido}</pre>
+      </body>
+      </html>
+      `;
       const ventana = window.open('', '_blank');
-      ventana.document.write(`<html><head><title>Estrategia PNFT</title></head><body><pre>${contenido}</pre></body></html>`);
+      ventana.document.write(html);
       ventana.document.close();
       ventana.print();
     };
 
-    // ---------- MÓDULO: DASHBOARD ----------
+    // ---------- DASHBOARD ----------
     function renderDashboard(container) {
       const totalSaberes = Object.values(DATA[selectedNivel]?.[selectedModulo]||{}).reduce((acc,area)=> acc+area.saberes.length,0);
       const seleccionados = saberesSeleccionados.size;
@@ -972,16 +1035,20 @@ TAREA: Diseñar una estrategia de mediación completa con momentos pedagógicos,
       const ciclo = obtenerCiclo(selectedNivel);
       container.innerHTML = `
         <div class="card">
-          <h2>📊 Progreso en ${selectedNivel} (${ciclo})</h2>
-          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;"></div></div>
-          <p>${pct}% completado (${seleccionados}/${totalSaberes} saberes)</p>
-          <h3>🎯 RdA del ciclo</h3>
+          <h2>📊 Progreso Curricular</h2>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <p><strong>${pct}%</strong> completado</p>
+          <p>${seleccionados} de ${totalSaberes} saberes</p>
+          <hr style="margin:20px 0; border:1px solid #1e4f6b;">
+          <h3>🎯 Resultado de Aprendizaje</h3>
           <p>${RDA[ciclo]?.['Apropiación tecnológica y Digital'] || 'No definido'}</p>
+          <h3 style="margin-top:15px;">📌 Nivel actual</h3>
+          <p>${selectedNivel} · ${selectedModulo}</p>
         </div>
       `;
     }
 
-    // ---------- MÓDULO: EVALUACIÓN MEP ----------
+    // ---------- EVALUACIÓN MEP ----------
     function renderEvaluacion(container) {
       const ciclo = obtenerCiclo(selectedNivel).includes('I')?'I': (obtenerCiclo(selectedNivel).includes('II')?'II':'III');
       const pesos = PESOS[ciclo];
@@ -1019,19 +1086,34 @@ TAREA: Diseñar una estrategia de mediación completa con momentos pedagógicos,
       Storage.saveItem('pnft_evaluaciones', { nivel: selectedNivel, ciclo, componentes: {tc, tareas, pruebas, proyecto, asis}, notaFinal: final });
     };
 
-    // ---------- MÓDULO: HISTORIAL ----------
+    // ---------- HISTORIAL ----------
     function renderHistorial(container) {
       const estrategias = Storage.getItems('pnft_estrategias');
       const evaluaciones = Storage.getItems('pnft_evaluaciones');
-      container.innerHTML = `<div class="card">
-        <h2>📜 Últimas estrategias generadas</h2>
-        ${estrategias.slice(-5).reverse().map(e => `<p>${e.fecha?.slice(0,10)} - Nivel ${e.nivel} (${e.metodologia})</p>`).join('')}
-        <h2>📋 Últimas evaluaciones</h2>
-        ${evaluaciones.slice(-5).reverse().map(ev => `<p>${ev.fecha?.slice(0,10)} - Nota: ${ev.notaFinal}</p>`).join('')}
-      </div>`;
+      container.innerHTML = `
+        <div class="card">
+          <h2>📜 Estrategias generadas</h2>
+          ${estrategias.slice(-5).reverse().map(e => `
+            <div style="margin-bottom:10px;">
+              <strong>${e.fecha?.slice(0,10)}</strong><br>
+              Nivel: ${e.nivel}<br>
+              Método: ${e.metodologia}<br>
+              IA: ${e.provider}
+            </div>
+          `).join('')}
+          <hr style="margin:20px 0;">
+          <h2>📋 Evaluaciones</h2>
+          ${evaluaciones.slice(-5).reverse().map(ev => `
+            <div style="margin-bottom:10px;">
+              ${ev.fecha?.slice(0,10)} - Nota: <strong>${ev.notaFinal}</strong>
+            </div>
+          `).join('')}
+        </div>
+      `;
     }
 
     // ---------- INICIALIZACIÓN ----------
+    cargarProgreso();
     renderAuth();
     loadPage('curriculo');
   </script>
