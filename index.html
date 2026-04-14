@@ -69,6 +69,17 @@
       overflow-y: auto; margin-top: 20px;
     }
     .info-message { padding: 10px; background: #1e3a4f; border-radius: 20px; margin: 15px 0; text-align: center; }
+    /* Colores por área */
+    .saber-tag[data-area="Apropiación tecnológica y Digital"] { background: #2a5c7a; }
+    .saber-tag[data-area="Programación y Algoritmos"] { background: #3e6b4f; }
+    .saber-tag[data-area="Computación física y Robótica"] { background: #8b5e3c; }
+    .saber-tag[data-area="Ciencia de datos e Inteligencia artificial"] { background: #6a4e6b; }
+    
+    .saber-tag.selected {
+      border: 2px solid #ffd966 !important;
+      box-shadow: 0 0 8px #ffd96680;
+      transform: scale(1.02);
+    }
   </style>
 </head>
 <body>
@@ -711,16 +722,17 @@
     
     function obtenerSaberesDetallados(ids) {
       const detalles = [];
-      for (let nivel in DATA) {
-        for (let mod in DATA[nivel]) {
-          for (let area in DATA[nivel][mod]) {
-            DATA[nivel][mod][area].saberes.forEach(s => {
-              if (ids.includes(s.id)) {
-                detalles.push(`- ${s.nombre}: ${s.indicadores.join(' ')}`);
-              }
-            });
+      const nivelData = DATA[selectedNivel];
+      if (!nivelData) return '';
+      const moduloData = nivelData[selectedModulo];
+      if (!moduloData) return '';
+      
+      for (let area in moduloData) {
+        moduloData[area].saberes.forEach(s => {
+          if (ids.includes(s.id)) {
+            detalles.push(`- ${s.nombre}: ${s.indicadores.join(' ')}`);
           }
-        }
+        });
       }
       return detalles.join('\n');
     }
@@ -839,7 +851,7 @@
       cargarSaberes();
       modSelect.addEventListener('change', (e) => { selectedModulo = e.target.value; guardarProgreso(); cargarSaberes(); });
     }
-    function cargarSaberes() {
+   function cargarSaberes() {
       const data = DATA[selectedNivel]?.[selectedModulo] || {};
       const filtro = document.getElementById('areaFiltro')?.value || 'todas';
       let html = '';
@@ -848,29 +860,12 @@
         html += `<div style="margin-top:15px;"><strong>${area}</strong> <button style="margin-left:10px;" onclick="seleccionarArea('${area}')">Seleccionar área</button></div>`;
         data[area].saberes.forEach(s => {
           const selected = saberesSeleccionados.has(s.id) ? 'selected' : '';
-          html += `<span class="saber-tag ${selected}" onclick="toggleSaber('${s.id}')">${s.nombre}</span>`;
+          html += `<span class="saber-tag ${selected}" data-area="${area}" onclick="toggleSaber('${s.id}')">${s.nombre}</span>`;
         });
       }
       document.getElementById('saberesContainer').innerHTML = html;
       document.getElementById('contador').innerText = saberesSeleccionados.size;
     }
-    window.toggleSaber = (id) => {
-      if (saberesSeleccionados.has(id)) saberesSeleccionados.delete(id);
-      else saberesSeleccionados.add(id);
-      guardarProgreso(); cargarSaberes();
-    };
-    window.seleccionarArea = (area) => {
-      const data = DATA[selectedNivel]?.[selectedModulo] || {};
-      data[area]?.saberes.forEach(s => saberesSeleccionados.add(s.id));
-      guardarProgreso(); cargarSaberes();
-    };
-    window.seleccionarTodosSaberes = () => {
-      const data = DATA[selectedNivel]?.[selectedModulo] || {};
-      for (let area in data) data[area].saberes.forEach(s => saberesSeleccionados.add(s.id));
-      guardarProgreso(); cargarSaberes();
-    };
-    window.limpiarSeleccion = () => { saberesSeleccionados.clear(); guardarProgreso(); cargarSaberes(); };
-
 // ---------- IA: GENERACIÓN DE PROMPT + EDITOR EDITABLE (VERSIÓN CORREGIDA) ----------
 function renderIA(container) {
   if (!currentUser) { container.innerHTML = '<div class="card">Inicia sesión</div>'; return; }
