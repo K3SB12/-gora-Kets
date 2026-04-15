@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧭 PNFT 2026 · Sistema Integral Docente</title>
-    <!-- Tailwind CSS + Font Awesome -->
+    <title>🧭 PNFT 2026 · Portal Docente Completo</title>
+    <!-- Tailwind + Font Awesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -27,37 +27,33 @@
     <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center"><i class="fas fa-map-signs text-xl"></i></div>
-            <h1 class="text-2xl md:text-3xl font-black bg-gradient-to-r from-cyan-200 to-blue-300 bg-clip-text text-transparent">PNFT 2026 · Portal Docente</h1>
+            <h1 class="text-2xl md:text-3xl font-black bg-gradient-to-r from-cyan-200 to-blue-300 bg-clip-text text-transparent">PNFT 2026 · La Gran Ruta</h1>
         </div>
+        <div class="flex flex-wrap gap-2">
+            <select id="select-grupo" class="bg-slate-800/70 border border-slate-600 rounded-xl p-2 text-sm" onchange="App.cambiarGrupo()"></select>
+            <button onclick="Grupos.abrirModalGrupo()" class="bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full text-sm"><i class="fas fa-plus mr-1"></i>Grupo</button>
+        </div>
+    </div>
+    <div class="flex flex-wrap items-center gap-4 mb-4">
         <div class="flex flex-wrap gap-1">
-            <div class="level-tab text-sm active" data-level="0°" onclick="App.selectLevel('0°')">0°</div>
-            <div class="level-tab text-sm" data-level="1°" onclick="App.selectLevel('1°')">1°</div>
-            <div class="level-tab text-sm" data-level="2°" onclick="App.selectLevel('2°')">2°</div>
-            <div class="level-tab text-sm" data-level="3°" onclick="App.selectLevel('3°')">3°</div>
-            <div class="level-tab text-sm" data-level="4°" onclick="App.selectLevel('4°')">4°</div>
-            <div class="level-tab text-sm" data-level="5°" onclick="App.selectLevel('5°')">5°</div>
-            <div class="level-tab text-sm" data-level="6°" onclick="App.selectLevel('6°')">6°</div>
-            <div class="level-tab text-sm" data-level="7°" onclick="App.selectLevel('7°')">7°</div>
-            <div class="level-tab text-sm" data-level="8°" onclick="App.selectLevel('8°')">8°</div>
-            <div class="level-tab text-sm" data-level="9°" onclick="App.selectLevel('9°')">9°</div>
+            <div class="level-tab text-sm active" data-level="0°" onclick="App.selectLevel('0°')">0°</div><div class="level-tab text-sm" data-level="1°" onclick="App.selectLevel('1°')">1°</div><div class="level-tab text-sm" data-level="2°" onclick="App.selectLevel('2°')">2°</div><div class="level-tab text-sm" data-level="3°" onclick="App.selectLevel('3°')">3°</div><div class="level-tab text-sm" data-level="4°" onclick="App.selectLevel('4°')">4°</div><div class="level-tab text-sm" data-level="5°" onclick="App.selectLevel('5°')">5°</div><div class="level-tab text-sm" data-level="6°" onclick="App.selectLevel('6°')">6°</div><div class="level-tab text-sm" data-level="7°" onclick="App.selectLevel('7°')">7°</div><div class="level-tab text-sm" data-level="8°" onclick="App.selectLevel('8°')">8°</div><div class="level-tab text-sm" data-level="9°" onclick="App.selectLevel('9°')">9°</div>
         </div>
         <select id="select-modulo" class="bg-slate-800/70 border border-slate-600 rounded-xl p-2 text-sm" onchange="App.cargarModulo()">
-            <option value="Módulo 1">Módulo 1 (I Semestre)</option>
-            <option value="Módulo 2">Módulo 2 (II Semestre)</option>
+            <option value="Módulo 1">Módulo 1</option><option value="Módulo 2">Módulo 2</option>
         </select>
     </div>
 
     <!-- ===== PESTAÑAS PRINCIPALES ===== -->
     <div class="flex gap-3 mb-6 border-b border-white/10 pb-3">
-        <div class="tab-btn active" data-tab="planificacion" onclick="App.switchTab('planificacion')"><i class="fas fa-map mr-2"></i>Planificación</div>
+        <div class="tab-btn active" data-tab="dashboard" onclick="App.switchTab('dashboard')"><i class="fas fa-map mr-2"></i>Dashboard</div>
+        <div class="tab-btn" data-tab="grupos" onclick="App.switchTab('grupos')"><i class="fas fa-users mr-2"></i>Grupos</div>
         <div class="tab-btn" data-tab="evaluacion" onclick="App.switchTab('evaluacion')"><i class="fas fa-check-double mr-2"></i>Evaluación</div>
-        <div class="tab-btn" data-tab="estudiantes" onclick="App.switchTab('estudiantes')"><i class="fas fa-users mr-2"></i>Estudiantes</div>
-        <div class="tab-btn" data-tab="dashboard" onclick="App.switchTab('dashboard')"><i class="fas fa-chart-pie mr-2"></i>Dashboard</div>
+        <div class="tab-btn" data-tab="exportar" onclick="App.switchTab('exportar')"><i class="fas fa-download mr-2"></i>Exportar</div>
     </div>
 
     <!-- ===== CONTENEDORES DE PESTAÑAS ===== -->
-    <!-- PLANIFICACIÓN -->
-    <div id="tab-planificacion" class="tab-content">
+    <!-- DASHBOARD (ORIGINAL) -->
+    <div id="tab-dashboard" class="tab-content">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div class="lg:col-span-7 space-y-6">
                 <div class="glass-card p-6">
@@ -67,7 +63,7 @@
             </div>
             <div class="lg:col-span-5 space-y-6">
                 <div class="glass-card p-6">
-                    <h3 class="text-xl font-bold mb-4"><i class="fas fa-battery-full text-amber-400 mr-2"></i>Progreso por Área</h3>
+                    <h3 class="text-xl font-bold mb-4"><i class="fas fa-battery-full text-amber-400 mr-2"></i>Baterías de Poder</h3>
                     <div id="batteries-container" class="space-y-4"></div>
                 </div>
                 <div class="glass-card p-6">
@@ -87,8 +83,34 @@
                 <div class="glass-card p-6">
                     <h3 class="text-xl font-bold mb-4"><i class="fas fa-robot text-indigo-400 mr-2"></i>Generador IA</h3>
                     <button onclick="App.generarPrompt()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl mb-3"><i class="fas fa-magic mr-2"></i>Generar Prompt</button>
-                    <textarea id="output-prompt" rows="4" class="w-full bg-slate-900 text-cyan-300 text-xs p-3 rounded-xl" readonly placeholder="El prompt aparecerá aquí..."></textarea>
-                    <button onclick="App.copiarPrompt()" class="mt-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full"><i class="far fa-copy mr-1"></i>Copiar</button>
+                    <textarea id="output-prompt" rows="6" class="w-full bg-slate-900 text-cyan-300 text-xs p-3 rounded-xl" readonly></textarea>
+                    <div class="flex gap-2 mt-3">
+                        <button onclick="App.copiarPrompt()" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full"><i class="far fa-copy mr-1"></i>Copiar</button>
+                        <a href="https://gemini.google.com" target="_blank" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full"><i class="fab fa-google mr-1"></i>Gemini</a>
+                        <a href="https://chat.openai.com" target="_blank" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full"><i class="fas fa-comment mr-1"></i>ChatGPT</a>
+                        <a href="https://copilot.microsoft.com" target="_blank" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full"><i class="fas fa-sync-alt mr-1"></i>Copilot</a>
+                        <a href="https://deepseek.com" target="_blank" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full"><i class="fas fa-search mr-1"></i>DeepSeek</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRUPOS -->
+    <div id="tab-grupos" class="tab-content hidden">
+        <div class="glass-card p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold"><i class="fas fa-layer-group mr-3"></i>Gestión de Grupos y Estudiantes</h2>
+                <button onclick="Grupos.abrirModalSeccion()" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-full"><i class="fas fa-plus mr-2"></i>Nueva Sección</button>
+            </div>
+            <div class="grid md:grid-cols-4 gap-4">
+                <div class="md:col-span-1 bg-slate-800/30 p-4 rounded-xl">
+                    <h3 class="font-bold mb-2">Secciones</h3>
+                    <div id="lista-secciones" class="space-y-1"></div>
+                </div>
+                <div class="md:col-span-3">
+                    <div class="flex justify-between mb-3"><h3 class="font-bold">Estudiantes</h3><button onclick="Grupos.abrirModalEstudiante()" class="bg-green-600 text-sm px-3 py-1 rounded-full"><i class="fas fa-plus mr-1"></i>Estudiante</button></div>
+                    <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-800/50"><tr><th class="p-2">Nombre</th><th class="p-2">Acciones</th></tr></thead><tbody id="tabla-estudiantes-body"></tbody></table></div>
                 </div>
             </div>
         </div>
@@ -102,85 +124,40 @@
                 <div class="text-sm bg-blue-500/20 px-4 py-2 rounded-full" id="ciclo-eval-badge">Ciclo: I Ciclo</div>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
-                <button onclick="Eval.abrirModalCotidiano()" class="bg-blue-600/30 hover:bg-blue-600/50 p-4 rounded-xl text-center"><i class="fas fa-user-check text-2xl mb-2"></i><br>Trabajo Cotidiano <span id="peso-cotidiano" class="text-xs block">65%</span></button>
-                <button onclick="alert('Módulo de Tareas en desarrollo')" class="bg-emerald-600/30 hover:bg-emerald-600/50 p-4 rounded-xl text-center"><i class="fas fa-tasks text-2xl mb-2"></i><br>Tareas <span id="peso-tareas" class="text-xs block">10%</span></button>
-                <button onclick="alert('Módulo de Pruebas en desarrollo')" class="bg-amber-600/30 hover:bg-amber-600/50 p-4 rounded-xl text-center"><i class="fas fa-file-alt text-2xl mb-2"></i><br>Pruebas <span id="peso-pruebas" class="text-xs block">15%</span></button>
-                <button onclick="Eval.abrirModalProyecto()" class="bg-purple-600/30 hover:bg-purple-600/50 p-4 rounded-xl text-center"><i class="fas fa-project-diagram text-2xl mb-2"></i><br>Proyecto <span id="peso-proyecto" class="text-xs block">0%</span></button>
-                <button onclick="alert('Módulo de Asistencia en desarrollo')" class="bg-pink-600/30 hover:bg-pink-600/50 p-4 rounded-xl text-center"><i class="fas fa-calendar-check text-2xl mb-2"></i><br>Asistencia <span class="text-xs block">10%</span></button>
+                <button onclick="Eval.abrirModalCotidiano()" class="bg-blue-600/30 hover:bg-blue-600/50 p-4 rounded-xl"><i class="fas fa-user-check text-2xl mb-2"></i><br>Trabajo Cotidiano <span id="peso-cotidiano" class="text-xs block">65%</span></button>
+                <button onclick="alert('Módulo de Tareas en desarrollo')" class="bg-emerald-600/30 hover:bg-emerald-600/50 p-4 rounded-xl"><i class="fas fa-tasks text-2xl mb-2"></i><br>Tareas <span id="peso-tareas" class="text-xs block">10%</span></button>
+                <button onclick="alert('Módulo de Pruebas en desarrollo')" class="bg-amber-600/30 hover:bg-amber-600/50 p-4 rounded-xl"><i class="fas fa-file-alt text-2xl mb-2"></i><br>Pruebas <span id="peso-pruebas" class="text-xs block">15%</span></button>
+                <button onclick="Eval.abrirModalProyecto()" class="bg-purple-600/30 hover:bg-purple-600/50 p-4 rounded-xl"><i class="fas fa-project-diagram text-2xl mb-2"></i><br>Proyecto <span id="peso-proyecto" class="text-xs block">0%</span></button>
+                <button onclick="alert('Módulo de Asistencia en desarrollo')" class="bg-pink-600/30 hover:bg-pink-600/50 p-4 rounded-xl"><i class="fas fa-calendar-check text-2xl mb-2"></i><br>Asistencia <span class="text-xs block">10%</span></button>
             </div>
-            <h3 class="text-lg font-bold mb-3">Resumen de Calificaciones del Grupo</h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="bg-slate-800/50"><tr><th class="p-3">Estudiante</th><th class="p-3">Cotid.</th><th class="p-3">Tareas</th><th class="p-3">Pruebas</th><th class="p-3">Proy.</th><th class="p-3">Asist.</th><th class="p-3">Nota Final</th><th class="p-3">Condición</th></tr></thead>
-                    <tbody id="tabla-calificaciones-body"></tbody>
-                </table>
-            </div>
+            <h3 class="text-lg font-bold mb-3">Resumen de Calificaciones</h3>
+            <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-800/50"><tr><th class="p-3">Estudiante</th><th class="p-3">Cotid.</th><th class="p-3">Tareas</th><th class="p-3">Pruebas</th><th class="p-3">Proy.</th><th class="p-3">Asist.</th><th class="p-3">Nota Final</th><th class="p-3">Condición</th></tr></thead><tbody id="tabla-calificaciones-body"></tbody></table></div>
         </div>
     </div>
 
-    <!-- ESTUDIANTES -->
-    <div id="tab-estudiantes" class="tab-content hidden">
+    <!-- EXPORTAR -->
+    <div id="tab-exportar" class="tab-content hidden">
         <div class="glass-card p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold"><i class="fas fa-users mr-3"></i>Gestión de Estudiantes</h2>
-                <button onclick="Estudiantes.abrirModalNuevo()" class="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-full"><i class="fas fa-plus mr-2"></i>Nuevo Estudiante</button>
+            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-download mr-3"></i>Exportar Datos</h2>
+            <div class="grid md:grid-cols-3 gap-4">
+                <button onclick="Exportar.pdf()" class="bg-red-600/30 hover:bg-red-600/50 p-6 rounded-xl"><i class="fas fa-file-pdf text-4xl mb-3"></i><br>Exportar a PDF</button>
+                <button onclick="Exportar.word()" class="bg-blue-600/30 hover:bg-blue-600/50 p-6 rounded-xl"><i class="fas fa-file-word text-4xl mb-3"></i><br>Exportar a Word</button>
+                <button onclick="Exportar.json()" class="bg-emerald-600/30 hover:bg-emerald-600/50 p-6 rounded-xl"><i class="fas fa-file-code text-4xl mb-3"></i><br>Exportar JSON</button>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="bg-slate-800/50"><tr><th class="p-3">Nombre Completo</th><th class="p-3">Acciones</th></tr></thead>
-                    <tbody id="tabla-estudiantes-body"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- DASHBOARD -->
-    <div id="tab-dashboard" class="tab-content hidden">
-        <div class="glass-card p-6">
-            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-chart-bar mr-3"></i>Dashboard de Rendimiento</h2>
-            <div id="dashboard-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"></div>
-            <div id="dashboard-condicion" class="bg-slate-800/50 p-4 rounded-xl"></div>
+            <p class="text-xs text-white/40 mt-4">Exporta los datos del grupo y nivel seleccionados.</p>
         </div>
     </div>
 </div>
 
-<!-- ===== MODALES ===== -->
-<!-- Modal Trabajo Cotidiano -->
-<div id="modal-cotidiano" class="modal hidden">
-    <div class="modal-content glass-card p-6 w-full max-w-2xl">
-        <h3 class="text-xl font-bold mb-4">📝 Calificar Trabajo Cotidiano</h3>
-        <div id="cotidiano-lista-estudiantes" class="space-y-3 max-h-96 overflow-y-auto"></div>
-        <div class="flex justify-end gap-3 mt-6"><button onclick="Eval.cerrarModal('modal-cotidiano')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Eval.guardarCotidiano()" class="bg-blue-600 px-6 py-2 rounded-full">Guardar</button></div>
-    </div>
-</div>
-
-<!-- Modal Proyecto -->
-<div id="modal-proyecto" class="modal hidden">
-    <div class="modal-content glass-card p-6 w-full max-w-3xl">
-        <h3 class="text-xl font-bold mb-4">🚀 Calificar Proyecto (Design Thinking)</h3>
-        <div id="proyecto-fases" class="space-y-4"></div>
-        <div class="flex justify-end gap-3 mt-6"><button onclick="Eval.cerrarModal('modal-proyecto')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Eval.guardarProyecto()" class="bg-purple-600 px-6 py-2 rounded-full">Guardar Proyecto</button></div>
-    </div>
-</div>
-
-<!-- Modal Estudiante -->
-<div id="modal-estudiante" class="modal hidden">
-    <div class="modal-content glass-card p-6 w-full max-w-md">
-        <h3 class="text-xl font-bold mb-4" id="modal-estudiante-title">Nuevo Estudiante</h3>
-        <input type="hidden" id="edit-estudiante-id">
-        <div class="space-y-3">
-            <input id="est-nombre" placeholder="Nombre" class="w-full bg-slate-800 p-3 rounded-xl">
-            <input id="est-apellido1" placeholder="Primer Apellido" class="w-full bg-slate-800 p-3 rounded-xl">
-            <input id="est-apellido2" placeholder="Segundo Apellido" class="w-full bg-slate-800 p-3 rounded-xl">
-        </div>
-        <div class="flex justify-end gap-3 mt-6"><button onclick="Estudiantes.cerrarModal()" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Estudiantes.guardarEstudiante()" class="bg-green-600 px-6 py-2 rounded-full">Guardar</button></div>
-    </div>
-</div>
+<!-- MODALES (Grupo, Sección, Estudiante, Cotidiano, Proyecto) -->
+<div id="modal-grupo" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-md"><h3 class="text-xl font-bold mb-4">Nuevo Grupo</h3><input id="grupo-nombre" placeholder="Nombre del grupo" class="w-full bg-slate-800 p-3 rounded-xl mb-3"><div class="flex justify-end gap-3"><button onclick="Grupos.cerrarModal('modal-grupo')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Grupos.guardarGrupo()" class="bg-green-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
+<div id="modal-seccion" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-md"><h3 class="text-xl font-bold mb-4">Nueva Sección</h3><input id="seccion-nombre" placeholder="Nombre de la sección" class="w-full bg-slate-800 p-3 rounded-xl mb-3"><div class="flex justify-end gap-3"><button onclick="Grupos.cerrarModal('modal-seccion')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Grupos.guardarSeccion()" class="bg-green-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
+<div id="modal-estudiante" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-md"><h3 class="text-xl font-bold mb-4" id="modal-estudiante-title">Nuevo Estudiante</h3><input type="hidden" id="edit-estudiante-id"><input id="est-nombre" placeholder="Nombre" class="w-full bg-slate-800 p-3 rounded-xl mb-2"><input id="est-apellido1" placeholder="Primer Apellido" class="w-full bg-slate-800 p-3 rounded-xl mb-2"><input id="est-apellido2" placeholder="Segundo Apellido" class="w-full bg-slate-800 p-3 rounded-xl mb-3"><div class="flex justify-end gap-3"><button onclick="Grupos.cerrarModal('modal-estudiante')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Grupos.guardarEstudiante()" class="bg-green-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
+<div id="modal-cotidiano" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-2xl"><h3 class="text-xl font-bold mb-4">📝 Calificar Trabajo Cotidiano</h3><div id="cotidiano-lista-estudiantes" class="space-y-3 max-h-96 overflow-y-auto"></div><div class="flex justify-end gap-3 mt-6"><button onclick="Eval.cerrarModal('modal-cotidiano')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Eval.guardarCotidiano()" class="bg-blue-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
+<div id="modal-proyecto" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-3xl"><h3 class="text-xl font-bold mb-4">🚀 Calificar Proyecto (Design Thinking)</h3><div id="proyecto-fases" class="space-y-4"></div><div class="flex justify-end gap-3 mt-6"><button onclick="Eval.cerrarModal('modal-proyecto')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Eval.guardarProyecto()" class="bg-purple-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
 
 <script>
-    // ========== AQUÍ DEBES PEGAR TU OBJETO PNFT_DATA COMPLETO ==========
-    // Reemplaza este objeto de ejemplo con el contenido íntegro de tu archivo
-    // "Bases Datos PNFT saberes-RdA.docx"
+    // ========== PEGA AQUÍ TU OBJETO PNFT_DATA COMPLETO ==========
 const PNFT_DATA = {
             // ========== MATERNO INFANTIL / TRANSICIÓN ==========
             "0°": {
@@ -706,77 +683,199 @@ const PNFT_DATA = {
             }
         };
 
-        const RDA_POR_CICLO = {
-            "Materno Infantil/Transición": {
-                "Apropiación tecnológica y Digital": "Identifica los dispositivos digitales considerando características funcionales, experimentando su utilidad y reconociendo la autoría, durante la accesibilidad, interacción y comunicación en la creación de recursos digitales.",
-                "Programación y Algoritmos": "Ordena secuencias integrando conceptos de programación como dato, evento, estado, ciclos, así como nociones de lateralidad y orientación espacial, en la solución de desafíos propuestos, utilizando la programación iconográfica por bloques.",
-                "Computación física y Robótica": "Reconoce el funcionamiento de los robots, así como sus componentes (cuerpo, sistema sensorial, sistemas de control), al clasificarlos por su uso y programarlos para resolver retos.",
-                "Ciencia de datos e Inteligencia artificial": "Reconoce los conceptos básicos relacionados con la recopilación, organización e interpretación de datos, mediante gráficos pictóricos en la resolución de problemas, fomentando el pensamiento crítico y la curiosidad hacia el mundo que lo rodea."
-            },
-            "I Ciclo": {
-                "Apropiación tecnológica y Digital": "Selecciona los dispositivos digitales y herramientas de productividad, mediante el uso de software y hardware, en la creación de archivos, creación y edición de contenido multimedia, aprovechando Internet y respetando la propiedad intelectual en la realización de tareas para la accesibilidad a la información de forma segura y responsable.",
-                "Programación y Algoritmos": "Selecciona conceptos de programación como dato, secuencia, evento, estado, variables, operadores aritméticos y relacionales, condicionales simples, ciclo finito e infinito, en la programación por bloques para la solución de problemas.",
-                "Computación física y Robótica": "No aplica para este ciclo.",
-                "Ciencia de datos e Inteligencia artificial": "Reconoce los fundamentos de la inteligencia artificial y su presencia en la vida cotidiana, mediante ejemplos concretos como asistentes virtuales, valorando el uso seguro y responsable de estas tecnologías."
-            },
-            "II Ciclo": {
-                "Apropiación tecnológica y Digital": "Selecciona la configuración de programas locales y en línea para su correcto uso al crear, buscar, compartir, organizar y administrar información en la realización de diferentes tareas de manera comprensiva, segura y responsable.",
-                "Programación y Algoritmos": "Crea algoritmos que integran los conceptos de programación como secuencia, evento, estructuras de control (condicionales simples y ciclos), en la solución a problemas del contexto mediante la programación por bloques.",
-                "Computación física y Robótica": "Crea algoritmos que permiten la simulación de comportamientos de aparatos tecnológicos, aplicando elementos de computación física, programación y electrónica para la resolución de un problema.",
-                "Ciencia de datos e Inteligencia artificial": "Reconoce el uso de la inteligencia artificial en contextos cotidianos y aplica técnicas básicas de recolección, análisis y representación de datos mediante tablas y gráficos."
-            },
-            "III Ciclo": {
-                "Apropiación tecnológica y Digital": "Crea diferentes tipos de archivos digitales (como texto, presentaciones, hojas de cálculo y otros), aplicando técnicas de gestión y seguridad de la información para organizar, proteger y comunicar eficazmente su trabajo académico y proyectos personales en entornos digitales locales y en la nube.",
-                "Programación y Algoritmos": "Crea algoritmos y programas que integren estructuras de control (condicionales, ciclos), colecciones de datos, operadores y funciones, aplicando la lógica de programación para resolver problemas de complejidad media en contextos cotidianos o escolares.",
-                "Computación física y Robótica": "Crea prototipos que integren elementos de computación física y/o robótica, aplicando conocimientos de electrónica, programación de microcontroladores, y uso de sensores y actuadores para automatizar procesos o resolver problemas específicos de su entorno.",
-                "Ciencia de datos e Inteligencia artificial": "Aplica técnicas básicas de ciencia de datos (recolección, organización, visualización) e identifica el funcionamiento y aplicaciones de la inteligencia artificial, reconociendo sus usos, beneficios y desafíos éticos en diferentes contextos cotidianos."
-            }
-        };
+    // ========== FIN DE PNFT_DATA ==========
 
-    const PERFILES_POR_CICLO = {
-        "Materno Infantil/Transición": [{ nombre: "Fundamentos de tecnología", area: "Apropiación tecnológica y Digital" }],
-        "I Ciclo": [{ nombre: "Fundamentos de tecnología", area: "Apropiación tecnológica y Digital" }, { nombre: "Seguridad digital", area: "Apropiación tecnológica y Digital" }],
-        "II Ciclo": [{ nombre: "Fundamentos de tecnología", area: "Apropiación tecnológica y Digital" }, { nombre: "Seguridad digital", area: "Apropiación tecnológica y Digital" }, { nombre: "Lenguajes de programación", area: "Programación y Algoritmos" }],
-        "III Ciclo": [{ nombre: "Fundamentos de tecnología", area: "Apropiación tecnológica y Digital" }, { nombre: "Seguridad digital", area: "Apropiación tecnológica y Digital" }, { nombre: "Lenguajes de programación", area: "Programación y Algoritmos" }, { nombre: "Mecánica y diseño de robots", area: "Computación física y Robótica" }]
-    };
-    const PESOS_EVALUACION = {
-        "I Ciclo": { cotidiano:65, tareas:10, pruebas:15, proyecto:0, asistencia:10 },
-        "II Ciclo": { cotidiano:60, tareas:10, pruebas:20, proyecto:0, asistencia:10 },
-        "III Ciclo": { cotidiano:50, tareas:10, pruebas:0, proyecto:30, asistencia:10 }
+// ========== PERFILES DE SALIDA POR CICLO (COMPLETO) ==========
+const PERFILES_POR_CICLO = {
+    "Materno Infantil/Transición": [
+        { nombre: "Fundamentos de tecnología", area: "Apropiación tecnológica y Digital" },
+        { nombre: "Experiencias de uso con la tecnología", area: "Apropiación tecnológica y Digital" },
+        { nombre: "Fundamentos de programación", area: "Programación y Algoritmos" },
+        { nombre: "Lenguajes de programación", area: "Programación y Algoritmos" },
+        { nombre: "Principios de computación física y robótica", area: "Computación física y Robótica" },
+        { nombre: "Introducción a los datos", area: "Ciencia de datos e Inteligencia artificial" },
+        { nombre: "Organización y representación de datos", area: "Ciencia de datos e Inteligencia artificial" },
+        { nombre: "Entornos virtuales", area: "Ciencia de datos e Inteligencia artificial" }
+    ],
+    "I Ciclo": [
+        { nombre: "Fundamentos de tecnología", area: "Apropiación tecnológica y Digital" },
+        { nombre: "Experiencias de uso con la tecnología", area: "Apropiación tecnológica y Digital" },
+        { nombre: "Seguridad digital y gestión de riesgos", area: "Apropiación tecnológica y Digital" },
+        { nombre: "Fundamentos de programación", area: "Programación y Algoritmos" },
+        { nombre: "Lenguajes de programación", area: "Programación y Algoritmos" },
+        { nombre: "Introducción a la inteligencia artificial", area: "Ciencia de datos e Inteligencia artificial" }
+    ],
+    "II Ciclo": [
+        { nombre: "Fundamentos de tecnología", area: "Apropiación tecnológica y Digital" },
+        { nombre: "Experiencias de uso con la tecnología", area: "Apropiación tecnológica y Digital" },
+        { nombre: "Seguridad digital y gestión de riesgos", area: "Apropiación tecnológica y Digital" },
+        { nombre: "Fundamentos de programación", area: "Programación y Algoritmos" },
+        { nombre: "Lenguajes de programación", area: "Programación y Algoritmos" },
+        { nombre: "Electrónica y circuitos", area: "Computación física y Robótica" },
+        { nombre: "Creación de prototipos", area: "Computación física y Robótica" },
+        { nombre: "Introducción a los datos", area: "Ciencia de datos e Inteligencia artificial" },
+        { nombre: "Organización y representación de datos", area: "Ciencia de datos e Inteligencia artificial" },
+        { nombre: "Introducción a la inteligencia artificial", area: "Ciencia de datos e Inteligencia artificial" }
+    ],
+    "III Ciclo": [
+        { nombre: "Fundamentos de tecnología", area: "Apropiación tecnológica y Digital" },
+        { nombre: "Experiencias de uso con la tecnología", area: "Apropiación tecnológica y Digital" },
+        { nombre: "Seguridad digital y gestión de riesgos", area: "Apropiación tecnológica y Digital" },
+        { nombre: "Fundamentos de programación", area: "Programación y Algoritmos" },
+        { nombre: "Lenguajes de programación", area: "Programación y Algoritmos" },
+        { nombre: "Principios de computación física y robótica", area: "Computación física y Robótica" },
+        { nombre: "Mecánica y diseño de robots", area: "Computación física y Robótica" },
+        { nombre: "Electrónica y circuitos", area: "Computación física y Robótica" },
+        { nombre: "Creación de prototipos", area: "Computación física y Robótica" },
+        { nombre: "Introducción a los datos", area: "Ciencia de datos e Inteligencia artificial" },
+        { nombre: "Organización y representación de datos", area: "Ciencia de datos e Inteligencia artificial" },
+        { nombre: "Introducción a la inteligencia artificial", area: "Ciencia de datos e Inteligencia artificial" }
+    ]
+};
+
+// ========== EJES TRANSVERSALES POR CICLO (COMPLETO) ==========
+const EJES_POR_CICLO = {
+    "Materno Infantil/Transición": {
+        "Pensamiento computacional": "Pensamiento algorítmico: Utiliza algoritmos simples mediante una serie de instrucciones paso por paso para resolver un problema o realizar una tarea específica. Abstracción: Dibuja los elementos esenciales de una cosa u objeto. Descomposición: Divide tareas o problemas en pasos más pequeños y manejables. Reconocimiento de patrones: Reconoce patrones en objetos, números o eventos; clasifica y ordena objetos según diferentes características.",
+        "Ciudadanía y Ética digital": "Ciudadanía: Reconoce la importancia de hacer un uso responsable y equilibrado de la tecnología, comprendiendo el tiempo de pantalla adecuado. Ética digital: Reconoce la importancia de respetar los derechos de autor y de no copiar o utilizar el trabajo de otros sin permiso.",
+        "Emprendimiento e innovación": "Emprendimiento: Comparte con sus compañeros ideas y escucha las opiniones de los demás. Innovación: Conoce diversas maneras de hacer las cosas, pensando de manera no convencional."
+    },
+    "I Ciclo": {
+        "Pensamiento computacional": "Pensamiento algorítmico: Aplica conceptos básicos de lógica, como el 'si... entonces'; hace conexiones causa-efecto. Abstracción: Identifica patrones y generaliza reglas a partir de esos patrones. Descomposición: Planifica tareas de manera más efectiva, dividiéndolas en pasos más detallados. Reconocimiento de patrones: Identifica patrones que se repiten en los pasos que dan solución a un problema.",
+        "Ciudadanía y Ética digital": "Ciudadanía: Infiere la importancia de asumir la responsabilidad de sus acciones en línea, respetando normas y políticas. Ética digital: Conoce sobre los derechos y responsabilidades que tiene como ciudadano digital, incluyendo el respeto a la diversidad y la participación segura en la comunidad en línea.",
+        "Emprendimiento e innovación": "Emprendimiento: Colabora con sus compañeros, comparte ideas y escucha las opiniones de los demás. Innovación: Explora herramientas digitales creativas, como programas de diseño o plataformas de codificación, que les permitan expresar sus ideas de forma innovadora."
+    },
+    "II Ciclo": {
+        "Pensamiento computacional": "Pensamiento algorítmico: Diseña algoritmos eficientes y optimizados para resolver problemas específicos. Abstracción: Extrae de un problema la información que es relevante para poder resolverlo. Descomposición: Utiliza diagramas, esquemas o pseudocódigo para representar y comprender problemas y soluciones de manera más abstracta. Reconocimiento de patrones: Aplica conceptos como condicionales o ciclos en la programación, a partir del reconocimiento de patrones.",
+        "Ciudadanía y Ética digital": "Ciudadanía: Gestiona su identidad digital de manera responsable, fomentando una imagen positiva en línea y comprendiendo cómo crear y mantener contraseñas seguras. Ética digital: Valora la aplicación de los derechos de propiedad intelectual, incluyendo el manejo general de distintos tipos de licencia, sobre las propias producciones digitales y las de otros.",
+        "Emprendimiento e innovación": "Emprendimiento: Integra habilidades básicas de planificación, estableciendo metas y aprendiendo a dividir el trabajo en tareas específicas. Innovación: Desarrolla prototipos de productos o servicios, probados en un entorno controlado, comprendiendo la importancia de iterar y mejorar sus ideas antes de lanzarlas al mercado."
+    },
+    "III Ciclo": {
+        "Pensamiento computacional": "Pensamiento algorítmico: Construye algoritmos teniendo en cuenta la eficiencia y el rendimiento para la resolución de problemas. Abstracción: Utiliza funciones o procedimientos para encapsular y abstraer bloques de código reutilizables, promoviendo modularidad y legibilidad. Descomposición: Descompone problemas complejos en subproblemas más pequeños y los aborda de manera sistemática, utilizando diagramas de flujo u otras técnicas de representación visual. Reconocimiento de patrones: Analiza patrones en datos, algoritmos y problemas para obtener regularidades y estructuras repetitivas.",
+        "Ciudadanía y Ética digital": "Ciudadanía: Reflexiona sobre cómo su actividad en línea genera rastros permanentes y la importancia de gestionar su huella digital para proteger su reputación e imagen. Ética digital: Aplica los conceptos de ética y moralidad en el entorno digital, fomentando la empatía, el respeto y la consideración hacia los demás en línea, evitando el ciberacoso y promoviendo relaciones digitales saludables.",
+        "Emprendimiento e innovación": "Emprendimiento: Desarrolla habilidades de liderazgo trabajando en equipo, asumiendo roles de liderazgo, tomando decisiones y delegando responsabilidades. Innovación: Integra el uso de diversas herramientas de productividad y programación para generar soluciones innovadoras a los problemas que debe resolver."
+    }
+};
+
+// ========== RESULTADOS DE APRENDIZAJE (RDA) POR CICLO Y ÁREA (COMPLETO) ==========
+// Nota: Se incluyen todas las áreas para cada ciclo, según el documento.
+const RDA_POR_CICLO = {
+    "Materno Infantil/Transición": {
+        "Apropiación tecnológica y Digital": "Identifica los dispositivos digitales considerando características funcionales, experimentando su utilidad y reconociendo la autoría, durante la accesibilidad, interacción y comunicación en la creación de recursos digitales.",
+        "Programación y Algoritmos": "Ordena secuencias integrando conceptos de programación como dato, evento, estado, ciclos, así como nociones de lateralidad y orientación espacial, en la solución de desafíos propuestos, utilizando la programación iconográfica por bloques.",
+        "Computación física y Robótica": "Reconoce el funcionamiento de los robots, así como sus componentes (cuerpo, sistema sensorial, sistemas de control), al clasificarlos por su uso y programarlos para resolver retos.",
+        "Ciencia de datos e Inteligencia artificial": "Reconoce los conceptos básicos relacionados con la recopilación, organización e interpretación de datos, mediante gráficos pictóricos en la resolución de problemas, fomentando el pensamiento crítico y la curiosidad hacia el mundo que lo rodea."
+    },
+    "I Ciclo": {
+        "Apropiación tecnológica y Digital": "Selecciona los dispositivos digitales y herramientas de productividad, mediante el uso de software y hardware, en la creación de archivos, creación y edición de contenido multimedia, aprovechando Internet y respetando la propiedad intelectual en la realización de tareas para la accesibilidad a la información de forma segura y responsable.",
+        "Programación y Algoritmos": "Selecciona conceptos de programación como dato, secuencia, evento, estado, variables, operadores aritméticos y relacionales, condicionales simples, ciclo finito e infinito, en la programación por bloques para la solución de problemas.",
+        "Computación física y Robótica": "No aplica para este ciclo.",
+        "Ciencia de datos e Inteligencia artificial": "Reconoce los fundamentos de la inteligencia artificial y su presencia en la vida cotidiana, mediante ejemplos concretos como asistentes virtuales, valorando el uso seguro y responsable de estas tecnologías."
+    },
+    "II Ciclo": {
+        "Apropiación tecnológica y Digital": "Selecciona la configuración de programas locales y en línea para su correcto uso al crear, buscar, compartir, organizar y administrar información en la realización de diferentes tareas de manera comprensiva, segura y responsable.",
+        "Programación y Algoritmos": "Crea algoritmos que integran los conceptos de programación como secuencia, evento, estructuras de control (condicionales simples y ciclos), en la solución a problemas del contexto mediante la programación por bloques.",
+        "Computación física y Robótica": "Crea algoritmos que permiten la simulación de comportamientos de aparatos tecnológicos, aplicando elementos de computación física, programación y electrónica para la resolución de un problema.",
+        "Ciencia de datos e Inteligencia artificial": "Reconoce el uso de la inteligencia artificial en contextos cotidianos y aplica técnicas básicas de recolección, análisis y representación de datos mediante tablas y gráficos."
+    },
+    "III Ciclo": {
+        "Apropiación tecnológica y Digital": "Combina herramientas digitales, tomando en cuenta fundamentos de tecnología, impacto de las TIC, seguridad y privacidad digital y, su experiencia de uso, en la realización de productos digitales.",
+        "Programación y Algoritmos": "Integra conceptos de programación como eventos, operadores, estructuras de datos, estructuras de control, procedimientos, funciones, colecciones de datos y algoritmos (diagrama de flujo y pseudocódigo), en la solución de problemas reales.",
+        "Computación física y Robótica": "Aplica fundamentos de robótica, computación física, electrónica, mecánica y sistemas robóticos autónomos en la programación y construcción de prototipos que resuelven un problema.",
+        "Ciencia de datos e Inteligencia artificial": "Analiza datos mediante herramientas digitales que permiten su visualización para la toma de decisiones en situaciones cotidianas y reconoce aspectos fundamentales de la inteligencia artificial, incluyendo sus aplicaciones actuales y desafíos asociados."
+    }
+};
+    const PESOS_EVALUACION = { "I Ciclo": { cotidiano:65, tareas:10, pruebas:15, proyecto:0, asistencia:10 }, "II Ciclo": { cotidiano:60, tareas:10, pruebas:20, proyecto:0, asistencia:10 }, "III Ciclo": { cotidiano:50, tareas:10, pruebas:0, proyecto:30, asistencia:10 } };
+
+    // ---------- INDEXEDDB ----------
+    const DB = {
+        db: null,
+        async init() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('PNFT_DB', 1);
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('grupos')) db.createObjectStore('grupos', { keyPath: 'id', autoIncrement: true });
+                    if (!db.objectStoreNames.contains('secciones')) { const sec = db.createObjectStore('secciones', { keyPath: 'id', autoIncrement: true }); sec.createIndex('grupoId', 'grupoId'); }
+                    if (!db.objectStoreNames.contains('estudiantes')) { const est = db.createObjectStore('estudiantes', { keyPath: 'id', autoIncrement: true }); est.createIndex('seccionId', 'seccionId'); }
+                    if (!db.objectStoreNames.contains('calificaciones')) db.createObjectStore('calificaciones', { keyPath: 'id', autoIncrement: true });
+                    if (!db.objectStoreNames.contains('planificacion')) db.createObjectStore('planificacion', { keyPath: 'id' });
+                };
+                request.onsuccess = (e) => { this.db = e.target.result; resolve(); };
+                request.onerror = (e) => reject(e);
+            });
+        },
+        async getAll(store) { return new Promise((res, rej) => { const tx = this.db.transaction(store, 'readonly'); const req = tx.objectStore(store).getAll(); req.onsuccess = () => res(req.result); req.onerror = rej; }); },
+        async getByIndex(store, index, value) { return new Promise((res, rej) => { const tx = this.db.transaction(store, 'readonly'); const req = tx.objectStore(store).index(index).getAll(value); req.onsuccess = () => res(req.result); req.onerror = rej; }); },
+        async add(store, item) { return new Promise((res, rej) => { const tx = this.db.transaction(store, 'readwrite'); const req = tx.objectStore(store).add(item); req.onsuccess = () => res(req.result); req.onerror = rej; }); },
+        async put(store, item) { return new Promise((res, rej) => { const tx = this.db.transaction(store, 'readwrite'); const req = tx.objectStore(store).put(item); req.onsuccess = () => res(req.result); req.onerror = rej; }); },
+        async delete(store, id) { return new Promise((res, rej) => { const tx = this.db.transaction(store, 'readwrite'); const req = tx.objectStore(store).delete(id); req.onsuccess = () => res(); req.onerror = rej; }); }
     };
 
     // ---------- ESTADO GLOBAL ----------
     const App = {
-        nivelActual: '1°', moduloActual: 'Módulo 1', saberesSeleccionados: new Set(), saberesImpartidos: new Set(),
-        estudiantes: [], calificaciones: {},
-        init() { this.cargarStorage(); this.renderizarTodo(); this.actualizarPesosUI(); },
-        cargarStorage() {
-            const key = `pnft_${this.nivelActual}_${this.moduloActual}`;
-            const data = JSON.parse(localStorage.getItem(key) || '{}');
-            this.saberesSeleccionados = new Set(data.seleccionados || []);
-            this.saberesImpartidos = new Set(data.impartidos || []);
-            this.estudiantes = JSON.parse(localStorage.getItem('pnft_estudiantes') || '[]');
-            this.calificaciones = JSON.parse(localStorage.getItem(`pnft_calif_${this.nivelActual}`) || '{}');
-            if (!this.calificaciones.estudiantes) this.calificaciones.estudiantes = {};
+        nivelActual: '1°', moduloActual: 'Módulo 1', grupoActualId: null, seccionActualId: null,
+        saberesSeleccionados: new Set(), saberesImpartidos: new Set(), estudiantes: [], calificaciones: {},
+        async init() {
+            await DB.init();
+            await this.cargarGrupos();
+            await this.cargarStorage();
+            this.renderizarTodo();
         },
-        guardarStorage() {
-            const key = `pnft_${this.nivelActual}_${this.moduloActual}`;
-            localStorage.setItem(key, JSON.stringify({ seleccionados: [...this.saberesSeleccionados], impartidos: [...this.saberesImpartidos] }));
-            localStorage.setItem('pnft_estudiantes', JSON.stringify(this.estudiantes));
-            localStorage.setItem(`pnft_calif_${this.nivelActual}`, JSON.stringify(this.calificaciones));
+        async cargarGrupos() {
+            const grupos = await DB.getAll('grupos');
+            const select = document.getElementById('select-grupo');
+            select.innerHTML = '<option value="">Seleccionar grupo...</option>';
+            grupos.forEach(g => select.innerHTML += `<option value="${g.id}">${g.nombre}</option>`);
+            if (grupos.length && !this.grupoActualId) { this.grupoActualId = grupos[0].id; select.value = this.grupoActualId; await this.cargarSecciones(); }
+        },
+        async cambiarGrupo() {
+            this.grupoActualId = +document.getElementById('select-grupo').value;
+            await this.cargarSecciones();
+            await this.cargarStorage();
+            this.renderizarTodo();
+            if (document.querySelector('[data-tab="evaluacion"]').classList.contains('active')) Eval.renderizarTabla();
+        },
+        async cargarSecciones() {
+            if (!this.grupoActualId) return;
+            const secciones = await DB.getByIndex('secciones', 'grupoId', this.grupoActualId);
+            if (secciones.length) this.seccionActualId = secciones[0].id;
+            await this.cargarEstudiantes();
+            Grupos.renderSecciones();
+        },
+        async cargarEstudiantes() {
+            if (!this.seccionActualId) { this.estudiantes = []; return; }
+            this.estudiantes = await DB.getByIndex('estudiantes', 'seccionId', this.seccionActualId);
+        },
+        async cargarStorage() {
+            if (!this.grupoActualId || !this.seccionActualId) return;
+            const key = `plan_${this.grupoActualId}_${this.seccionActualId}_${this.nivelActual}_${this.moduloActual}`;
+            const data = await DB.getByIndex('planificacion', 'id', key);
+            if (data.length) {
+                this.saberesSeleccionados = new Set(data[0].seleccionados || []);
+                this.saberesImpartidos = new Set(data[0].impartidos || []);
+            } else { this.saberesSeleccionados.clear(); this.saberesImpartidos.clear(); }
+            const calif = await DB.getByIndex('calificaciones', 'id', `cal_${this.grupoActualId}_${this.seccionActualId}`);
+            this.calificaciones = calif.length ? calif[0].data : {};
+        },
+        async guardarStorage() {
+            if (!this.grupoActualId || !this.seccionActualId) return;
+            const key = `plan_${this.grupoActualId}_${this.seccionActualId}_${this.nivelActual}_${this.moduloActual}`;
+            await DB.put('planificacion', { id: key, seleccionados: [...this.saberesSeleccionados], impartidos: [...this.saberesImpartidos] });
+            await DB.put('calificaciones', { id: `cal_${this.grupoActualId}_${this.seccionActualId}`, data: this.calificaciones });
         },
         getCiclo() { const n = parseInt(this.nivelActual); if (isNaN(n)) return 'Materno Infantil/Transición'; if (n <= 3) return 'I Ciclo'; if (n <= 6) return 'II Ciclo'; return 'III Ciclo'; },
-        selectLevel(level) { this.nivelActual = level; document.querySelectorAll('.level-tab').forEach(t => t.classList.remove('active')); document.querySelector(`[data-level="${level}"]`).classList.add('active'); this.init(); },
-        cargarModulo() { this.moduloActual = document.getElementById('select-modulo').value; this.init(); },
-        switchTab(tab) { document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden')); document.getElementById(`tab-${tab}`).classList.remove('hidden'); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.querySelector(`[data-tab="${tab}"]`).classList.add('active'); if (tab === 'evaluacion') Eval.renderizarTabla(); if (tab === 'dashboard') Dashboard.render(); if (tab === 'estudiantes') Estudiantes.renderTabla(); },
-        actualizarPesosUI() { const ciclo = this.getCiclo(); const pesos = PESOS_EVALUACION[ciclo] || PESOS_EVALUACION['I Ciclo']; document.getElementById('peso-cotidiano').innerText = `${pesos.cotidiano}%`; document.getElementById('peso-tareas').innerText = `${pesos.tareas}%`; document.getElementById('peso-pruebas').innerText = `${pesos.pruebas}%`; document.getElementById('peso-proyecto').innerText = `${pesos.proyecto}%`; document.getElementById('ciclo-eval-badge').innerText = `Ciclo: ${ciclo}`; },
-        renderizarTodo() { this.renderSaberes(); this.renderBateriasYPerfiles(); this.renderListaSeleccionados(); this.actualizarPesosUI(); },
-        toggleSaber(id, checked) { if (checked) this.saberesSeleccionados.add(id); else this.saberesSeleccionados.delete(id); this.guardarStorage(); this.renderizarTodo(); },
-        toggleImpartido(id) { if (this.saberesImpartidos.has(id)) this.saberesImpartidos.delete(id); else this.saberesImpartidos.add(id); this.guardarStorage(); this.renderSaberes(); },
-        limpiarSeleccion() { this.saberesSeleccionados.clear(); this.guardarStorage(); this.renderizarTodo(); },
+        selectLevel(level) { this.nivelActual = level; document.querySelectorAll('.level-tab').forEach(t => t.classList.remove('active')); document.querySelector(`[data-level="${level}"]`).classList.add('active'); this.cargarStorage().then(() => this.renderizarTodo()); },
+        cargarModulo() { this.moduloActual = document.getElementById('select-modulo').value; this.cargarStorage().then(() => this.renderizarTodo()); },
+        switchTab(tab) { document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden')); document.getElementById(`tab-${tab}`).classList.remove('hidden'); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.querySelector(`[data-tab="${tab}"]`).classList.add('active'); if (tab === 'evaluacion') Eval.renderizarTabla(); if (tab === 'grupos') Grupos.renderSecciones(); },
+        renderizarTodo() { this.renderSaberes(); this.renderBateriasYPerfiles(); this.renderListaSeleccionados(); document.getElementById('ciclo-eval-badge').innerText = `Ciclo: ${this.getCiclo()}`; this.actualizarPesosUI(); },
+        actualizarPesosUI() { const ciclo = this.getCiclo(); const p = PESOS_EVALUACION[ciclo] || PESOS_EVALUACION['I Ciclo']; document.getElementById('peso-cotidiano').innerText = `${p.cotidiano}%`; document.getElementById('peso-tareas').innerText = `${p.tareas}%`; document.getElementById('peso-pruebas').innerText = `${p.pruebas}%`; document.getElementById('peso-proyecto').innerText = `${p.proyecto}%`; },
+        toggleSaber(id, checked) { if (checked) this.saberesSeleccionados.add(id); else this.saberesSeleccionados.delete(id); this.guardarStorage().then(() => this.renderizarTodo()); },
+        toggleImpartido(id) { if (this.saberesImpartidos.has(id)) this.saberesImpartidos.delete(id); else this.saberesImpartidos.add(id); this.guardarStorage().then(() => this.renderSaberes()); },
+        limpiarSeleccion() { this.saberesSeleccionados.clear(); this.guardarStorage().then(() => this.renderizarTodo()); },
         renderSaberes() {
-            const container = document.getElementById('saberes-container'); const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual];
-            if (!data) { container.innerHTML = '<p class="text-white/40">Datos no disponibles para este nivel/módulo.</p>'; return; }
+            const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual]; const container = document.getElementById('saberes-container');
+            if (!data) { container.innerHTML = '<p class="text-white/40">Datos no disponibles.</p>'; return; }
             let html = ''; Object.entries(data).forEach(([area, content]) => {
                 html += `<h4 class="text-lg font-bold text-blue-300 mt-4">${area}</h4>`;
                 content.saberes.forEach(s => { const id = `${area}::${s.nombre}`; const checked = this.saberesSeleccionados.has(id); const impartido = this.saberesImpartidos.has(id);
@@ -790,22 +889,18 @@ const PNFT_DATA = {
             const contador = {}; areas.forEach(a => contador[a] = 0);
             this.saberesSeleccionados.forEach(s => { const area = s.split('::')[0]; if (contador.hasOwnProperty(area)) contador[area]++; });
             const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
-            const batteriesHtml = areas.map(area => {
-                const total = data[area]?.saberes?.length || 1;
-                const pct = Math.round((contador[area] / total) * 100);
-                const color = area.includes('Apropiación') ? 'from-blue-500 to-cyan-400' : area.includes('Programación') ? 'from-emerald-500 to-green-400' : area.includes('Robótica') ? 'from-amber-500 to-orange-400' : 'from-purple-500 to-pink-400';
+            const bhtml = areas.map(area => {
+                const total = data[area]?.saberes?.length || 1; const pct = Math.round((contador[area] / total) * 100);
+                const color = area.includes('Apropiación') ? 'from-blue-500' : area.includes('Programación') ? 'from-emerald-500' : area.includes('Robótica') ? 'from-amber-500' : 'from-purple-500';
                 return `<div><div class="flex justify-between text-sm"><span>${area}</span><span>${pct}%</span></div><div class="w-full h-5 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r ${color}" style="width:${pct}%"></div></div></div>`;
             }).join('');
-            document.getElementById('batteries-container').innerHTML = batteriesHtml;
-            // Perfiles
+            document.getElementById('batteries-container').innerHTML = bhtml;
             const ciclo = this.getCiclo(); const perfiles = PERFILES_POR_CICLO[ciclo] || [];
-            const perfilHtml = perfiles.map(perfil => {
-                const total = data[perfil.area]?.saberes?.length || 1;
-                const seleccionados = [...this.saberesSeleccionados].filter(s => s.startsWith(perfil.area)).length;
-                const pct = Math.round((seleccionados / total) * 100);
-                return `<div><div class="flex justify-between text-xs"><span>${perfil.nombre}</span><span>${pct}%</span></div><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-emerald-500" style="width:${pct}%"></div></div></div>`;
+            const phtml = perfiles.map(p => {
+                const total = data[p.area]?.saberes?.length || 1; const sel = [...this.saberesSeleccionados].filter(s => s.startsWith(p.area)).length;
+                return `<div><div class="flex justify-between text-xs"><span>${p.nombre}</span><span>${Math.round((sel/total)*100)}%</span></div><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-emerald-500" style="width:${Math.round((sel/total)*100)}%"></div></div></div>`;
             }).join('');
-            document.getElementById('perfiles-content').innerHTML = perfilHtml || '<p class="text-white/40">No hay perfiles definidos.</p>';
+            document.getElementById('perfiles-content').innerHTML = phtml;
         },
         renderListaSeleccionados() {
             const lista = document.getElementById('selected-saberes-list');
@@ -815,66 +910,70 @@ const PNFT_DATA = {
             for (let area in agrupados) { html += `<p class="text-xs font-bold text-blue-300 mt-2">${area}</p>`; agrupados[area].forEach(n => { html += `<div class="flex items-center justify-between text-sm pl-2"><span>• ${n}</span><i class="fas fa-times-circle text-red-400 cursor-pointer" onclick="App.eliminarSaber('${area}::${n}')"></i></div>`; }); }
             lista.innerHTML = html;
         },
-        eliminarSaber(id) { this.saberesSeleccionados.delete(id); this.guardarStorage(); this.renderizarTodo(); },
+        eliminarSaber(id) { this.saberesSeleccionados.delete(id); this.guardarStorage().then(() => this.renderizarTodo()); },
         togglePerfiles() { const c = document.getElementById('perfiles-content'); const ch = document.getElementById('perfiles-chevron'); c.classList.toggle('hidden'); ch.classList.toggle('fa-chevron-down'); ch.classList.toggle('fa-chevron-up'); },
         generarPrompt() {
             if (this.saberesSeleccionados.size === 0) { alert('Selecciona al menos un saber.'); return; }
-            const ciclo = this.getCiclo(); const rda = RDA_POR_CICLO[ciclo]?.["Apropiación tecnológica y Digital"] || "RdA no definido";
+            const ciclo = this.getCiclo(); const rda = RDA_POR_CICLO[ciclo]?.["Apropiación tecnológica y Digital"] || "";
+            const ejes = EJES_POR_CICLO[ciclo] || {}; let ejesTxt = ''; for (let e in ejes) ejesTxt += `- ${e}: ${ejes[e]}\n`;
             let saberesTxt = ''; this.saberesSeleccionados.forEach(s => saberesTxt += `- ${s}\n`);
-            const prompt = `Actúa como especialista en mediación pedagógica del MEP Costa Rica - PNFT 2026.\nNivel: ${this.nivelActual} | Módulo: ${this.moduloActual}\nCiclo: ${ciclo}\n📌 SABERES SELECCIONADOS:\n${saberesTxt}\n🎯 RdA: ${rda}\nTAREA: Diseñar estrategia de mediación completa con Focalización, Exploración, Aplicación, Reflexión, Rúbrica y DUA.`;
+            let metodologia = "ABJ"; if (ciclo === 'II Ciclo') metodologia = "ABR"; else if (ciclo === 'III Ciclo') metodologia = "Design Thinking";
+            const prompt = `Actúa como especialista en mediación pedagógica del MEP Costa Rica - PNFT 2026.\nNivel: ${this.nivelActual} | Módulo: ${this.moduloActual}\nCiclo: ${ciclo}\nMetodología: ${metodologia}\n📌 SABERES SELECCIONADOS:\n${saberesTxt}\n🎯 RdA: ${rda}\n⚙️ EJES TRANSVERSALES:\n${ejesTxt}\nTAREA: Diseñar estrategia completa con Focalización, Exploración, Aplicación, Reflexión, Rúbrica y DUA.`;
             document.getElementById('output-prompt').value = prompt;
         },
         copiarPrompt() { const ta = document.getElementById('output-prompt'); ta.select(); document.execCommand('copy'); alert('✅ Prompt copiado.'); }
     };
 
+    const Grupos = {
+        async abrirModalGrupo() { document.getElementById('grupo-nombre').value = ''; document.getElementById('modal-grupo').classList.remove('hidden'); },
+        async guardarGrupo() { const nombre = document.getElementById('grupo-nombre').value; if (!nombre) return; await DB.add('grupos', { nombre }); this.cerrarModal('modal-grupo'); App.cargarGrupos(); },
+        async abrirModalSeccion() { if (!App.grupoActualId) { alert('Selecciona un grupo primero.'); return; } document.getElementById('seccion-nombre').value = ''; document.getElementById('modal-seccion').classList.remove('hidden'); },
+        async guardarSeccion() { const nombre = document.getElementById('seccion-nombre').value; await DB.add('secciones', { nombre, grupoId: App.grupoActualId }); this.cerrarModal('modal-seccion'); App.cargarSecciones(); },
+        async seleccionarSeccion(id) { App.seccionActualId = id; await App.cargarEstudiantes(); this.renderEstudiantes(); this.renderSecciones(); },
+        async abrirModalEstudiante() { if (!App.seccionActualId) { alert('Selecciona una sección.'); return; } document.getElementById('modal-estudiante-title').innerText = 'Nuevo Estudiante'; document.getElementById('est-nombre').value = ''; document.getElementById('modal-estudiante').classList.remove('hidden'); },
+        async guardarEstudiante() { const nombre = document.getElementById('est-nombre').value; const ape1 = document.getElementById('est-apellido1').value; const ape2 = document.getElementById('est-apellido2').value; await DB.add('estudiantes', { nombre, apellido1: ape1, apellido2: ape2, seccionId: App.seccionActualId }); this.cerrarModal('modal-estudiante'); App.cargarEstudiantes().then(() => this.renderEstudiantes()); },
+        async eliminarEstudiante(id) { await DB.delete('estudiantes', id); App.cargarEstudiantes().then(() => this.renderEstudiantes()); },
+        renderSecciones() {
+            if (!App.grupoActualId) return;
+            DB.getByIndex('secciones', 'grupoId', App.grupoActualId).then(secs => {
+                const div = document.getElementById('lista-secciones');
+                div.innerHTML = secs.map(s => `<div class="p-2 rounded cursor-pointer ${App.seccionActualId === s.id ? 'bg-blue-600' : 'bg-white/5'}" onclick="Grupos.seleccionarSeccion(${s.id})">${s.nombre}</div>`).join('');
+                if (secs.length && !App.seccionActualId) { App.seccionActualId = secs[0].id; App.cargarEstudiantes().then(() => this.renderEstudiantes()); }
+            });
+        },
+        renderEstudiantes() {
+            const tbody = document.getElementById('tabla-estudiantes-body');
+            tbody.innerHTML = App.estudiantes.map(e => `<tr><td class="p-2">${e.nombre} ${e.apellido1} ${e.apellido2}</td><td><button onclick="Grupos.eliminarEstudiante(${e.id})" class="text-red-400"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+        },
+        cerrarModal(id) { document.getElementById(id).classList.add('hidden'); }
+    };
+
     const Eval = {
-        abrirModalCotidiano() { if (App.estudiantes.length === 0) { alert('Primero registra estudiantes.'); return; } const div = document.getElementById('cotidiano-lista-estudiantes'); div.innerHTML = App.estudiantes.map(e => `<div class="flex items-center gap-3"><span class="w-32">${e.nombre} ${e.apellido1}</span><input type="number" min="1" max="4" step="1" id="cot_${e.id}" placeholder="1-4" class="bg-slate-800 w-20 p-2 rounded"></div>`).join(''); document.getElementById('modal-cotidiano').classList.remove('hidden'); },
-        abrirModalProyecto() { if (App.estudiantes.length === 0) { alert('Primero registra estudiantes.'); return; } const fases = ['Empatizar', 'Definir', 'Idear', 'Prototipar', 'Evaluar']; let html = ''; App.estudiantes.forEach(e => { html += `<div class="border-b border-white/20 pb-2"><p class="font-bold">${e.nombre} ${e.apellido1}</p><div class="grid grid-cols-5 gap-2">`; fases.forEach(f => html += `<input type="number" min="0" max="100" id="proy_${e.id}_${f}" placeholder="${f}" class="bg-slate-800 p-1 rounded text-xs">`); html += `</div></div>`; }); document.getElementById('proyecto-fases').innerHTML = html; document.getElementById('modal-proyecto').classList.remove('hidden'); },
-        cerrarModal(id) { document.getElementById(id).classList.add('hidden'); },
-        guardarCotidiano() { App.estudiantes.forEach(e => { const nota = parseFloat(document.getElementById(`cot_${e.id}`)?.value); if (!isNaN(nota)) { if (!App.calificaciones.estudiantes[e.id]) App.calificaciones.estudiantes[e.id] = {}; App.calificaciones.estudiantes[e.id].cotidiano = nota; } }); App.guardarStorage(); this.cerrarModal('modal-cotidiano'); alert('Trabajo Cotidiano guardado.'); Eval.renderizarTabla(); },
-        guardarProyecto() { const fases = ['Empatizar', 'Definir', 'Idear', 'Prototipar', 'Evaluar']; App.estudiantes.forEach(e => { let suma = 0; fases.forEach(f => { const val = parseFloat(document.getElementById(`proy_${e.id}_${f}`)?.value); if (!isNaN(val)) suma += val; }); const promedio = suma / fases.length; if (!App.calificaciones.estudiantes[e.id]) App.calificaciones.estudiantes[e.id] = {}; App.calificaciones.estudiantes[e.id].proyecto = promedio; }); App.guardarStorage(); this.cerrarModal('modal-proyecto'); alert('Proyecto guardado.'); Eval.renderizarTabla(); },
+        abrirModalCotidiano() { if (App.estudiantes.length === 0) { alert('Registra estudiantes.'); return; } const div = document.getElementById('cotidiano-lista-estudiantes'); div.innerHTML = App.estudiantes.map(e => `<div class="flex items-center gap-3"><span class="w-32">${e.nombre} ${e.apellido1}</span><input type="number" min="1" max="4" id="cot_${e.id}" class="bg-slate-800 w-20 p-2 rounded"></div>`).join(''); document.getElementById('modal-cotidiano').classList.remove('hidden'); },
+        guardarCotidiano() { App.estudiantes.forEach(e => { const nota = parseFloat(document.getElementById(`cot_${e.id}`)?.value); if (!isNaN(nota)) { if (!App.calificaciones[e.id]) App.calificaciones[e.id] = {}; App.calificaciones[e.id].cotidiano = nota; } }); App.guardarStorage().then(() => { this.cerrarModal('modal-cotidiano'); Eval.renderizarTabla(); }); },
+        abrirModalProyecto() { if (App.estudiantes.length === 0) { alert('Registra estudiantes.'); return; } const fases = ['Empatizar', 'Definir', 'Idear', 'Prototipar', 'Evaluar']; let html = ''; App.estudiantes.forEach(e => { html += `<div class="border-b border-white/20 pb-2"><p class="font-bold">${e.nombre} ${e.apellido1}</p><div class="grid grid-cols-5 gap-2">`; fases.forEach(f => html += `<input type="number" min="0" max="100" id="proy_${e.id}_${f}" placeholder="${f}" class="bg-slate-800 p-1 rounded text-xs">`); html += `</div></div>`; }); document.getElementById('proyecto-fases').innerHTML = html; document.getElementById('modal-proyecto').classList.remove('hidden'); },
+        guardarProyecto() { const fases = ['Empatizar', 'Definir', 'Idear', 'Prototipar', 'Evaluar']; App.estudiantes.forEach(e => { let suma = 0; fases.forEach(f => { const val = parseFloat(document.getElementById(`proy_${e.id}_${f}`)?.value); if (!isNaN(val)) suma += val; }); const prom = suma / fases.length; if (!App.calificaciones[e.id]) App.calificaciones[e.id] = {}; App.calificaciones[e.id].proyecto = prom; }); App.guardarStorage().then(() => { this.cerrarModal('modal-proyecto'); Eval.renderizarTabla(); }); },
         renderizarTabla() {
-            const tbody = document.getElementById('tabla-calificaciones-body'); if (App.estudiantes.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="p-3 text-center">No hay estudiantes registrados.</td></tr>'; return; }
-            const pesos = PESOS_EVALUACION[App.getCiclo()] || PESOS_EVALUACION['I Ciclo'];
-            let html = ''; App.estudiantes.forEach(e => {
-                const cal = App.calificaciones.estudiantes[e.id] || {};
-                const cot = cal.cotidiano || 0, tar = cal.tareas || 0, pru = cal.pruebas || 0, proy = cal.proyecto || 0, asis = cal.asistencia || 100;
-                const notaFinal = (cot*pesos.cotidiano + tar*pesos.tareas + pru*pesos.pruebas + proy*pesos.proyecto + asis*pesos.asistencia) / 100;
-                let condicion = 'Reprobado', color = 'text-red-400'; if (notaFinal >= 70) { condicion = 'Aprobado'; color = 'text-green-400'; } else if (notaFinal >= 60) { condicion = 'Aplazado'; color = 'text-yellow-400'; }
-                html += `<tr><td class="p-2">${e.nombre} ${e.apellido1}</td><td>${cot}</td><td>${tar}</td><td>${pru}</td><td>${proy.toFixed(1)}</td><td>${asis}</td><td class="font-bold">${notaFinal.toFixed(1)}</td><td class="${color}">${condicion}</td></tr>`;
+            const tbody = document.getElementById('tabla-calificaciones-body'); if (App.estudiantes.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="p-3 text-center">No hay estudiantes.</td></tr>'; return; }
+            const pesos = PESOS_EVALUACION[App.getCiclo()] || PESOS_EVALUACION['I Ciclo']; let html = '';
+            App.estudiantes.forEach(e => {
+                const cal = App.calificaciones[e.id] || {}; const cot = cal.cotidiano || 0, tar = cal.tareas || 0, pru = cal.pruebas || 0, proy = cal.proyecto || 0, asis = cal.asistencia || 100;
+                const nota = (cot*pesos.cotidiano + tar*pesos.tareas + pru*pesos.pruebas + proy*pesos.proyecto + asis*pesos.asistencia) / 100;
+                let cond = 'Reprobado', color = 'text-red-400'; if (nota >= 70) { cond = 'Aprobado'; color = 'text-green-400'; } else if (nota >= 60) { cond = 'Aplazado'; color = 'text-yellow-400'; }
+                html += `<tr><td class="p-2">${e.nombre} ${e.apellido1}</td><td>${cot}</td><td>${tar}</td><td>${pru}</td><td>${proy.toFixed(1)}</td><td>${asis}</td><td>${nota.toFixed(1)}</td><td class="${color}">${cond}</td></tr>`;
             });
             tbody.innerHTML = html;
-        }
-    };
-
-    const Estudiantes = {
-        abrirModalNuevo() { document.getElementById('modal-estudiante-title').innerText = 'Nuevo Estudiante'; document.getElementById('edit-estudiante-id').value = ''; document.getElementById('est-nombre').value = ''; document.getElementById('est-apellido1').value = ''; document.getElementById('est-apellido2').value = ''; document.getElementById('modal-estudiante').classList.remove('hidden'); },
-        cerrarModal() { document.getElementById('modal-estudiante').classList.add('hidden'); },
-        guardarEstudiante() {
-            const nombre = document.getElementById('est-nombre').value.trim(); if (!nombre) return alert('Nombre requerido');
-            const id = Date.now(); App.estudiantes.push({ id, nombre, apellido1: document.getElementById('est-apellido1').value, apellido2: document.getElementById('est-apellido2').value });
-            App.guardarStorage(); this.cerrarModal(); this.renderTabla();
         },
-        renderTabla() {
-            const tbody = document.getElementById('tabla-estudiantes-body');
-            tbody.innerHTML = App.estudiantes.map(e => `<tr><td class="p-2">${e.nombre} ${e.apellido1} ${e.apellido2}</td><td><button onclick="Estudiantes.eliminar(${e.id})" class="text-red-400"><i class="fas fa-trash"></i></button></td></tr>`).join('');
-        },
-        eliminar(id) { App.estudiantes = App.estudiantes.filter(e => e.id !== id); App.guardarStorage(); this.renderTabla(); }
+        cerrarModal(id) { document.getElementById(id).classList.add('hidden'); }
     };
 
-    const Dashboard = {
-        render() {
-            if (App.estudiantes.length === 0) { document.getElementById('dashboard-stats').innerHTML = '<p class="text-white/40 col-span-4">Registra estudiantes para ver estadísticas.</p>'; return; }
-            const califs = Object.values(App.calificaciones.estudiantes || {});
-            const notas = califs.map(c => { const p = PESOS_EVALUACION[App.getCiclo()] || PESOS_EVALUACION['I Ciclo']; return (c.cotidiano||0)*p.cotidiano/100 + (c.tareas||0)*p.tareas/100 + (c.pruebas||0)*p.pruebas/100 + (c.proyecto||0)*p.proyecto/100 + (c.asistencia||100)*p.asistencia/100; });
-            const prom = notas.reduce((a,b) => a+b,0) / notas.length || 0;
-            const aprob = notas.filter(n => n>=70).length, aplaz = notas.filter(n => n>=60 && n<70).length, reprob = notas.filter(n => n<60).length;
-            document.getElementById('dashboard-stats').innerHTML = `<div class="bg-slate-800/50 p-4 rounded-xl"><p class="text-sm text-white/60">Estudiantes</p><p class="text-3xl font-bold">${App.estudiantes.length}</p></div><div class="bg-slate-800/50 p-4 rounded-xl"><p class="text-sm text-white/60">Promedio</p><p class="text-3xl font-bold">${prom.toFixed(1)}</p></div><div class="bg-slate-800/50 p-4 rounded-xl"><p class="text-sm text-white/60">Aprobados</p><p class="text-3xl font-bold text-green-400">${aprob}</p></div><div class="bg-slate-800/50 p-4 rounded-xl"><p class="text-sm text-white/60">Reprobados</p><p class="text-3xl font-bold text-red-400">${reprob}</p></div>`;
-            document.getElementById('dashboard-condicion').innerHTML = `<div class="flex gap-4"><span class="flex items-center"><span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>Aprobado (${aprob})</span><span class="flex items-center"><span class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>Aplazado (${aplaz})</span><span class="flex items-center"><span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>Reprobado (${reprob})</span></div>`;
-        }
+    const Exportar = {
+        pdf() { window.print(); },
+        word() { const contenido = document.getElementById('tab-dashboard').innerHTML; const blob = new Blob([contenido], { type: 'application/msword' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'dashboard.doc'; a.click(); },
+        async json() { const data = { grupo: App.grupoActualId, seccion: App.seccionActualId, nivel: App.nivelActual, modulo: App.moduloActual, calificaciones: App.calificaciones, estudiantes: App.estudiantes }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'datos_pnft.json'; a.click(); }
     };
 
-    window.App = App; window.Eval = Eval; window.Estudiantes = Estudiantes; window.Dashboard = Dashboard;
+    window.App = App; window.Grupos = Grupos; window.Eval = Eval; window.Exportar = Exportar;
     window.onload = () => App.init();
 </script>
 </body>
