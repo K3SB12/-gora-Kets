@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧭 PNFT 2026 · Portal Docente Completo</title>
+    <title>🧭 PNFT 2026 · Portal Docente Completo (v2.1)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -149,7 +149,13 @@
                 <h2 class="text-2xl font-bold"><i class="fas fa-calculator mr-3"></i>Gestión de Calificaciones</h2>
                 <div class="text-sm bg-blue-500/20 px-4 py-2 rounded-full" id="ciclo-eval-badge">Ciclo: I Ciclo</div>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8" id="eval-botones"></div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
+                <button onclick="Eval.abrirModalCotidiano()" class="bg-blue-600/30 hover:bg-blue-600/50 p-4 rounded-xl"><i class="fas fa-user-check text-2xl mb-2"></i><br>Trabajo Cotidiano <span id="peso-cotidiano" class="text-xs block">65%</span></button>
+                <button onclick="Eval.abrirModalTareas()" class="bg-emerald-600/30 hover:bg-emerald-600/50 p-4 rounded-xl"><i class="fas fa-tasks text-2xl mb-2"></i><br>Tareas <span id="peso-tareas" class="text-xs block">10%</span></button>
+                <button onclick="Eval.abrirModalPruebas()" class="bg-amber-600/30 hover:bg-amber-600/50 p-4 rounded-xl"><i class="fas fa-file-alt text-2xl mb-2"></i><br>Pruebas <span id="peso-pruebas" class="text-xs block">15%</span></button>
+                <button onclick="Eval.abrirModalProyecto()" class="bg-purple-600/30 hover:bg-purple-600/50 p-4 rounded-xl"><i class="fas fa-project-diagram text-2xl mb-2"></i><br>Proyecto <span id="peso-proyecto" class="text-xs block">0%</span></button>
+                <button onclick="Eval.abrirModalAsistencia()" class="bg-pink-600/30 hover:bg-pink-600/50 p-4 rounded-xl"><i class="fas fa-calendar-check text-2xl mb-2"></i><br>Asistencia <span class="text-xs block">10%</span></button>
+            </div>
             <h3 class="text-lg font-bold mb-3">Resumen de Calificaciones</h3>
             <div class="overflow-x-auto"><table class="w-full text-sm" id="tabla-calificaciones"><thead class="bg-slate-800/50"></thead><tbody id="tabla-calificaciones-body"></tbody></table></div>
         </div>
@@ -169,7 +175,7 @@
     </div>
 </div>
 
-<!-- MODALES -->
+<!-- MODALES EXISTENTES (GRUPO, SECCIÓN, ESTUDIANTE, COTIDIANO, PROYECTO) -->
 <div id="modal-grupo" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-md"><h3 class="text-xl font-bold mb-4">Nuevo Grupo</h3><input id="grupo-nombre" placeholder="Nombre" class="w-full bg-slate-800 p-3 rounded-xl mb-3"><div class="flex justify-end gap-3"><button onclick="Grupos.cerrarModal('modal-grupo')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Grupos.guardarGrupo()" class="bg-green-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
 <div id="modal-seccion" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-md"><h3 class="text-xl font-bold mb-4">Nueva Sección</h3><input id="seccion-nombre" placeholder="Nombre" class="w-full bg-slate-800 p-3 rounded-xl mb-3"><div class="flex justify-end gap-3"><button onclick="Grupos.cerrarModal('modal-seccion')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Grupos.guardarSeccion()" class="bg-green-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
 <div id="modal-estudiante" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-md"><h3 class="text-xl font-bold mb-4">Estudiante</h3><input type="hidden" id="edit-estudiante-id"><input id="est-nombre" placeholder="Nombre" class="w-full bg-slate-800 p-3 rounded-xl mb-2"><input id="est-apellido1" placeholder="Primer Apellido" class="w-full bg-slate-800 p-3 rounded-xl mb-2"><input id="est-apellido2" placeholder="Segundo Apellido" class="w-full bg-slate-800 p-3 rounded-xl mb-3"><div class="flex justify-end gap-3"><button onclick="Grupos.cerrarModal('modal-estudiante')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Grupos.guardarEstudiante()" class="bg-green-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
@@ -807,18 +813,43 @@ const RDA_POR_CICLO = {
 };
     const PESOS_EVALUACION = { "I Ciclo": { cotidiano:65, tareas:10, pruebas:15, proyecto:0, asistencia:10 }, "II Ciclo": { cotidiano:60, tareas:10, pruebas:20, proyecto:0, asistencia:10 }, "III Ciclo": { cotidiano:50, tareas:10, pruebas:0, proyecto:30, asistencia:10 } };
 
- // ---------- INDEXEDDB ----------
-    const DB = {
+  const DB = {
         db: null, useLS: false,
-        async init() { if(!window.indexedDB) { this.useLS=true; return false; } return new Promise(r=>{ const req=indexedDB.open('PNFT_DB',1); req.onupgradeneeded=e=>{ const db=e.target.result; if(!db.objectStoreNames.contains('grupos')) db.createObjectStore('grupos',{keyPath:'id',autoIncrement:true}); if(!db.objectStoreNames.contains('secciones')){ const s=db.createObjectStore('secciones',{keyPath:'id',autoIncrement:true}); s.createIndex('grupoId','grupoId'); } if(!db.objectStoreNames.contains('estudiantes')){ const s=db.createObjectStore('estudiantes',{keyPath:'id',autoIncrement:true}); s.createIndex('seccionId','seccionId'); } if(!db.objectStoreNames.contains('calificaciones')) db.createObjectStore('calificaciones',{keyPath:'id'}); if(!db.objectStoreNames.contains('planificacion')) db.createObjectStore('planificacion',{keyPath:'id'}); }; req.onsuccess=e=>{ this.db=e.target.result; r(true); }; req.onerror=()=>{ this.useLS=true; r(false); }; }); },
-        _lsGet(k){ return JSON.parse(localStorage.getItem(k)||'[]'); },
-        _lsSet(k,v){ localStorage.setItem(k,JSON.stringify(v)); },
-        async getAll(s){ if(this.useLS) return this._lsGet(`pnft_${s}`); return new Promise(r=>{ const tx=this.db.transaction(s,'readonly'); tx.objectStore(s).getAll().onsuccess=e=>r(e.target.result); }); },
-        async getByIndex(s,idx,val){ if(this.useLS) return this._lsGet(`pnft_${s}`).filter(i=>i[idx]===val); return new Promise(r=>{ const tx=this.db.transaction(s,'readonly'); tx.objectStore(s).index(idx).getAll(val).onsuccess=e=>r(e.target.result); }); },
-        async add(s,item){ if(this.useLS){ const d=this._lsGet(`pnft_${s}`); item.id=Date.now()+Math.random(); d.push(item); this._lsSet(`pnft_${s}`,d); return item.id; } return new Promise(r=>{ const tx=this.db.transaction(s,'readwrite'); const req=tx.objectStore(s).add(item); req.onsuccess=()=>r(req.result); }); },
-        async put(s,item){ if(this.useLS){ const d=this._lsGet(`pnft_${s}`); const idx=d.findIndex(i=>i.id===item.id); if(idx>=0) d[idx]=item; else d.push(item); this._lsSet(`pnft_${s}`,d); return; } return new Promise(r=>{ const tx=this.db.transaction(s,'readwrite'); tx.objectStore(s).put(item).onsuccess=()=>r(); }); },
-        async delete(s,id){ if(this.useLS){ const d=this._lsGet(`pnft_${s}`).filter(i=>i.id!==id); this._lsSet(`pnft_${s}`,d); return; } return new Promise(r=>{ const tx=this.db.transaction(s,'readwrite'); tx.objectStore(s).delete(id).onsuccess=()=>r(); }); }
+        async init() {
+            if (!window.indexedDB) { this.useLS = true; return false; }
+            return new Promise((resolve) => {
+                const openReq = indexedDB.open('PNFT_DB');
+                openReq.onsuccess = (e) => {
+                    const existingVersion = e.target.result.version;
+                    e.target.result.close();
+                    this._upgradeDB(existingVersion + 1, resolve);
+                };
+                openReq.onerror = () => { this.useLS = true; resolve(false); };
+                openReq.onblocked = () => { this.useLS = true; resolve(false); };
+            });
+        },
+        _upgradeDB(version, resolve) {
+            const req = indexedDB.open('PNFT_DB', version);
+            req.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains('grupos')) db.createObjectStore('grupos', { keyPath: 'id', autoIncrement: true });
+                if (!db.objectStoreNames.contains('secciones')) { const s = db.createObjectStore('secciones', { keyPath: 'id', autoIncrement: true }); s.createIndex('grupoId', 'grupoId'); }
+                if (!db.objectStoreNames.contains('estudiantes')) { const s = db.createObjectStore('estudiantes', { keyPath: 'id', autoIncrement: true }); s.createIndex('seccionId', 'seccionId'); }
+                if (!db.objectStoreNames.contains('calificaciones')) db.createObjectStore('calificaciones', { keyPath: 'id' });
+                if (!db.objectStoreNames.contains('planificacion')) db.createObjectStore('planificacion', { keyPath: 'id' });
+            };
+            req.onsuccess = (e) => { this.db = e.target.result; this.useLS = false; resolve(true); };
+            req.onerror = () => { this.useLS = true; resolve(false); };
+        },
+        _lsGet(k) { return JSON.parse(localStorage.getItem(k) || '[]'); },
+        _lsSet(k, v) { localStorage.setItem(k, JSON.stringify(v)); },
+        async getAll(s) { if (this.useLS) return this._lsGet(`pnft_${s}`); return new Promise(r => { const tx = this.db.transaction(s, 'readonly'); tx.objectStore(s).getAll().onsuccess = e => r(e.target.result); }); },
+        async getByIndex(s, idx, val) { if (this.useLS) return this._lsGet(`pnft_${s}`).filter(i => i[idx] === val); return new Promise(r => { const tx = this.db.transaction(s, 'readonly'); tx.objectStore(s).index(idx).getAll(val).onsuccess = e => r(e.target.result); }); },
+        async add(s, item) { if (this.useLS) { const d = this._lsGet(`pnft_${s}`); item.id = Date.now() + Math.random(); d.push(item); this._lsSet(`pnft_${s}`, d); return item.id; } return new Promise(r => { const tx = this.db.transaction(s, 'readwrite'); const req = tx.objectStore(s).add(item); req.onsuccess = () => r(req.result); }); },
+        async put(s, item) { if (this.useLS) { const d = this._lsGet(`pnft_${s}`); const idx = d.findIndex(i => i.id === item.id); if (idx >= 0) d[idx] = item; else d.push(item); this._lsSet(`pnft_${s}`, d); return; } return new Promise(r => { const tx = this.db.transaction(s, 'readwrite'); tx.objectStore(s).put(item).onsuccess = () => r(); }); },
+        async delete(s, id) { if (this.useLS) { const d = this._lsGet(`pnft_${s}`).filter(i => i.id !== id); this._lsSet(`pnft_${s}`, d); return; } return new Promise(r => { const tx = this.db.transaction(s, 'readwrite'); tx.objectStore(s).delete(id).onsuccess = () => r(); }); }
     };
+
 
     // ---------- APP PRINCIPAL ----------
     const App = {
@@ -904,8 +935,8 @@ const RDA_POR_CICLO = {
         async importarBackup(e){ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=async(ev)=>{ try{ const data=JSON.parse(ev.target.result); if(!data.version||!data.grupos) throw new Error('Formato inválido'); if(!confirm('¿Reemplazar todos los datos actuales?')) return; const stores=['grupos','secciones','estudiantes','planificacion','calificaciones']; for(let s of stores){ if(DB.useLS) localStorage.removeItem(`pnft_${s}`); else await new Promise(r=>{ const tx=DB.db.transaction(s,'readwrite'); tx.objectStore(s).clear().onsuccess=r; }); } for(let g of data.grupos) await DB.add('grupos',g); for(let s of data.secciones) await DB.add('secciones',s); for(let e of data.estudiantes) await DB.add('estudiantes',e); for(let p of data.planificacion) await DB.put('planificacion',p); for(let c of data.calificaciones) await DB.put('calificaciones',c); alert('Backup importado. Recargando...'); window.location.reload(); }catch(err){ alert('Error al importar'); console.error(err); } }; reader.readAsText(file); }
     };
 
-    window.App=App; window.Grupos=Grupos; window.Eval=Eval; window.Exportar=Exportar;
-    window.onload=()=>App.init().catch(e=>{ console.error(e); alert('Error al iniciar.'); });
+    window.App = App; window.Grupos = Grupos; window.Eval = Eval; window.Exportar = Exportar;
+    window.onload = () => App.init().catch(e => { console.error(e); alert('Error al iniciar.'); });
 </script>
 </body>
 </html>
