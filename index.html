@@ -1048,44 +1048,106 @@ const RDA_POR_CICLO = {
             this.actualizarPanelRdA(contador, data);
         },
 
-        actualizarPanelRdA(contador, data) {
+        // NUEVA FUNCIÓN AUXILIAR: Obtener progreso acumulado del ciclo
+        obtenerProgresoCiclo() {
             const ciclo = this.getCiclo();
-            const areas = Object.keys(RDA_POR_CICLO[ciclo] || {}).filter(area => area !== 'Computación física y Robótica' || (ciclo !== 'I Ciclo' && RDA_POR_CICLO[ciclo]['Computación física y Robótica'] !== 'No aplica para este ciclo.'));
-            // Para I Ciclo, Computación física y Robótica no aplica, así que la excluimos del panel
+            // Determinar los grados que pertenecen a este ciclo
+            let grados = [];
+            if (ciclo === 'Materno Infantil/Transición') grados = ['0°'];
+            else if (ciclo === 'I Ciclo') grados = ['1°', '2°', '3°'];
+            else if (ciclo === 'II Ciclo') grados = ['4°', '5°', '6°'];
+            else if (ciclo === 'III Ciclo') grados = ['7°', '8°', '9°'];
+        
+            const areas = ['Apropiación tecnológica y Digital', 'Programación y Algoritmos', 'Computación física y Robótica', 'Ciencia de datos e Inteligencia artificial'];
+            const totales = {};        // total de saberes por área en todo el ciclo
+            const seleccionados = {};  // saberes seleccionados acumulados (Set para evitar duplicados)
             
+            areas.forEach(a => { totales[a] = 0; seleccionados[a] = new Set(); });
+        
+            grados.forEach(grado => {
+                ['Módulo 1', 'Módulo 2'].forEach(modulo => {
+                    const key = `${grado}_${modulo}`;
+                    const data = Storage.cargar(key) || {};
+                    const saberesIds = data.seleccionados || [];
+                    
+                    // Obtener la estructura del módulo para contar totales
+                    const modData = PNFT_DATA[grado]?.[modulo];
+                    if (modData) {
+                        areas.forEach(area => {
+                            const areaData = modData[area];
+                            if (areaData) {
+                                totales[area] += areaData.saberes.length;
+                                // Agregar los seleccionados de esta área
+                                saberesIds.forEach(id => {
+                                    if (id.startsWith(area + '::')) {
+                                        seleccionados[area].add(id);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        
+            // Construir objeto de resultado con porcentajes
+            const resultado = {};
+            areas.forEach(area => {
+                const tot = totales[area] || 1;
+                const sel = seleccionados[area].size;
+                const pct = Math.round((sel / tot) * 100);
+                resultado[area] = {
+                    total: tot,
+                    seleccionados: sel,
+                    porcentaje: pct,
+                    rda: RDA_POR_CICLO[ciclo]?.[area] || 'RdA no definido.'
+                };
+            });
+            return resultado;
+        },
+
+        // VERSIÓN ACTUALIZADA DE actualizarPanelRdA
+        actualizarPanelRdA() {
+            const ciclo = this.getCiclo();
+            const progresoCiclo = this.obtenerProgresoCiclo();
+            const areas = Object.keys(progresoCiclo).filter(area => {
+                // Excluir Computación física en I Ciclo si no aplica
+                if (ciclo === 'I Ciclo' && area === 'Computación física y Robótica') {
+                    return RDA_POR_CICLO[ciclo]['Computación física y Robótica'] !== 'No aplica para este ciclo.';
+                }
+                return true;
+            });
+        
             const container = document.getElementById('rda-progress-list');
             if (!container) return;
-            
+        
             if (areas.length === 0) {
                 container.innerHTML = '<p style="font-size:0.9rem; color:#e5e7eb;">No hay RdA definidos para este ciclo.</p>';
                 return;
             }
-            
+        
             let html = '';
             areas.forEach(area => {
-                const totalSaberes = data[area]?.saberes?.length || 1;
-                const seleccionados = contador[area] || 0;
-                const pct = Math.round((seleccionados / totalSaberes) * 100);
-                const rdaTexto = RDA_POR_CICLO[ciclo][area] || 'RdA no definido.';
-                
-                // Determinar color de la barra según el área
+                const data = progresoCiclo[area];
+                const pct = data.porcentaje;
+                const rdaTexto = data.rda;
+        
                 let barColor = 'from-blue-500 to-cyan-400';
                 if (area.includes('Programación')) barColor = 'from-emerald-500 to-green-400';
                 else if (area.includes('Robótica')) barColor = 'from-amber-500 to-orange-400';
                 else if (area.includes('Ciencia')) barColor = 'from-purple-500 to-pink-400';
-                
+        
                 let mensaje = '';
-                if (pct === 0) mensaje = '🌱 Sin saberes planificados.';
-                else if (pct < 40) mensaje = '📌 Iniciando el camino.';
-                else if (pct < 70) mensaje = '📈 Progresando hacia el RdA.';
-                else if (pct < 100) mensaje = '🔥 ¡Muy cerca del RdA!';
-                else mensaje = '🏆 ¡RdA completamente planificado!';
-                
+                if (pct === 0) mensaje = '🌱 Sin saberes planificados en el ciclo.';
+                else if (pct < 40) mensaje = '📌 Iniciando el camino en el ciclo.';
+                else if (pct < 70) mensaje = '📈 Progresando hacia el RdA del ciclo.';
+                else if (pct < 100) mensaje = '🔥 ¡Muy cerca del RdA del ciclo!';
+                else mensaje = '🏆 ¡RdA del ciclo completamente planificado!';
+        
                 html += `
                     <div>
                         <div class="flex justify-between items-center mb-1">
                             <span class="font-semibold text-sm">${area}</span>
-                            <span class="text-xs bg-white/10 px-2 py-0.5 rounded-full">${pct}%</span>
+                            <span class="text-xs bg-white/10 px-2 py-0.5 rounded-full">${pct}% (${data.seleccionados}/${data.total})</span>
                         </div>
                         <p class="text-xs text-white/70 mb-2 italic">${rdaTexto.length > 100 ? rdaTexto.substring(0, 100) + '…' : rdaTexto}</p>
                         <div class="w-full h-4 bg-slate-700/50 rounded-full mb-1">
