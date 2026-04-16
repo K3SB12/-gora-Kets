@@ -72,7 +72,18 @@
                     </div>
                 </div>
 
-                <!-- GENERADOR DE PROMPT (MOVIDO AQUÍ) -->
+                <!-- SABERES -->
+                <div id="saberes-section" class="glass-card p-6 hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-lg"><i class="fas fa-list-check text-emerald-400"></i> Saberes del Módulo</h3>
+                        <span id="selected-count-badge" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full">0 seleccionados</span>
+                    </div>
+                    <div id="saberes-container" class="space-y-4 max-h-[600px] overflow-y-auto pr-2"></div>
+                    <div class="mt-4 text-xs text-amber-300/80 flex items-center gap-2"><i class="fas fa-lightbulb"></i> Regla de Oro: Selecciona entre 3 y 5 indicadores.</div>
+                </div>
+            </div>
+
+                            <!-- GENERADOR DE PROMPT (MOVIDO AQUÍ) -->
                 <div class="glass-card p-6">
                     <h3 class="font-bold text-lg mb-4"><i class="fas fa-robot text-indigo-400 mr-2"></i>Generador de Prompt para IA</h3>
                     <div class="mb-3"><label class="text-xs text-white/60 block mb-1">Ejes Transversales a incluir:</label><div id="ejes-checkboxes" class="space-y-1 text-sm"></div></div>
@@ -86,17 +97,6 @@
                         <a href="https://deepseek.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fas fa-search"></i> DeepSeek</a>
                     </div>
                 </div>
-
-                <!-- SABERES -->
-                <div id="saberes-section" class="glass-card p-6 hidden">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg"><i class="fas fa-list-check text-emerald-400"></i> Saberes del Módulo</h3>
-                        <span id="selected-count-badge" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full">0 seleccionados</span>
-                    </div>
-                    <div id="saberes-container" class="space-y-4 max-h-[600px] overflow-y-auto pr-2"></div>
-                    <div class="mt-4 text-xs text-amber-300/80 flex items-center gap-2"><i class="fas fa-lightbulb"></i> Regla de Oro: Selecciona entre 3 y 5 indicadores.</div>
-                </div>
-            </div>
 
             <!-- COLUMNA DERECHA: BATERÍAS, PLANEAMIENTO, PERFILES -->
             <div class="lg:col-span-4 space-y-6">
