@@ -6,20 +6,151 @@
     <title>🧭 PNFT 2026 · Planificador Curricular</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body { background: radial-gradient(circle at 20% 30%, #0b1c2f, #040a14); font-family: 'Inter', system-ui, sans-serif; }
-        .glass-card { background: rgba(15, 30, 45, 0.55); backdrop-filter: blur(14px); border: 1px solid rgba(100, 210, 255, 0.15); border-radius: 2rem; }
-        .tab-btn { padding: 0.75rem 1.5rem; border-radius: 9999px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05); color: #9ca3af; transition: all 0.2s; }
-        .tab-btn.active { background: #2563eb; color: white; box-shadow: 0 0 15px #2563eb; }
-        .battery-fill { height: 100%; border-radius: 9999px; transition: width 0.5s; }
-        .level-tab { padding: 0.3rem 0.8rem; border-radius: 9999px; background: rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s; }
-        .level-tab.active { background: #2563eb; color: white; }
-        .island-card { background: rgba(20, 40, 60, 0.6); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s; cursor: pointer; }
-        .island-card:hover { transform: translateY(-6px); border-color: #3b82f6; box-shadow: 0 0 25px rgba(59,130,246,0.3); }
-        .btn-primary { background: linear-gradient(135deg, #2563eb, #1e40af); border: none; color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 9999px; box-shadow: 0 8px 18px -6px #1e40af; cursor: pointer; }
-        .floating { animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0); } }
-    </style>
+<style>
+    body {
+        background: radial-gradient(circle at 20% 30%, #121212, #000000);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+    }
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDQwIDQwIj48cGF0aCBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDMiIGQ9Ik0yMCAzQzEwIDMgNSAxMCA1IDIyczUgMTcgMTUgMTcgMTUtNyAxNS0xNVMzMCAzIDIwIDN6Ii8+PC9zdmc+');
+        background-repeat: repeat;
+        opacity: 0.15;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .glass-card {
+        background: rgba(30, 41, 59, 0.65);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 2rem;
+        box-shadow: 0 20px 40px -10px rgba(0,0,0,0.7);
+    }
+    .tab-btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.05);
+        color: #e5e7eb;
+        transition: all 0.2s;
+        font-size: 1rem;
+    }
+    .tab-btn.active {
+        background: #2563eb;
+        color: white;
+        box-shadow: 0 0 15px #2563eb;
+    }
+    .battery-fill {
+        height: 100%;
+        border-radius: 9999px;
+        transition: width 0.5s;
+    }
+    .level-tab {
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.05);
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 0.9rem;
+        color: #e5e7eb;
+    }
+    .level-tab.active {
+        background: #2563eb;
+        color: white;
+    }
+    .island-card {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    .island-card:hover {
+        transform: translateY(-6px);
+        border-color: #3b82f6;
+        box-shadow: 0 0 25px rgba(59,130,246,0.5);
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        border: none;
+        color: white;
+        font-weight: bold;
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        box-shadow: 0 8px 18px -6px #1e40af;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+    .floating {
+        animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+        100% { transform: translateY(0); }
+    }
+    /* REGLAS DE ACCESIBILIDAD Y LEGIBILIDAD */
+    body, button, input, select, textarea {
+        font-size: 1rem; /* 16px base */
+        color: #ffffff;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        color: #ffffff;
+        font-weight: 700;
+    }
+    .text-white {
+        color: #ffffff !important;
+    }
+    /* Mejora de contraste para textos secundarios */
+    .text-slate-400, .text-white\/60, .text-white\/40, .text-white\/70, .text-white\/80 {
+        color: #e5e7eb !important;
+    }
+    .bg-slate-800, .bg-slate-800\/70, .bg-slate-800\/50, .bg-slate-800\/30 {
+        background-color: #1e293b !important;
+    }
+    .bg-slate-700, .bg-slate-700\/50 {
+        background-color: #334155 !important;
+    }
+    .bg-slate-900, .bg-slate-900\/80 {
+        background-color: #0f172a !important;
+    }
+    /* Tamaño de letra grande en zonas críticas */
+    #saberes-container {
+        font-size: 1rem;
+    }
+    #saberes-container .text-\[10px\] {
+        font-size: 0.95rem !important;
+        line-height: 1.5;
+        color: #e5e7eb !important;
+    }
+    #output-prompt {
+        font-size: 0.95rem !important;
+        line-height: 1.5;
+        background-color: #0f172a !important;
+        color: #a5f3fc !important;
+        border: 1px solid #475569;
+    }
+    #selected-saberes-list .text-\[10px\] {
+        font-size: 0.9rem !important;
+        color: #cbd5e1 !important;
+    }
+    a, button {
+        color: #e2e8f0;
+    }
+    .bg-white\/5 {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    .bg-white\/5:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+</style>
 </head>
 <body class="text-white">
 
@@ -88,7 +219,7 @@
                     <div class="mb-3"><label class="text-xs text-white/60 block mb-1">Ejes Transversales a incluir:</label><div id="ejes-checkboxes" class="space-y-1 text-sm"></div></div>
                     <div class="mb-3"><label class="text-xs text-white/60 block mb-1">Duración de clase (min):</label><input type="number" id="duracion-clase" value="40" class="w-full bg-slate-800 p-2 rounded text-white text-sm"></div>
                     <button onclick="App.generarPrompt()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition mb-4"><i class="fas fa-magic mr-2"></i>✨ Generar Prompt PNFT</button>
-                    <div class="relative"><textarea id="output-prompt" rows="6" class="w-full bg-slate-900/80 text-cyan-300 font-mono text-xs p-4 rounded-xl border border-white/20" readonly></textarea><button onclick="App.copiarPrompt()" class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 p-2 rounded-lg"><i class="far fa-copy"></i></button></div>
+                    <div class="relative"><textarea id="output-prompt" rows="6" style="font-size: 1rem; line-height: 1.5; background-color: #0f172a; color: #a5f3fc;" class="w-full font-mono p-4 rounded-xl border border-gray-500" readonly></textarea><button onclick="App.copiarPrompt()" class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 p-2 rounded-lg"><i class="far fa-copy"></i></button></div>
                     <div class="grid grid-cols-4 gap-2 mt-4">
                         <a href="https://gemini.google.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fab fa-google"></i> Gemini</a>
                         <a href="https://chat.openai.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fas fa-comment"></i> ChatGPT</a>
@@ -867,7 +998,7 @@ const RDA_POR_CICLO = {
                     if (checked) total++;
                     html += `<div class="flex items-start gap-3 p-2 border-b border-white/10 ${impartido ? 'bg-green-500/20' : ''}">
                         <input type="checkbox" ${checked ? 'checked' : ''} onchange="App.toggleSaber('${id}', this.checked)">
-                        <div class="flex-1"><span class="font-semibold">${s.nombre}</span><div class="text-[10px] text-slate-400">${s.indicadores.map(i => `• ${i}`).join('<br>')}</div></div>
+                        <div class="flex-1"><span class="font-semibold">${s.nombre}</span><div style="font-size: 0.95rem; color: #e5e7eb; line-height: 1.5;">${s.indicadores.map(i => `• ${i}`).join('<br>')}</div></div>
                         <button onclick="App.toggleImpartido('${id}')" class="text-xs ${impartido ? 'text-green-400' : 'text-white/40'}"><i class="fas fa-check-circle"></i> Impartido</button>
                     </div>`;
                 });
@@ -895,24 +1026,33 @@ const RDA_POR_CICLO = {
             }).join('');
             document.getElementById('perfiles-content').innerHTML = phtml;
         },
-        renderListaSeleccionados() {
+       renderListaSeleccionados() {
             const lista = document.getElementById('selected-saberes-list');
-            if (this.saberesSeleccionados.size === 0) { lista.innerHTML = '<p class="text-white/40 text-center">No hay saberes seleccionados</p>'; return; }
+            if (this.saberesSeleccionados.size === 0) {
+                lista.innerHTML = '<p style="font-size: 1rem; color: #e5e7eb; text-align: center;">No hay saberes seleccionados</p>';
+                return;
+            }
             const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
-            let html = ''; const agrupados = {};
-            this.saberesSeleccionados.forEach(s => { const [area, nombre] = s.split('::'); if (!agrupados[area]) agrupados[area] = []; agrupados[area].push(nombre); });
+            let html = '';
+            const agrupados = {};
+            this.saberesSeleccionados.forEach(s => {
+                const [area, nombre] = s.split('::');
+                if (!agrupados[area]) agrupados[area] = [];
+                agrupados[area].push(nombre);
+            });
             for (let area in agrupados) {
-                html += `<p class="text-xs font-bold text-blue-300 mt-2">${area}</p>`;
-                agrupados[area].forEach(nombre => { html += `<div class="flex items-center justify-between text-sm pl-2"><span>• ${nombre}</span><i class="fas fa-times-circle text-red-400 cursor-pointer" onclick="App.eliminarSaber('${area}::${nombre}')"></i></div>`; });
+                html += `<p style="font-size: 1rem; font-weight: bold; color: #93c5fd; margin-top: 0.75rem;">${area}</p>`;
+                agrupados[area].forEach(nombre => {
+                    const saber = data[area]?.saberes?.find(s => s.nombre === nombre);
+                    const preview = saber ? saber.indicadores[0].substring(0, 35) + '…' : '';
+                    html += `<div style="display: flex; align-items: center; justify-content: space-between; font-size: 1rem; padding-left: 0.5rem; margin-bottom: 0.25rem;">
+                        <span>• ${nombre} <span style="font-size: 0.9rem; color: #cbd5e1;">${preview}</span></span>
+                        <i class="fas fa-times-circle" style="color: #f87171; cursor: pointer;" onclick="App.eliminarSaber('${area}::${nombre}')"></i>
+                    </div>`;
+                });
             }
             lista.innerHTML = html;
-        },
-        eliminarSaber(id) { this.saberesSeleccionados.delete(id); this.guardarStorage(); this.renderizarTodo(); },
-        togglePerfiles() {
-            const c = document.getElementById('perfiles-content');
-            c.classList.toggle('hidden');
-            document.getElementById('perfiles-chevron').classList.toggle('fa-chevron-down');
-        },
+        }
         generarPrompt() {
             if (this.saberesSeleccionados.size === 0) { alert('Selecciona al menos un saber.'); return; }
             const ciclo = this.getCiclo();
