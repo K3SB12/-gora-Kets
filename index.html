@@ -931,9 +931,9 @@ const RDA_POR_CICLO = {
         renderIslas() {
             document.getElementById('island-container').innerHTML = `
                 <div class="island-card rounded-3xl p-6 border-l-8 border-l-pink-400" onclick="App.selectCycle('materno')"><h3 class="text-2xl font-black">🏝️ Materno · Transición</h3><p class="text-white/60 text-sm">ABJ · 0°</p></div>
-                <div class="island-card rounded-3xl p-6 border-l-8 border-l-green-400" onclick="App.selectCycle('i')"><h3 class="text-2xl font-black">📗 I Ciclo</h3><p class="text-white/60 text-sm">1° · 2° · 3° · ABJ</p></div>
-                <div class="island-card rounded-3xl p-6 border-l-8 border-l-orange-400" onclick="App.selectCycle('ii')"><h3 class="text-2xl font-black">📙 II Ciclo</h3><p class="text-white/60 text-sm">4° · 5° · 6° · ABR</p></div>
-                <div class="island-card rounded-3xl p-6 border-l-8 border-l-purple-400" onclick="App.selectCycle('iii')"><h3 class="text-2xl font-black">📕 III Ciclo</h3><p class="text-white/60 text-sm">7° · 8° · 9° · Design Thinking</p></div>
+                <div class="island-card rounded-3xl p-6 border-l-8 border-l-green-400" onclick="App.selectCycle('i')"><h3 class="text-2xl font-black">🏝️ I Ciclo</h3><p class="text-white/60 text-sm">1° · 2° · 3° · ABJ</p></div>
+                <div class="island-card rounded-3xl p-6 border-l-8 border-l-orange-400" onclick="App.selectCycle('ii')"><h3 class="text-2xl font-black">🏝️ II Ciclo</h3><p class="text-white/60 text-sm">4° · 5° · 6° · ABR</p></div>
+                <div class="island-card rounded-3xl p-6 border-l-8 border-l-purple-400" onclick="App.selectCycle('iii')"><h3 class="text-2xl font-black">🏝️ III Ciclo</h3><p class="text-white/60 text-sm">7° · 8° · 9° · Design Thinking</p></div>
             `;
         },
         selectCycle(c) { const m = { materno: '0°', i: '1°', ii: '4°', iii: '7°' }; this.selectLevel(m[c]); },
