@@ -767,46 +767,15 @@ const RDA_POR_CICLO = {
 };
     const PESOS_EVALUACION = { "I Ciclo": { cotidiano:65, tareas:10, pruebas:15, proyecto:0, asistencia:10 }, "II Ciclo": { cotidiano:60, tareas:10, pruebas:20, proyecto:0, asistencia:10 }, "III Ciclo": { cotidiano:50, tareas:10, pruebas:0, proyecto:30, asistencia:10 } };
 
-  const DB = {
-        db: null, useLS: false,
-        async init() {
-            if (!window.indexedDB) { this.useLS = true; return false; }
-            return new Promise((resolve) => {
-                const openReq = indexedDB.open('PNFT_DB');
-                openReq.onsuccess = (e) => {
-                    const existingVersion = e.target.result.version;
-                    e.target.result.close();
-                    this._upgradeDB(existingVersion + 1, resolve);
-                };
-                openReq.onerror = () => { this.useLS = true; resolve(false); };
-                openReq.onblocked = () => { this.useLS = true; resolve(false); };
-            });
-        },
-        _upgradeDB(version, resolve) {
-            const req = indexedDB.open('PNFT_DB', version);
-            req.onupgradeneeded = (e) => {
-                const db = e.target.result;
-                if (!db.objectStoreNames.contains('grupos')) db.createObjectStore('grupos', { keyPath: 'id', autoIncrement: true });
-                if (!db.objectStoreNames.contains('secciones')) { const s = db.createObjectStore('secciones', { keyPath: 'id', autoIncrement: true }); s.createIndex('grupoId', 'grupoId'); }
-                if (!db.objectStoreNames.contains('estudiantes')) { const s = db.createObjectStore('estudiantes', { keyPath: 'id', autoIncrement: true }); s.createIndex('seccionId', 'seccionId'); }
-                if (!db.objectStoreNames.contains('calificaciones')) db.createObjectStore('calificaciones', { keyPath: 'id' });
-                if (!db.objectStoreNames.contains('planificacion')) db.createObjectStore('planificacion', { keyPath: 'id' });
-            };
-            req.onsuccess = (e) => { this.db = e.target.result; this.useLS = false; resolve(true); };
-            req.onerror = () => { this.useLS = true; resolve(false); };
-        },
-        _lsGet(k) { return JSON.parse(localStorage.getItem(k) || '[]'); },
-        _lsSet(k, v) { localStorage.setItem(k, JSON.stringify(v)); },
-        async getAll(s) { if (this.useLS) return this._lsGet(`pnft_${s}`); return new Promise(r => { const tx = this.db.transaction(s, 'readonly'); tx.objectStore(s).getAll().onsuccess = e => r(e.target.result); }); },
-        async getByIndex(s, idx, val) { if (this.useLS) return this._lsGet(`pnft_${s}`).filter(i => i[idx] === val); return new Promise(r => { const tx = this.db.transaction(s, 'readonly'); tx.objectStore(s).index(idx).getAll(val).onsuccess = e => r(e.target.result); }); },
-        async add(s, item) { if (this.useLS) { const d = this._lsGet(`pnft_${s}`); item.id = Date.now() + Math.random(); d.push(item); this._lsSet(`pnft_${s}`, d); return item.id; } return new Promise(r => { const tx = this.db.transaction(s, 'readwrite'); const req = tx.objectStore(s).add(item); req.onsuccess = () => r(req.result); }); },
-        async put(s, item) { if (this.useLS) { const d = this._lsGet(`pnft_${s}`); const idx = d.findIndex(i => i.id === item.id); if (idx >= 0) d[idx] = item; else d.push(item); this._lsSet(`pnft_${s}`, d); return; } return new Promise(r => { const tx = this.db.transaction(s, 'readwrite'); tx.objectStore(s).put(item).onsuccess = () => r(); }); },
-        async delete(s, id) { if (this.useLS) { const d = this._lsGet(`pnft_${s}`).filter(i => i.id !== id); this._lsSet(`pnft_${s}`, d); return; } return new Promise(r => { const tx = this.db.transaction(s, 'readwrite'); tx.objectStore(s).delete(id).onsuccess = () => r(); }); }
+  // ---------- ALMACENAMIENTO SIMPLE ----------
+    const Storage = {
+        guardar(key, data) { localStorage.setItem(`pnft_${key}`, JSON.stringify(data)); },
+        cargar(key) { const d = localStorage.getItem(`pnft_${key}`); return d ? JSON.parse(d) : null; },
+        guardarTodo(data) { localStorage.setItem('pnft_backup', JSON.stringify(data)); },
+        cargarTodo() { const d = localStorage.getItem('pnft_backup'); return d ? JSON.parse(d) : null; }
     };
 
-
     // ---------- APP PRINCIPAL ----------
-     // ---------- APP PRINCIPAL (SIMPLIFICADA) ----------
     const App = {
         nivelActual: '0°', moduloActual: 'Módulo 1',
         saberesSeleccionados: new Set(), saberesImpartidos: new Set(),
@@ -998,9 +967,6 @@ const RDA_POR_CICLO = {
 
     window.App = App; window.Exportar = Exportar;
     window.onload = () => App.init();
-</script>
-</body>
-</html>
 </script>
 </body>
 </html>
