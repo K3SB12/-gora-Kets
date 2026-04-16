@@ -852,91 +852,201 @@ const RDA_POR_CICLO = {
 
 
     // ---------- APP PRINCIPAL ----------
+     // ---------- APP PRINCIPAL (SIMPLIFICADA) ----------
     const App = {
-        nivelActual:'0°', moduloActual:'Módulo 1', grupoActualId:null, seccionActualId:null,
-        saberesSeleccionados:new Set(), saberesImpartidos:new Set(), estudiantes:[], calificaciones:{},
-        async init(){ await DB.init(); this.renderIslas(); await this.cargarGrupos(); await this.cargarStorage(); this.renderizarTodo(); },
-        renderIslas(){ document.getElementById('island-container').innerHTML=`
-            <div class="island-card rounded-3xl p-6 border-l-8 border-l-pink-400" onclick="App.selectCycle('materno')"><h3 class="text-2xl font-black">🏝️ Materno</h3><p>ABJ</p></div>
-            <div class="island-card rounded-3xl p-6 border-l-8 border-l-green-400" onclick="App.selectCycle('i')"><h3 class="text-2xl font-black">📗 I Ciclo</h3><p>1°·2°·3°</p></div>
-            <div class="island-card rounded-3xl p-6 border-l-8 border-l-orange-400" onclick="App.selectCycle('ii')"><h3 class="text-2xl font-black">📙 II Ciclo</h3><p>ABR</p></div>
-            <div class="island-card rounded-3xl p-6 border-l-8 border-l-purple-400" onclick="App.selectCycle('iii')"><h3 class="text-2xl font-black">📕 III Ciclo</h3><p>Design Thinking</p></div>
-        `; },
-        selectCycle(c){ const m={materno:'0°',i:'1°',ii:'4°',iii:'7°'}; this.selectLevel(m[c]); },
-        async cargarGrupos(){ const gs=await DB.getAll('grupos'); const sel=document.getElementById('select-grupo'); sel.innerHTML='<option value="">Seleccionar grupo...</option>'; gs.forEach(g=>sel.innerHTML+=`<option value="${g.id}">${g.nombre}</option>`); if(gs.length&&!this.grupoActualId){ this.grupoActualId=gs[0].id; sel.value=this.grupoActualId; await this.cargarSecciones(); } },
-        async cambiarGrupo(){ this.grupoActualId=+document.getElementById('select-grupo').value; await this.cargarSecciones(); await this.cargarStorage(); this.renderizarTodo(); if(document.querySelector('[data-tab="evaluacion"]')?.classList.contains('active')) Eval.renderizarTabla(); },
-        async cargarSecciones(){ if(!this.grupoActualId) return; const secs=await DB.getByIndex('secciones','grupoId',this.grupoActualId); if(secs.length) this.seccionActualId=secs[0].id; await this.cargarEstudiantes(); Grupos.renderSecciones(secs); },
-        async cargarEstudiantes(){ this.estudiantes=this.seccionActualId?await DB.getByIndex('estudiantes','seccionId',this.seccionActualId):[]; },
-        async cargarStorage(){ if(!this.grupoActualId||!this.seccionActualId) return; const key=`plan_${this.grupoActualId}_${this.seccionActualId}_${this.nivelActual}_${this.moduloActual}`; const data=await DB.getByIndex('planificacion','id',key); this.saberesSeleccionados=new Set(data[0]?.seleccionados||[]); this.saberesImpartidos=new Set(data[0]?.impartidos||[]); const cal=await DB.getByIndex('calificaciones','id',`cal_${this.grupoActualId}_${this.seccionActualId}`); this.calificaciones=cal[0]?.data||{}; },
-        async guardarStorage(){ if(!this.grupoActualId||!this.seccionActualId) return; const key=`plan_${this.grupoActualId}_${this.seccionActualId}_${this.nivelActual}_${this.moduloActual}`; await DB.put('planificacion',{id:key,seleccionados:[...this.saberesSeleccionados],impartidos:[...this.saberesImpartidos]}); await DB.put('calificaciones',{id:`cal_${this.grupoActualId}_${this.seccionActualId}`,data:this.calificaciones}); },
-        getCiclo(){ const n=parseInt(this.nivelActual); if(isNaN(n)) return 'Materno Infantil/Transición'; if(n<=3) return 'I Ciclo'; if(n<=6) return 'II Ciclo'; return 'III Ciclo'; },
-        selectLevel(l){ this.nivelActual=l; document.getElementById('current-level-display').innerText=l; document.querySelectorAll('.level-tab').forEach(t=>{ t.classList.toggle('active',t.dataset.level===l); }); this.cargarStorage().then(()=>this.renderizarTodo()); },
-        cargarSaberesDelNivel(){ this.moduloActual=document.getElementById('select-modulo').value; this.cargarStorage().then(()=>{ document.getElementById('saberes-section').classList.remove('hidden'); this.renderSaberes(); this.renderBateriasYPerfiles(); this.renderListaSeleccionados(); }); },
-        switchTab(t){ document.querySelectorAll('.tab-content').forEach(c=>c.classList.add('hidden')); document.getElementById(`tab-${t}`).classList.remove('hidden'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); document.querySelector(`[data-tab="${t}"]`).classList.add('active'); if(t==='evaluacion') Eval.renderizarTabla(); if(t==='grupos') App.cargarSecciones().then(()=>Grupos.renderSecciones()); },
-        renderizarTodo(){ this.renderSaberes(); this.renderBateriasYPerfiles(); this.renderListaSeleccionados(); this.actualizarPesosUI(); this.renderEjesCheckboxes(); },
-        actualizarPesosUI(){ const c=this.getCiclo(); document.getElementById('ciclo-eval-badge').innerText=`Ciclo: ${c}`; },
-        renderEjesCheckboxes(){ const ejes=EJES_POR_CICLO[this.getCiclo()]||{}; const div=document.getElementById('ejes-checkboxes'); div.innerHTML=Object.keys(ejes).map(e=>`<label class="flex items-center gap-2"><input type="checkbox" value="${e}" checked> ${e}</label>`).join(''); },
-        toggleSaber(id,chk){ if(chk) this.saberesSeleccionados.add(id); else this.saberesSeleccionados.delete(id); this.guardarStorage().then(()=>this.renderizarTodo()); },
-        toggleImpartido(id){ if(this.saberesImpartidos.has(id)) this.saberesImpartidos.delete(id); else this.saberesImpartidos.add(id); this.guardarStorage().then(()=>this.renderSaberes()); },
-        limpiarSeleccionModulo(){ this.saberesSeleccionados.clear(); this.guardarStorage().then(()=>this.renderizarTodo()); },
-        renderSaberes(){ const data=PNFT_DATA[this.nivelActual]?.[this.moduloActual]; const cont=document.getElementById('saberes-container'); if(!data){ cont.innerHTML='<p class="text-white/40">Datos no disponibles.</p>'; return; } let html='',total=0; Object.entries(data).forEach(([area,content])=>{ html+=`<h4 class="text-lg font-bold text-blue-300 mt-4">${area}</h4>`; content.saberes.forEach(s=>{ const id=`${area}::${s.nombre}`; const checked=this.saberesSeleccionados.has(id); const impartido=this.saberesImpartidos.has(id); if(checked) total++; html+=`<div class="flex items-start gap-3 p-2 border-b border-white/10 ${impartido?'bg-green-500/20':''}"><input type="checkbox" ${checked?'checked':''} onchange="App.toggleSaber('${id}', this.checked)"><div class="flex-1"><span class="font-semibold">${s.nombre}</span><div class="text-[10px] text-slate-400">${s.indicadores.map(i=>`• ${i}`).join('<br>')}</div></div><button onclick="App.toggleImpartido('${id}')" class="text-xs ${impartido?'text-green-400':'text-white/40'}"><i class="fas fa-check-circle"></i> Impartido</button></div>`; }); }); cont.innerHTML=html; document.getElementById('selected-count-badge').innerText=`${total} seleccionados`; },
-        renderBateriasYPerfiles(){ const areas=['Apropiación tecnológica y Digital','Programación y Algoritmos','Computación física y Robótica','Ciencia de datos e Inteligencia artificial']; const contador={}; areas.forEach(a=>contador[a]=0); this.saberesSeleccionados.forEach(s=>{ const a=s.split('::')[0]; if(contador.hasOwnProperty(a)) contador[a]++; }); const data=PNFT_DATA[this.nivelActual]?.[this.moduloActual]||{}; const bhtml=areas.map(a=>{ const tot=data[a]?.saberes?.length||1; const pct=Math.round((contador[a]/tot)*100); return `<div><div class="flex justify-between text-sm"><span>${a}</span><span>${pct}%</span></div><div class="w-full h-5 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400" style="width:${pct}%"></div></div></div>`; }).join(''); document.getElementById('batteries-container').innerHTML=bhtml; const ciclo=this.getCiclo(); const perfiles=PERFILES_POR_CICLO[ciclo]||[]; const phtml=perfiles.map(p=>{ const tot=data[p.area]?.saberes?.length||1; const sel=[...this.saberesSeleccionados].filter(s=>s.startsWith(p.area)).length; return `<div><div class="flex justify-between text-xs"><span>${p.nombre}</span><span>${Math.round((sel/tot)*100)}%</span></div><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-emerald-500" style="width:${Math.round((sel/tot)*100)}%"></div></div></div>`; }).join(''); document.getElementById('perfiles-content').innerHTML=phtml; },
-        renderListaSeleccionados(){ const lista=document.getElementById('selected-saberes-list'); if(this.saberesSeleccionados.size===0){ lista.innerHTML='<p class="text-white/40 text-center">No hay saberes seleccionados</p>'; return; } const data=PNFT_DATA[this.nivelActual]?.[this.moduloActual]||{}; let html=''; const agrupados={}; this.saberesSeleccionados.forEach(s=>{ const [area,nombre]=s.split('::'); if(!agrupados[area]) agrupados[area]=[]; agrupados[area].push(nombre); }); for(let area in agrupados){ html+=`<p class="text-xs font-bold text-blue-300 mt-2">${area}</p>`; agrupados[area].forEach(nombre=>{ const saber=data[area]?.saberes?.find(s=>s.nombre===nombre); const preview=saber?saber.indicadores[0].substring(0,30)+'…':''; html+=`<div class="flex items-center justify-between text-sm pl-2"><span>• ${nombre} <span class="text-[10px] text-slate-400">${preview}</span></span><i class="fas fa-times-circle text-red-400 cursor-pointer" onclick="App.eliminarSaber('${area}::${nombre}')"></i></div>`; }); } lista.innerHTML=html; },
-        eliminarSaber(id){ this.saberesSeleccionados.delete(id); this.guardarStorage().then(()=>this.renderizarTodo()); },
-        togglePerfiles(){ const c=document.getElementById('perfiles-content'); c.classList.toggle('hidden'); document.getElementById('perfiles-chevron').classList.toggle('fa-chevron-down'); },
-        generarPrompt(){ if(this.saberesSeleccionados.size===0){ alert('Selecciona al menos un saber.'); return; } const ciclo=this.getCiclo(); const rda=RDA_POR_CICLO[ciclo]?.["Apropiación tecnológica y Digital"]||''; const ejesSeleccionados=[...document.querySelectorAll('#ejes-checkboxes input:checked')].map(cb=>cb.value); const ejesTxt=ejesSeleccionados.map(e=>`- ${e}: ${EJES_POR_CICLO[ciclo][e]}`).join('\n'); let saberesTxt=''; const data=PNFT_DATA[this.nivelActual]?.[this.moduloActual]||{}; for(let id of this.saberesSeleccionados){ const [area,nombre]=id.split('::'); const saber=data[area]?.saberes?.find(s=>s.nombre===nombre); if(saber){ saberesTxt+=`📌 ${area} - ${nombre}\n`; saber.indicadores.forEach(i=>saberesTxt+=`   • ${i}\n`); } } const duracion=document.getElementById('duracion-clase').value; const prompt=`Actúa como especialista MEP-PNFT 2026.\nNivel: ${this.nivelActual} | Módulo: ${this.moduloActual} | Ciclo: ${ciclo}\nDuración clase: ${duracion} min.\nMetodología: ${ciclo==='II Ciclo'?'ABR':ciclo==='III Ciclo'?'Design Thinking':'ABJ'}\n📌 SABERES:\n${saberesTxt}\n🎯 RdA: ${rda}\n⚙️ EJES TRANSVERSALES SELECCIONADOS:\n${ejesTxt}\nTAREA: Diseñar estrategia completa con Focalización, Exploración, Aplicación, Reflexión, Rúbrica y DUA.`; document.getElementById('output-prompt').value=prompt; },
-        copiarPrompt(){ const ta=document.getElementById('output-prompt'); ta.select(); document.execCommand('copy'); alert('Prompt copiado.'); }
-    };
-
-    // ---------- GRUPOS ----------
-    const Grupos = {
-        abrirModalGrupo(){ document.getElementById('grupo-nombre').value=''; document.getElementById('modal-grupo').classList.remove('hidden'); },
-        async guardarGrupo(){ const n=document.getElementById('grupo-nombre').value.trim(); if(!n) return; await DB.add('grupos',{nombre:n}); this.cerrarModal('modal-grupo'); await App.cargarGrupos(); },
-        abrirModalSeccion(){ if(!App.grupoActualId){ alert('Selecciona un grupo primero'); return; } document.getElementById('seccion-nombre').value=''; document.getElementById('modal-seccion').classList.remove('hidden'); },
-        async guardarSeccion(){ const n=document.getElementById('seccion-nombre').value.trim(); if(!n) return; await DB.add('secciones',{nombre:n,grupoId:App.grupoActualId}); this.cerrarModal('modal-seccion'); await App.cargarSecciones(); },
-        async seleccionarSeccion(id){ App.seccionActualId=id; await App.cargarEstudiantes(); this.renderEstudiantes(); await App.cargarStorage(); App.renderizarTodo(); },
-        abrirModalEstudiante(){ if(!App.seccionActualId){ alert('Selecciona una sección'); return; } document.getElementById('edit-estudiante-id').value=''; document.getElementById('est-nombre').value=''; document.getElementById('est-apellido1').value=''; document.getElementById('est-apellido2').value=''; document.getElementById('modal-estudiante').classList.remove('hidden'); },
-        async guardarEstudiante(){ const id=document.getElementById('edit-estudiante-id').value; const nombre=document.getElementById('est-nombre').value.trim(); const ape1=document.getElementById('est-apellido1').value.trim(); const ape2=document.getElementById('est-apellido2').value.trim(); if(!nombre) return; const datos={nombre,apellido1:ape1,apellido2:ape2,seccionId:App.seccionActualId}; if(id){ datos.id=+id; await DB.put('estudiantes',datos); } else { await DB.add('estudiantes',datos); } this.cerrarModal('modal-estudiante'); await App.cargarEstudiantes(); this.renderEstudiantes(); },
-        async eliminarEstudiante(id){ await DB.delete('estudiantes',id); await App.cargarEstudiantes(); this.renderEstudiantes(); },
-        renderSecciones(secs){ const div=document.getElementById('lista-secciones'); if(!secs) return; div.innerHTML=secs.map(s=>`<div class="p-2 rounded cursor-pointer ${App.seccionActualId===s.id?'bg-blue-600':'bg-white/5'}" onclick="Grupos.seleccionarSeccion(${s.id})">${s.nombre}</div>`).join(''); if(secs.length&&!App.seccionActualId){ App.seccionActualId=secs[0].id; App.cargarEstudiantes().then(()=>this.renderEstudiantes()); } },
-        renderEstudiantes(){ const tbody=document.getElementById('tabla-estudiantes-body'); tbody.innerHTML=App.estudiantes.map(e=>`<tr><td class="p-2">${e.nombre} ${e.apellido1} ${e.apellido2}</td><td><button onclick="Grupos.eliminarEstudiante(${e.id})" class="text-red-400"><i class="fas fa-trash"></i></button></td></tr>`).join(''); },
-        cerrarModal(id){ document.getElementById(id).classList.add('hidden'); },
-        async importarCSV(event){ const file=event.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=async(e)=>{ const lines=e.target.result.split('\n'); for(let line of lines){ const cols=line.split(','); if(cols.length>=3){ const nombre=cols[0].trim(), ape1=cols[1].trim(), ape2=cols[2].trim(); if(nombre) await DB.add('estudiantes',{nombre,apellido1:ape1,apellido2:ape2,seccionId:App.seccionActualId}); } } await App.cargarEstudiantes(); this.renderEstudiantes(); alert('Estudiantes importados.'); }; reader.readAsText(file); }
-    };
-
-    // ---------- EVALUACIÓN ----------
-    const Eval = {
-        abrirModalCotidiano(){ if(!App.estudiantes.length){ alert('No hay estudiantes.'); return; } const div=document.getElementById('cotidiano-lista'); div.innerHTML=App.estudiantes.map(e=>{ const nota=App.calificaciones[e.id]?.cotidiano||''; return `<div class="flex items-center gap-3"><span class="w-40">${e.nombre} ${e.apellido1}</span><input type="number" min="1" max="4" step="0.1" id="cot_${e.id}" value="${nota}" class="bg-slate-800 w-20 p-2 rounded"></div>`; }).join(''); document.getElementById('modal-cotidiano').classList.remove('hidden'); },
-        async guardarCotidiano(){ App.estudiantes.forEach(e=>{ const val=parseFloat(document.getElementById(`cot_${e.id}`)?.value); if(!isNaN(val)){ if(!App.calificaciones[e.id]) App.calificaciones[e.id]={}; App.calificaciones[e.id].cotidiano=val; } }); await App.guardarStorage(); this.cerrarModal('modal-cotidiano'); this.renderizarTabla(); },
-        abrirModalProyecto(){ if(!App.estudiantes.length){ alert('No hay estudiantes.'); return; } const fases=['Empatizar','Definir','Idear','Prototipar','Evaluar']; let html=''; App.estudiantes.forEach(e=>{ html+=`<div class="border-b border-white/20 pb-2"><p class="font-bold">${e.nombre} ${e.apellido1}</p><div class="grid grid-cols-5 gap-2">`; fases.forEach(f=>{ const val=App.calificaciones[e.id]?.proyectoFases?.[f]||''; html+=`<input type="number" min="0" max="100" id="proy_${e.id}_${f}" value="${val}" placeholder="${f}" class="bg-slate-800 p-1 rounded text-xs">`; }); html+=`</div></div>`; }); document.getElementById('proyecto-fases').innerHTML=html; document.getElementById('modal-proyecto').classList.remove('hidden'); },
-        async guardarProyecto(){ const fases=['Empatizar','Definir','Idear','Prototipar','Evaluar']; App.estudiantes.forEach(e=>{ let suma=0, count=0; const fasesObj={}; fases.forEach(f=>{ const val=parseFloat(document.getElementById(`proy_${e.id}_${f}`)?.value); if(!isNaN(val)){ suma+=val; count++; fasesObj[f]=val; } }); const prom=count?suma/count:0; if(!App.calificaciones[e.id]) App.calificaciones[e.id]={}; App.calificaciones[e.id].proyecto=prom; App.calificaciones[e.id].proyectoFases=fasesObj; }); await App.guardarStorage(); this.cerrarModal('modal-proyecto'); this.renderizarTabla(); },
-        renderizarTabla(){
-            const ciclo=App.getCiclo(); const pesos=PESOS_EVALUACION[ciclo]||PESOS_EVALUACION['I Ciclo'];
-            const thead=document.querySelector('#tabla-calificaciones thead'); const tbody=document.getElementById('tabla-calificaciones-body');
-            let columnas=['Estudiante']; if(pesos.cotidiano>0) columnas.push('Cotid.'); if(pesos.tareas>0) columnas.push('Tareas'); if(pesos.pruebas>0) columnas.push('Pruebas'); if(pesos.proyecto>0) columnas.push('Proyecto'); columnas.push('Asist.'); columnas.push('Nota Final','Condición');
-            thead.innerHTML=`<tr>${columnas.map(c=>`<th class="p-3">${c}</th>`).join('')}</tr>`;
-            if(!App.estudiantes.length){ tbody.innerHTML=`<tr><td colspan="${columnas.length}" class="p-3 text-center">No hay estudiantes.</td></tr>`; return; }
-            let html='';
-            App.estudiantes.forEach(e=>{
-                const cal=App.calificaciones[e.id]||{}; const cot=cal.cotidiano||0, tar=cal.tareas||0, pru=cal.pruebas||0, proy=cal.proyecto||0, asis=cal.asistencia||100;
-                const nota=(cot*pesos.cotidiano + tar*pesos.tareas + pru*pesos.pruebas + proy*pesos.proyecto + asis*pesos.asistencia)/100;
-                let cond='Reprobado',color='text-red-400'; if(nota>=70){ cond='Aprobado'; color='text-green-400'; } else if(nota>=60){ cond='Aplazado'; color='text-yellow-400'; }
-                html+=`<tr>`; html+=`<td class="p-2">${e.nombre} ${e.apellido1}</td>`; if(pesos.cotidiano>0) html+=`<td>${cot}</td>`; if(pesos.tareas>0) html+=`<td>${tar}</td>`; if(pesos.pruebas>0) html+=`<td>${pru}</td>`; if(pesos.proyecto>0) html+=`<td>${proy.toFixed(1)}</td>`; html+=`<td>${asis}</td><td>${nota.toFixed(1)}</td><td class="${color}">${cond}</td></tr>`;
-            });
-            tbody.innerHTML=html;
+        nivelActual: '0°', moduloActual: 'Módulo 1',
+        saberesSeleccionados: new Set(), saberesImpartidos: new Set(),
+        init() {
+            this.renderIslas();
+            this.cargarStorage();
+            this.renderizarTodo();
         },
-        cerrarModal(id){ document.getElementById(id).classList.add('hidden'); }
+        renderIslas() {
+            document.getElementById('island-container').innerHTML = `
+                <div class="island-card rounded-3xl p-6 border-l-8 border-l-pink-400" onclick="App.selectCycle('materno')"><h3 class="text-2xl font-black">🏝️ Materno · Transición</h3><p class="text-white/60 text-sm">ABJ · 0°</p></div>
+                <div class="island-card rounded-3xl p-6 border-l-8 border-l-green-400" onclick="App.selectCycle('i')"><h3 class="text-2xl font-black">📗 I Ciclo</h3><p class="text-white/60 text-sm">1° · 2° · 3° · ABJ</p></div>
+                <div class="island-card rounded-3xl p-6 border-l-8 border-l-orange-400" onclick="App.selectCycle('ii')"><h3 class="text-2xl font-black">📙 II Ciclo</h3><p class="text-white/60 text-sm">4° · 5° · 6° · ABR</p></div>
+                <div class="island-card rounded-3xl p-6 border-l-8 border-l-purple-400" onclick="App.selectCycle('iii')"><h3 class="text-2xl font-black">📕 III Ciclo</h3><p class="text-white/60 text-sm">7° · 8° · 9° · Design Thinking</p></div>
+            `;
+        },
+        selectCycle(c) { const m = { materno: '0°', i: '1°', ii: '4°', iii: '7°' }; this.selectLevel(m[c]); },
+        selectLevel(l) {
+            this.nivelActual = l;
+            document.getElementById('current-level-display').innerText = l;
+            document.querySelectorAll('.level-tab').forEach(t => t.classList.toggle('active', t.dataset.level === l));
+            this.cargarStorage();
+            this.renderizarTodo();
+        },
+        cargarSaberesDelNivel() {
+            this.moduloActual = document.getElementById('select-modulo').value;
+            this.cargarStorage();
+            document.getElementById('saberes-section').classList.remove('hidden');
+            this.renderSaberes();
+            this.renderBateriasYPerfiles();
+            this.renderListaSeleccionados();
+        },
+        switchTab(t) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById(`tab-${t}`).classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-tab="${t}"]`).classList.add('active');
+        },
+        cargarStorage() {
+            const key = `${this.nivelActual}_${this.moduloActual}`;
+            const data = Storage.cargar(key) || {};
+            this.saberesSeleccionados = new Set(data.seleccionados || []);
+            this.saberesImpartidos = new Set(data.impartidos || []);
+        },
+        guardarStorage() {
+            const key = `${this.nivelActual}_${this.moduloActual}`;
+            Storage.guardar(key, { seleccionados: [...this.saberesSeleccionados], impartidos: [...this.saberesImpartidos] });
+        },
+        getCiclo() {
+            const n = parseInt(this.nivelActual);
+            if (isNaN(n)) return 'Materno Infantil/Transición';
+            if (n <= 3) return 'I Ciclo';
+            if (n <= 6) return 'II Ciclo';
+            return 'III Ciclo';
+        },
+        renderizarTodo() {
+            this.renderSaberes();
+            this.renderBateriasYPerfiles();
+            this.renderListaSeleccionados();
+            this.renderEjesCheckboxes();
+        },
+        renderEjesCheckboxes() {
+            const ejes = EJES_POR_CICLO[this.getCiclo()] || {};
+            const div = document.getElementById('ejes-checkboxes');
+            div.innerHTML = Object.keys(ejes).map(e => `<label class="flex items-center gap-2"><input type="checkbox" value="${e}" checked> ${e}</label>`).join('');
+        },
+        toggleSaber(id, chk) {
+            if (chk) this.saberesSeleccionados.add(id); else this.saberesSeleccionados.delete(id);
+            this.guardarStorage();
+            this.renderizarTodo();
+        },
+        toggleImpartido(id) {
+            if (this.saberesImpartidos.has(id)) this.saberesImpartidos.delete(id); else this.saberesImpartidos.add(id);
+            this.guardarStorage();
+            this.renderSaberes();
+        },
+        limpiarSeleccionModulo() { this.saberesSeleccionados.clear(); this.guardarStorage(); this.renderizarTodo(); },
+        renderSaberes() {
+            const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual];
+            const cont = document.getElementById('saberes-container');
+            if (!data) { cont.innerHTML = '<p class="text-white/40">Datos no disponibles.</p>'; return; }
+            let html = '', total = 0;
+            Object.entries(data).forEach(([area, content]) => {
+                html += `<h4 class="text-lg font-bold text-blue-300 mt-4">${area}</h4>`;
+                content.saberes.forEach(s => {
+                    const id = `${area}::${s.nombre}`;
+                    const checked = this.saberesSeleccionados.has(id);
+                    const impartido = this.saberesImpartidos.has(id);
+                    if (checked) total++;
+                    html += `<div class="flex items-start gap-3 p-2 border-b border-white/10 ${impartido ? 'bg-green-500/20' : ''}">
+                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="App.toggleSaber('${id}', this.checked)">
+                        <div class="flex-1"><span class="font-semibold">${s.nombre}</span><div class="text-[10px] text-slate-400">${s.indicadores.map(i => `• ${i}`).join('<br>')}</div></div>
+                        <button onclick="App.toggleImpartido('${id}')" class="text-xs ${impartido ? 'text-green-400' : 'text-white/40'}"><i class="fas fa-check-circle"></i> Impartido</button>
+                    </div>`;
+                });
+            });
+            cont.innerHTML = html;
+            document.getElementById('selected-count-badge').innerText = `${total} seleccionados`;
+        },
+        renderBateriasYPerfiles() {
+            const areas = ['Apropiación tecnológica y Digital', 'Programación y Algoritmos', 'Computación física y Robótica', 'Ciencia de datos e Inteligencia artificial'];
+            const contador = {}; areas.forEach(a => contador[a] = 0);
+            this.saberesSeleccionados.forEach(s => { const a = s.split('::')[0]; if (contador.hasOwnProperty(a)) contador[a]++; });
+            const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
+            const bhtml = areas.map(a => {
+                const tot = data[a]?.saberes?.length || 1;
+                const pct = Math.round((contador[a] / tot) * 100);
+                return `<div><div class="flex justify-between text-sm"><span>${a}</span><span>${pct}%</span></div><div class="w-full h-5 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400" style="width:${pct}%"></div></div></div>`;
+            }).join('');
+            document.getElementById('batteries-container').innerHTML = bhtml;
+            const ciclo = this.getCiclo();
+            const perfiles = PERFILES_POR_CICLO[ciclo] || [];
+            const phtml = perfiles.map(p => {
+                const tot = data[p.area]?.saberes?.length || 1;
+                const sel = [...this.saberesSeleccionados].filter(s => s.startsWith(p.area)).length;
+                return `<div><div class="flex justify-between text-xs"><span>${p.nombre}</span><span>${Math.round((sel / tot) * 100)}%</span></div><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-emerald-500" style="width:${Math.round((sel / tot) * 100)}%"></div></div></div>`;
+            }).join('');
+            document.getElementById('perfiles-content').innerHTML = phtml;
+        },
+        renderListaSeleccionados() {
+            const lista = document.getElementById('selected-saberes-list');
+            if (this.saberesSeleccionados.size === 0) { lista.innerHTML = '<p class="text-white/40 text-center">No hay saberes seleccionados</p>'; return; }
+            const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
+            let html = ''; const agrupados = {};
+            this.saberesSeleccionados.forEach(s => { const [area, nombre] = s.split('::'); if (!agrupados[area]) agrupados[area] = []; agrupados[area].push(nombre); });
+            for (let area in agrupados) {
+                html += `<p class="text-xs font-bold text-blue-300 mt-2">${area}</p>`;
+                agrupados[area].forEach(nombre => { html += `<div class="flex items-center justify-between text-sm pl-2"><span>• ${nombre}</span><i class="fas fa-times-circle text-red-400 cursor-pointer" onclick="App.eliminarSaber('${area}::${nombre}')"></i></div>`; });
+            }
+            lista.innerHTML = html;
+        },
+        eliminarSaber(id) { this.saberesSeleccionados.delete(id); this.guardarStorage(); this.renderizarTodo(); },
+        togglePerfiles() {
+            const c = document.getElementById('perfiles-content');
+            c.classList.toggle('hidden');
+            document.getElementById('perfiles-chevron').classList.toggle('fa-chevron-down');
+        },
+        generarPrompt() {
+            if (this.saberesSeleccionados.size === 0) { alert('Selecciona al menos un saber.'); return; }
+            const ciclo = this.getCiclo();
+            const rda = RDA_POR_CICLO[ciclo]?.["Apropiación tecnológica y Digital"] || '';
+            const ejesSeleccionados = [...document.querySelectorAll('#ejes-checkboxes input:checked')].map(cb => cb.value);
+            const ejesTxt = ejesSeleccionados.map(e => `- ${e}: ${EJES_POR_CICLO[ciclo][e]}`).join('\n');
+            let saberesTxt = ''; const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
+            for (let id of this.saberesSeleccionados) {
+                const [area, nombre] = id.split('::');
+                const saber = data[area]?.saberes?.find(s => s.nombre === nombre);
+                if (saber) { saberesTxt += `📌 ${area} - ${nombre}\n`; saber.indicadores.forEach(i => saberesTxt += `   • ${i}\n`); }
+            }
+            const duracion = document.getElementById('duracion-clase').value;
+            const metodologia = ciclo === 'II Ciclo' ? 'ABR' : (ciclo === 'III Ciclo' ? 'Design Thinking' : 'ABJ');
+            const prompt = `Actúa como especialista MEP-PNFT 2026.\nNivel: ${this.nivelActual} | Módulo: ${this.moduloActual} | Ciclo: ${ciclo}\nDuración clase: ${duracion} min.\nMetodología: ${metodologia}\n📌 SABERES:\n${saberesTxt}\n🎯 RdA: ${rda}\n⚙️ EJES TRANSVERSALES SELECCIONADOS:\n${ejesTxt}\nTAREA: Diseñar estrategia completa con Focalización, Exploración, Aplicación, Reflexión, Rúbrica y DUA.`;
+            document.getElementById('output-prompt').value = prompt;
+        },
+        copiarPrompt() { const ta = document.getElementById('output-prompt'); ta.select(); document.execCommand('copy'); alert('Prompt copiado.'); }
     };
 
-    // ---------- EXPORTAR ----------
     const Exportar = {
-        informeGrupo(){ const printWindow=window.open('','_blank'); printWindow.document.write('<html><head><title>Informe PNFT</title><style>body{font-family:sans-serif;margin:2rem;} table{border-collapse:collapse;width:100%;} th,td{border:1px solid #ccc;padding:8px;text-align:left;}</style></head><body>'); printWindow.document.write(`<h1>Informe del Grupo</h1><p>Nivel: ${App.nivelActual} | Módulo: ${App.moduloActual}</p>`); printWindow.document.write(document.getElementById('tabla-calificaciones').outerHTML); printWindow.document.write('</body></html>'); printWindow.document.close(); printWindow.print(); },
-        async backupCompleto(){ const grupos=await DB.getAll('grupos'); const secciones=await DB.getAll('secciones'); const estudiantes=await DB.getAll('estudiantes'); const plan=await DB.getAll('planificacion'); const cal=await DB.getAll('calificaciones'); const backup={version:'1.0',fecha:new Date().toISOString(),grupos,secciones,estudiantes,planificacion:plan,calificaciones:cal}; const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`backup_pnft_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(a.href); alert('Backup exportado.'); },
-        async importarBackup(e){ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=async(ev)=>{ try{ const data=JSON.parse(ev.target.result); if(!data.version||!data.grupos) throw new Error('Formato inválido'); if(!confirm('¿Reemplazar todos los datos actuales?')) return; const stores=['grupos','secciones','estudiantes','planificacion','calificaciones']; for(let s of stores){ if(DB.useLS) localStorage.removeItem(`pnft_${s}`); else await new Promise(r=>{ const tx=DB.db.transaction(s,'readwrite'); tx.objectStore(s).clear().onsuccess=r; }); } for(let g of data.grupos) await DB.add('grupos',g); for(let s of data.secciones) await DB.add('secciones',s); for(let e of data.estudiantes) await DB.add('estudiantes',e); for(let p of data.planificacion) await DB.put('planificacion',p); for(let c of data.calificaciones) await DB.put('calificaciones',c); alert('Backup importado. Recargando...'); window.location.reload(); }catch(err){ alert('Error al importar'); console.error(err); } }; reader.readAsText(file); }
+        backupCompleto() {
+            const backup = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('pnft_')) backup[key] = localStorage.getItem(key);
+            }
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `backup_pnft_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+            alert('✅ Backup exportado correctamente.');
+        },
+        importarBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const backup = JSON.parse(e.target.result);
+                    if (!confirm('¿Reemplazar todos los datos de planificación?')) return;
+                    for (let key in backup) localStorage.setItem(key, backup[key]);
+                    alert('✅ Backup importado. Recargando...');
+                    window.location.reload();
+                } catch (err) { alert('❌ Archivo inválido.'); }
+            };
+            reader.readAsText(file);
+        }
     };
 
-    window.App = App; window.Grupos = Grupos; window.Eval = Eval; window.Exportar = Exportar;
-    window.onload = () => App.init().catch(e => { console.error(e); alert('Error al iniciar.'); });
+    window.App = App; window.Exportar = Exportar;
+    window.onload = () => App.init();
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>
