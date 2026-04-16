@@ -1045,10 +1045,11 @@ const RDA_POR_CICLO = {
             }).join('');
             document.getElementById('perfiles-content').innerHTML = phtml || '<p style="font-size:0.9rem; color:#e5e7eb;">No hay perfiles definidos para este ciclo.</p>';
             // NUEVA LLAMADA
-            this.actualizarPanelRdA(contador, data);
+             this.actualizarPanelRdA(); // Ya no necesita parámetros
         },
 
-        // NUEVA FUNCIÓN AUXILIAR: Obtener progreso acumulado del ciclo
+
+        // NUEVA FUNCIÓN: Progreso acumulado del ciclo
         obtenerProgresoCiclo() {
             const ciclo = this.getCiclo();
             let grados = [];
@@ -1067,11 +1068,12 @@ const RDA_POR_CICLO = {
                     const key = `${grado}_${modulo}`;
                     const data = Storage.cargar(key) || {};
                     const saberesIds = data.seleccionados || [];
-        
+                    
                     const modData = PNFT_DATA[grado]?.[modulo];
                     if (modData) {
                         areas.forEach(area => {
                             const areaData = modData[area];
+                            // 🔥 CORRECCIÓN CLAVE: Verificar que el área exista en el módulo
                             if (areaData && areaData.saberes) {
                                 totales[area] += areaData.saberes.length;
                                 saberesIds.forEach(id => {
@@ -1098,13 +1100,13 @@ const RDA_POR_CICLO = {
                 };
             });
             return resultado;
-        }
+        },
         // VERSIÓN ACTUALIZADA DE actualizarPanelRdA
-       actualizarPanelRdA() {
+         actualizarPanelRdA() {
             const ciclo = this.getCiclo();
-            const progresoCiclo = this.obtenerProgresoCiclo();
+            const progresoCiclo = this.obtenerProgresoCiclo(); // Usa el acumulado del ciclo
             const areas = Object.keys(progresoCiclo).filter(area => {
-                // Excluir si el total de saberes en el ciclo es 0
+                // 🔥 Excluir áreas que no tienen saberes en el ciclo (total === 0)
                 if (progresoCiclo[area].total === 0) return false;
                 // Excluir Computación física en I Ciclo si no aplica
                 if (ciclo === 'I Ciclo' && area === 'Computación física y Robótica') {
@@ -1155,7 +1157,6 @@ const RDA_POR_CICLO = {
             });
             container.innerHTML = html;
         }
-        
        renderListaSeleccionados() {
             const lista = document.getElementById('selected-saberes-list');
             if (this.saberesSeleccionados.size === 0) {
