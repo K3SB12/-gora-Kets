@@ -235,6 +235,24 @@
                     <h3 class="font-bold text-lg mb-4"><i class="fas fa-battery-full text-amber-400 mr-2"></i>Baterías de Poder</h3>
                     <div class="space-y-5" id="batteries-container"></div>
                 </div>
+                <!-- NUEVO PANEL: PROGRESO HACIA EL RdA -->
+                <div class="glass-card p-6 mt-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fas fa-bullseye text-2xl text-red-400"></i>
+                        <h3 class="font-bold text-lg">🎯 Progreso hacia el RdA</h3>
+                    </div>
+                    <p id="rda-texto" class="text-sm text-white/80 mb-3 italic">Selecciona un nivel para ver el RdA.</p>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span id="rda-area-nombre">Apropiación tecnológica y Digital</span>
+                            <span id="rda-porcentaje">0%</span>
+                        </div>
+                        <div class="w-full h-5 bg-slate-700/50 rounded-full">
+                            <div id="rda-progress-bar" class="battery-fill h-full rounded-full bg-gradient-to-r from-red-500 to-orange-400" style="width:0%"></div>
+                        </div>
+                        <p id="rda-mensaje" class="text-xs text-white/60 mt-2">Planifica saberes para avanzar.</p>
+                    </div>
+                </div>
                 <div class="glass-card p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-bold text-lg"><i class="fas fa-clipboard-list text-purple-400 mr-2"></i>Planeamiento</h3>
@@ -1018,7 +1036,8 @@ const RDA_POR_CICLO = {
             const bhtml = areas.map(a => {
                 const tot = data[a]?.saberes?.length || 1;
                 const pct = Math.round((contador[a] / tot) * 100);
-                return `<div><div class="flex justify-between text-sm"><span>${a}</span><span>${pct}%</span></div><div class="w-full h-5 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400" style="width:${pct}%"></div></div></div>`;
+                const color = a.includes('Apropiación') ? 'from-blue-500' : a.includes('Programación') ? 'from-emerald-500' : a.includes('Robótica') ? 'from-amber-500' : 'from-purple-500';
+                return `<div><div class="flex justify-between text-sm"><span>${a}</span><span>${pct}%</span></div><div class="w-full h-5 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r ${color}" style="width:${pct}%"></div></div></div>`;
             }).join('');
             document.getElementById('batteries-container').innerHTML = bhtml;
         
@@ -1026,13 +1045,37 @@ const RDA_POR_CICLO = {
             const perfiles = PERFILES_POR_CICLO[ciclo] || [];
             const phtml = perfiles.map(p => {
                 const tot = data[p.area]?.saberes?.length || 1;
-                // CORRECCIÓN: Comparar exactamente el área extraída del ID del saber
                 const sel = [...this.saberesSeleccionados].filter(s => s.split('::')[0] === p.area).length;
-                const pctPerfil = Math.round((sel / tot) * 100);
-                return `<div><div class="flex justify-between text-xs"><span>${p.nombre}</span><span>${pctPerfil}%</span></div><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-emerald-500" style="width:${pctPerfil}%"></div></div></div>`;
+                return `<div><div class="flex justify-between text-xs"><span>${p.nombre}</span><span>${Math.round((sel/tot)*100)}%</span></div><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-emerald-500" style="width:${Math.round((sel/tot)*100)}%"></div></div></div>`;
             }).join('');
             document.getElementById('perfiles-content').innerHTML = phtml || '<p style="font-size:0.9rem; color:#e5e7eb;">No hay perfiles definidos para este ciclo.</p>';
+            // NUEVA LLAMADA
+            this.actualizarPanelRdA(contador, data);
         },
+
+        actualizarPanelRdA(contador, data) {
+            // Tomamos el área principal "Apropiación tecnológica y Digital" como referencia para el RdA
+            const areaRef = 'Apropiación tecnológica y Digital';
+            const totalSaberes = data[areaRef]?.saberes?.length || 1;
+            const seleccionados = contador[areaRef] || 0;
+            const pct = Math.round((seleccionados / totalSaberes) * 100);
+        
+            const ciclo = this.getCiclo();
+            const rdaTexto = RDA_POR_CICLO[ciclo]?.[areaRef] || 'Resultado de Aprendizaje no definido para este ciclo.';
+        
+            document.getElementById('rda-texto').innerText = rdaTexto;
+            document.getElementById('rda-area-nombre').innerText = areaRef;
+            document.getElementById('rda-porcentaje').innerText = `${pct}%`;
+            document.getElementById('rda-progress-bar').style.width = `${pct}%`;
+        
+            const mensaje = document.getElementById('rda-mensaje');
+            if (pct === 0) mensaje.innerText = '🌱 Comienza seleccionando saberes de esta área.';
+            else if (pct < 40) mensaje.innerText = '📌 Buen inicio, sigue planificando más saberes.';
+            else if (pct < 70) mensaje.innerText = '📈 Vas por buen camino hacia el RdA.';
+            else if (pct < 100) mensaje.innerText = '🔥 ¡Muy cerca de alcanzar el RdA!';
+            else mensaje.innerText = '🏆 ¡RdA completamente planificado!';
+        },
+        
        renderListaSeleccionados() {
             const lista = document.getElementById('selected-saberes-list');
             if (this.saberesSeleccionados.size === 0) {
