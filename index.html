@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧭 PNFT 2026 · Portal Docente Completo (v2.1)</title>
+    <title>🧭 PNFT 2026 · Planificador Curricular</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -12,9 +12,6 @@
         .tab-btn { padding: 0.75rem 1.5rem; border-radius: 9999px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05); color: #9ca3af; transition: all 0.2s; }
         .tab-btn.active { background: #2563eb; color: white; box-shadow: 0 0 15px #2563eb; }
         .battery-fill { height: 100%; border-radius: 9999px; transition: width 0.5s; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .modal.hidden { display: none; }
-        .modal-content { max-width: 90%; max-height: 90%; overflow-y: auto; }
         .level-tab { padding: 0.3rem 0.8rem; border-radius: 9999px; background: rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s; }
         .level-tab.active { background: #2563eb; color: white; }
         .island-card { background: rgba(20, 40, 60, 0.6); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s; cursor: pointer; }
@@ -35,22 +32,19 @@
             </div>
             <div>
                 <h1 class="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-cyan-200 via-white to-blue-300 bg-clip-text text-transparent">PNFT 2026 · La Gran Ruta</h1>
-                <p class="text-cyan-300/80 text-sm flex items-center gap-2"><i class="fas fa-island-tropical"></i> Navegando hacia el Perfil de Salida</p>
+                <p class="text-cyan-300/80 text-sm flex items-center gap-2"><i class="fas fa-island-tropical"></i> Planificador Curricular · Dashboard de Cumplimiento</p>
             </div>
         </div>
-        <div class="flex items-center gap-3">
-            <select id="select-grupo" class="bg-slate-800/70 border border-slate-600 rounded-xl p-2 text-sm" onchange="App.cambiarGrupo()"></select>
-            <button onclick="Grupos.abrirModalGrupo()" class="bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full text-sm"><i class="fas fa-plus mr-1"></i>Grupo</button>
-            <span class="bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-xs"><i class="fas fa-dice-d6 text-amber-400 mr-1"></i>Islas MEP</span>
+        <div class="flex items-center gap-3 bg-black/20 backdrop-blur-md px-5 py-2 rounded-full border border-white/10">
+            <i class="fas fa-dice-d6 text-amber-400"></i>
+            <span class="text-sm font-semibold">Islas de Aprendizaje · MEP 2026</span>
         </div>
     </div>
 
-    <!-- PESTAÑAS -->
+    <!-- PESTAÑAS (SOLO DASHBOARD Y EXPORTAR) -->
     <div class="flex gap-3 mb-6 border-b border-white/10 pb-3">
         <div class="tab-btn active" data-tab="dashboard" onclick="App.switchTab('dashboard')"><i class="fas fa-map mr-2"></i>Dashboard</div>
-        <div class="tab-btn" data-tab="grupos" onclick="App.switchTab('grupos')"><i class="fas fa-users mr-2"></i>Grupos</div>
-        <div class="tab-btn" data-tab="evaluacion" onclick="App.switchTab('evaluacion')"><i class="fas fa-check-double mr-2"></i>Evaluación</div>
-        <div class="tab-btn" data-tab="exportar" onclick="App.switchTab('exportar')"><i class="fas fa-download mr-2"></i>Exportar</div>
+        <div class="tab-btn" data-tab="exportar" onclick="App.switchTab('exportar')"><i class="fas fa-download mr-2"></i>Exportar Backup</div>
     </div>
 
     <!-- DASHBOARD -->
@@ -58,9 +52,12 @@
         <div class="flex flex-wrap gap-2 mb-6 justify-center md:justify-start">
             <div class="level-tab active" data-level="0°" onclick="App.selectLevel('0°')">0° Preescolar</div><div class="level-tab" data-level="1°" onclick="App.selectLevel('1°')">1°</div><div class="level-tab" data-level="2°" onclick="App.selectLevel('2°')">2°</div><div class="level-tab" data-level="3°" onclick="App.selectLevel('3°')">3°</div><div class="level-tab" data-level="4°" onclick="App.selectLevel('4°')">4°</div><div class="level-tab" data-level="5°" onclick="App.selectLevel('5°')">5°</div><div class="level-tab" data-level="6°" onclick="App.selectLevel('6°')">6°</div><div class="level-tab" data-level="7°" onclick="App.selectLevel('7°')">7°</div><div class="level-tab" data-level="8°" onclick="App.selectLevel('8°')">8°</div><div class="level-tab" data-level="9°" onclick="App.selectLevel('9°')">9°</div>
         </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- COLUMNA IZQUIERDA: ISLAS + MÓDULO + SABERES -->
             <div class="lg:col-span-8 space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" id="island-container"></div>
+
                 <div class="glass-card p-6">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="font-bold text-lg"><i class="fas fa-flag-checkered text-blue-400 mr-2"></i>Configurar Módulo</h3>
@@ -74,6 +71,23 @@
                         <button onclick="App.cargarSaberesDelNivel()" class="btn-primary"><i class="fas fa-download mr-2"></i>Cargar Saberes</button>
                     </div>
                 </div>
+
+                <!-- GENERADOR DE PROMPT (MOVIDO AQUÍ) -->
+                <div class="glass-card p-6">
+                    <h3 class="font-bold text-lg mb-4"><i class="fas fa-robot text-indigo-400 mr-2"></i>Generador de Prompt para IA</h3>
+                    <div class="mb-3"><label class="text-xs text-white/60 block mb-1">Ejes Transversales a incluir:</label><div id="ejes-checkboxes" class="space-y-1 text-sm"></div></div>
+                    <div class="mb-3"><label class="text-xs text-white/60 block mb-1">Duración de clase (min):</label><input type="number" id="duracion-clase" value="40" class="w-full bg-slate-800 p-2 rounded text-white text-sm"></div>
+                    <button onclick="App.generarPrompt()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition mb-4"><i class="fas fa-magic mr-2"></i>✨ Generar Prompt PNFT</button>
+                    <div class="relative"><textarea id="output-prompt" rows="6" class="w-full bg-slate-900/80 text-cyan-300 font-mono text-xs p-4 rounded-xl border border-white/20" readonly></textarea><button onclick="App.copiarPrompt()" class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 p-2 rounded-lg"><i class="far fa-copy"></i></button></div>
+                    <div class="grid grid-cols-4 gap-2 mt-4">
+                        <a href="https://gemini.google.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fab fa-google"></i> Gemini</a>
+                        <a href="https://chat.openai.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fas fa-comment"></i> ChatGPT</a>
+                        <a href="https://copilot.microsoft.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fas fa-sync-alt"></i> Copilot</a>
+                        <a href="https://deepseek.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fas fa-search"></i> DeepSeek</a>
+                    </div>
+                </div>
+
+                <!-- SABERES -->
                 <div id="saberes-section" class="glass-card p-6 hidden">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-bold text-lg"><i class="fas fa-list-check text-emerald-400"></i> Saberes del Módulo</h3>
@@ -83,6 +97,8 @@
                     <div class="mt-4 text-xs text-amber-300/80 flex items-center gap-2"><i class="fas fa-lightbulb"></i> Regla de Oro: Selecciona entre 3 y 5 indicadores.</div>
                 </div>
             </div>
+
+            <!-- COLUMNA DERECHA: BATERÍAS, PLANEAMIENTO, PERFILES -->
             <div class="lg:col-span-4 space-y-6">
                 <div class="glass-card p-6">
                     <h3 class="font-bold text-lg mb-4"><i class="fas fa-battery-full text-amber-400 mr-2"></i>Baterías de Poder</h3>
@@ -102,85 +118,23 @@
                     </div>
                     <div id="perfiles-content" class="mt-4 space-y-3 hidden"></div>
                 </div>
-                <div class="glass-card p-6">
-                    <h3 class="font-bold text-lg mb-4"><i class="fas fa-robot text-indigo-400 mr-2"></i>Generador IA</h3>
-                    <div class="mb-3"><label class="text-xs text-white/60 block mb-1">Ejes Transversales:</label><div id="ejes-checkboxes" class="space-y-1 text-sm"></div></div>
-                    <div class="mb-3"><label class="text-xs text-white/60 block mb-1">Duración clase (min):</label><input type="number" id="duracion-clase" value="40" class="w-full bg-slate-800 p-2 rounded text-white text-sm"></div>
-                    <button onclick="App.generarPrompt()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition mb-4"><i class="fas fa-magic mr-2"></i>✨ Generar Prompt</button>
-                    <div class="relative"><textarea id="output-prompt" rows="6" class="w-full bg-slate-900/80 text-cyan-300 font-mono text-xs p-4 rounded-xl border border-white/20" readonly></textarea><button onclick="App.copiarPrompt()" class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 p-2 rounded-lg"><i class="far fa-copy"></i></button></div>
-                    <div class="grid grid-cols-4 gap-2 mt-4">
-                        <a href="https://gemini.google.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fab fa-google"></i> Gemini</a>
-                        <a href="https://chat.openai.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fas fa-comment"></i> ChatGPT</a>
-                        <a href="https://copilot.microsoft.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fas fa-sync-alt"></i> Copilot</a>
-                        <a href="https://deepseek.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fas fa-search"></i> DeepSeek</a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- GRUPOS -->
-    <div id="tab-grupos" class="tab-content hidden">
-        <div class="glass-card p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold"><i class="fas fa-layer-group mr-3"></i>Gestión de Grupos y Estudiantes</h2>
-                <div class="flex gap-2">
-                    <button onclick="Grupos.abrirModalSeccion()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full text-sm"><i class="fas fa-plus mr-1"></i>Sección</button>
-                    <label class="bg-amber-600 hover:bg-amber-700 px-4 py-2 rounded-full text-sm cursor-pointer"><i class="fas fa-upload mr-1"></i>Importar CSV <input type="file" id="input-import-csv" accept=".csv" class="hidden" onchange="Grupos.importarCSV(event)"></label>
-                </div>
-            </div>
-            <div class="grid md:grid-cols-4 gap-4">
-                <div class="md:col-span-1 bg-slate-800/30 p-4 rounded-xl">
-                    <h3 class="font-bold mb-2">Secciones</h3>
-                    <div id="lista-secciones" class="space-y-1"></div>
-                </div>
-                <div class="md:col-span-3">
-                    <div class="flex justify-between mb-3"><h3 class="font-bold">Estudiantes</h3><button onclick="Grupos.abrirModalEstudiante()" class="bg-green-600 text-sm px-3 py-1 rounded-full"><i class="fas fa-plus mr-1"></i>Estudiante</button></div>
-                    <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-800/50"><tr><th class="p-2">Nombre</th><th class="p-2">Acciones</th></tr></thead><tbody id="tabla-estudiantes-body"></tbody></table></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- EVALUACIÓN -->
-    <div id="tab-evaluacion" class="tab-content hidden">
-        <div class="glass-card p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold"><i class="fas fa-calculator mr-3"></i>Gestión de Calificaciones</h2>
-                <div class="text-sm bg-blue-500/20 px-4 py-2 rounded-full" id="ciclo-eval-badge">Ciclo: I Ciclo</div>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
-                <button onclick="Eval.abrirModalCotidiano()" class="bg-blue-600/30 hover:bg-blue-600/50 p-4 rounded-xl"><i class="fas fa-user-check text-2xl mb-2"></i><br>Trabajo Cotidiano <span id="peso-cotidiano" class="text-xs block">65%</span></button>
-                <button onclick="Eval.abrirModalTareas()" class="bg-emerald-600/30 hover:bg-emerald-600/50 p-4 rounded-xl"><i class="fas fa-tasks text-2xl mb-2"></i><br>Tareas <span id="peso-tareas" class="text-xs block">10%</span></button>
-                <button onclick="Eval.abrirModalPruebas()" class="bg-amber-600/30 hover:bg-amber-600/50 p-4 rounded-xl"><i class="fas fa-file-alt text-2xl mb-2"></i><br>Pruebas <span id="peso-pruebas" class="text-xs block">15%</span></button>
-                <button onclick="Eval.abrirModalProyecto()" class="bg-purple-600/30 hover:bg-purple-600/50 p-4 rounded-xl"><i class="fas fa-project-diagram text-2xl mb-2"></i><br>Proyecto <span id="peso-proyecto" class="text-xs block">0%</span></button>
-                <button onclick="Eval.abrirModalAsistencia()" class="bg-pink-600/30 hover:bg-pink-600/50 p-4 rounded-xl"><i class="fas fa-calendar-check text-2xl mb-2"></i><br>Asistencia <span class="text-xs block">10%</span></button>
-            </div>
-            <h3 class="text-lg font-bold mb-3">Resumen de Calificaciones</h3>
-            <div class="overflow-x-auto"><table class="w-full text-sm" id="tabla-calificaciones"><thead class="bg-slate-800/50"></thead><tbody id="tabla-calificaciones-body"></tbody></table></div>
-        </div>
-    </div>
-
-    <!-- EXPORTAR -->
+    <!-- EXPORTAR (BACKUP) -->
     <div id="tab-exportar" class="tab-content hidden">
         <div class="glass-card p-6">
-            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-download mr-3"></i>Exportar e Importar</h2>
+            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-download mr-3"></i>Exportar e Importar Planificación</h2>
             <div class="grid md:grid-cols-2 gap-4">
-                <button onclick="Exportar.informeGrupo()" class="bg-indigo-600/30 hover:bg-indigo-600/50 p-6 rounded-xl"><i class="fas fa-file-alt text-4xl mb-3"></i><br>Exportar Informe (PDF/Word)</button>
-                <button onclick="Exportar.backupCompleto()" class="bg-amber-600/30 hover:bg-amber-600/50 p-6 rounded-xl"><i class="fas fa-archive text-4xl mb-3"></i><br>Exportar Backup Completo</button>
+                <button onclick="Exportar.backupCompleto()" class="bg-amber-600/30 hover:bg-amber-600/50 p-6 rounded-xl"><i class="fas fa-archive text-4xl mb-3"></i><br>Exportar Backup de Saberes</button>
                 <button onclick="document.getElementById('input-import-backup').click()" class="bg-purple-600/30 hover:bg-purple-600/50 p-6 rounded-xl"><i class="fas fa-upload text-4xl mb-3"></i><br>Importar Backup</button>
                 <input type="file" id="input-import-backup" accept=".json" class="hidden" onchange="Exportar.importarBackup(event)">
             </div>
+            <p class="text-xs text-white/40 mt-4">Guarda y restaura tu progreso de planificación en todos los niveles y módulos.</p>
         </div>
     </div>
 </div>
-
-<!-- MODALES EXISTENTES (GRUPO, SECCIÓN, ESTUDIANTE, COTIDIANO, PROYECTO) -->
-<div id="modal-grupo" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-md"><h3 class="text-xl font-bold mb-4">Nuevo Grupo</h3><input id="grupo-nombre" placeholder="Nombre" class="w-full bg-slate-800 p-3 rounded-xl mb-3"><div class="flex justify-end gap-3"><button onclick="Grupos.cerrarModal('modal-grupo')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Grupos.guardarGrupo()" class="bg-green-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
-<div id="modal-seccion" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-md"><h3 class="text-xl font-bold mb-4">Nueva Sección</h3><input id="seccion-nombre" placeholder="Nombre" class="w-full bg-slate-800 p-3 rounded-xl mb-3"><div class="flex justify-end gap-3"><button onclick="Grupos.cerrarModal('modal-seccion')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Grupos.guardarSeccion()" class="bg-green-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
-<div id="modal-estudiante" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-md"><h3 class="text-xl font-bold mb-4">Estudiante</h3><input type="hidden" id="edit-estudiante-id"><input id="est-nombre" placeholder="Nombre" class="w-full bg-slate-800 p-3 rounded-xl mb-2"><input id="est-apellido1" placeholder="Primer Apellido" class="w-full bg-slate-800 p-3 rounded-xl mb-2"><input id="est-apellido2" placeholder="Segundo Apellido" class="w-full bg-slate-800 p-3 rounded-xl mb-3"><div class="flex justify-end gap-3"><button onclick="Grupos.cerrarModal('modal-estudiante')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Grupos.guardarEstudiante()" class="bg-green-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
-<div id="modal-cotidiano" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-2xl"><h3 class="text-xl font-bold mb-4">📝 Calificar Trabajo Cotidiano</h3><div id="cotidiano-lista" class="space-y-3 max-h-96 overflow-y-auto"></div><div class="flex justify-end gap-3 mt-6"><button onclick="Eval.cerrarModal('modal-cotidiano')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Eval.guardarCotidiano()" class="bg-blue-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
-<div id="modal-proyecto" class="modal hidden"><div class="modal-content glass-card p-6 w-full max-w-3xl"><h3 class="text-xl font-bold mb-4">🚀 Calificar Proyecto</h3><div id="proyecto-fases" class="space-y-4"></div><div class="flex justify-end gap-3 mt-6"><button onclick="Eval.cerrarModal('modal-proyecto')" class="bg-slate-600 px-4 py-2 rounded-full">Cancelar</button><button onclick="Eval.guardarProyecto()" class="bg-purple-600 px-6 py-2 rounded-full">Guardar</button></div></div></div>
 
 <script>
  
