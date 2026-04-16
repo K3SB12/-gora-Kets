@@ -1100,10 +1100,12 @@ const RDA_POR_CICLO = {
             return resultado;
         }
         // VERSIÓN ACTUALIZADA DE actualizarPanelRdA
-        actualizarPanelRdA() {
+       actualizarPanelRdA() {
             const ciclo = this.getCiclo();
             const progresoCiclo = this.obtenerProgresoCiclo();
             const areas = Object.keys(progresoCiclo).filter(area => {
+                // Excluir si el total de saberes en el ciclo es 0
+                if (progresoCiclo[area].total === 0) return false;
                 // Excluir Computación física en I Ciclo si no aplica
                 if (ciclo === 'I Ciclo' && area === 'Computación física y Robótica') {
                     return RDA_POR_CICLO[ciclo]['Computación física y Robótica'] !== 'No aplica para este ciclo.';
@@ -1152,7 +1154,7 @@ const RDA_POR_CICLO = {
                 `;
             });
             container.innerHTML = html;
-        },
+        }
         
        renderListaSeleccionados() {
             const lista = document.getElementById('selected-saberes-list');
