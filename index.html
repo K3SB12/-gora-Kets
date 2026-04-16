@@ -250,7 +250,9 @@
                         <div class="w-full h-5 bg-slate-700/50 rounded-full">
                             <div id="rda-progress-bar" class="battery-fill h-full rounded-full bg-gradient-to-r from-red-500 to-orange-400" style="width:0%"></div>
                         </div>
-                        <p id="rda-mensaje" class="text-xs text-white/60 mt-2">Planifica saberes para avanzar.</p>
+                       <div id="rda-progress-list" class="space-y-4">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
                     </div>
                 </div>
                 <div class="glass-card p-6">
@@ -1054,26 +1056,53 @@ const RDA_POR_CICLO = {
         },
 
         actualizarPanelRdA(contador, data) {
-            // Tomamos el área principal "Apropiación tecnológica y Digital" como referencia para el RdA
-            const areaRef = 'Apropiación tecnológica y Digital';
-            const totalSaberes = data[areaRef]?.saberes?.length || 1;
-            const seleccionados = contador[areaRef] || 0;
-            const pct = Math.round((seleccionados / totalSaberes) * 100);
-        
             const ciclo = this.getCiclo();
-            const rdaTexto = RDA_POR_CICLO[ciclo]?.[areaRef] || 'Resultado de Aprendizaje no definido para este ciclo.';
-        
-            document.getElementById('rda-texto').innerText = rdaTexto;
-            document.getElementById('rda-area-nombre').innerText = areaRef;
-            document.getElementById('rda-porcentaje').innerText = `${pct}%`;
-            document.getElementById('rda-progress-bar').style.width = `${pct}%`;
-        
-            const mensaje = document.getElementById('rda-mensaje');
-            if (pct === 0) mensaje.innerText = '🌱 Comienza seleccionando saberes de esta área.';
-            else if (pct < 40) mensaje.innerText = '📌 Buen inicio, sigue planificando más saberes.';
-            else if (pct < 70) mensaje.innerText = '📈 Vas por buen camino hacia el RdA.';
-            else if (pct < 100) mensaje.innerText = '🔥 ¡Muy cerca de alcanzar el RdA!';
-            else mensaje.innerText = '🏆 ¡RdA completamente planificado!';
+            const areas = Object.keys(RDA_POR_CICLO[ciclo] || {}).filter(area => area !== 'Computación física y Robótica' || (ciclo !== 'I Ciclo' && RDA_POR_CICLO[ciclo]['Computación física y Robótica'] !== 'No aplica para este ciclo.'));
+            // Para I Ciclo, Computación física y Robótica no aplica, así que la excluimos del panel
+            
+            const container = document.getElementById('rda-progress-list');
+            if (!container) return;
+            
+            if (areas.length === 0) {
+                container.innerHTML = '<p style="font-size:0.9rem; color:#e5e7eb;">No hay RdA definidos para este ciclo.</p>';
+                return;
+            }
+            
+            let html = '';
+            areas.forEach(area => {
+                const totalSaberes = data[area]?.saberes?.length || 1;
+                const seleccionados = contador[area] || 0;
+                const pct = Math.round((seleccionados / totalSaberes) * 100);
+                const rdaTexto = RDA_POR_CICLO[ciclo][area] || 'RdA no definido.';
+                
+                // Determinar color de la barra según el área
+                let barColor = 'from-blue-500 to-cyan-400';
+                if (area.includes('Programación')) barColor = 'from-emerald-500 to-green-400';
+                else if (area.includes('Robótica')) barColor = 'from-amber-500 to-orange-400';
+                else if (area.includes('Ciencia')) barColor = 'from-purple-500 to-pink-400';
+                
+                let mensaje = '';
+                if (pct === 0) mensaje = '🌱 Sin saberes planificados.';
+                else if (pct < 40) mensaje = '📌 Iniciando el camino.';
+                else if (pct < 70) mensaje = '📈 Progresando hacia el RdA.';
+                else if (pct < 100) mensaje = '🔥 ¡Muy cerca del RdA!';
+                else mensaje = '🏆 ¡RdA completamente planificado!';
+                
+                html += `
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-semibold text-sm">${area}</span>
+                            <span class="text-xs bg-white/10 px-2 py-0.5 rounded-full">${pct}%</span>
+                        </div>
+                        <p class="text-xs text-white/70 mb-2 italic">${rdaTexto.length > 100 ? rdaTexto.substring(0, 100) + '…' : rdaTexto}</p>
+                        <div class="w-full h-4 bg-slate-700/50 rounded-full mb-1">
+                            <div class="battery-fill h-full rounded-full bg-gradient-to-r ${barColor}" style="width:${pct}%"></div>
+                        </div>
+                        <p class="text-xs text-white/60">${mensaje}</p>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         },
         
        renderListaSeleccionados() {
