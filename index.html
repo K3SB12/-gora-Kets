@@ -945,7 +945,7 @@ const RDA_POR_CICLO = {
             `;
         },
 
-    selectCycle(c) {
+      selectCycle(c) {
         const m = { materno: '0°', i: '1°', ii: '4°', iii: '7°' };
         this.selectLevel(m[c]);
     },
@@ -1046,7 +1046,8 @@ const RDA_POR_CICLO = {
         Object.entries(data).forEach(([area, content]) => {
             html += `<h4 class="text-lg font-bold text-blue-300 mt-4">${area}</h4>`;
             content.saberes.forEach(s => {
-                const id = `${area}::${s.nombre}`;
+                // Nuevo identificador único: área::grado::módulo::nombre
+                const id = `${area}::${this.nivelActual}::${this.moduloActual}::${s.nombre}`;
                 const checked = this.saberesSeleccionados.has(id);
                 const impartido = this.saberesImpartidos.has(id);
                 if (checked) total++;
@@ -1064,7 +1065,10 @@ const RDA_POR_CICLO = {
     renderBateriasYPerfiles() {
         const areas = ['Apropiación tecnológica y Digital', 'Programación y Algoritmos', 'Computación física y Robótica', 'Ciencia de datos e Inteligencia artificial'];
         const contador = {}; areas.forEach(a => contador[a] = 0);
-        this.saberesSeleccionados.forEach(s => { const a = s.split('::')[0]; if (contador.hasOwnProperty(a)) contador[a]++; });
+        this.saberesSeleccionados.forEach(s => {
+            const a = s.split('::')[0];
+            if (contador.hasOwnProperty(a)) contador[a]++;
+        });
         const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
         const bhtml = areas.map(a => {
             const tot = data[a]?.saberes?.length || 1;
@@ -1104,7 +1108,10 @@ const RDA_POR_CICLO = {
                         const areaData = modData[area];
                         if (areaData && areaData.saberes) {
                             totales[area] += areaData.saberes.length;
-                            ids.forEach(id => { if (id.startsWith(area + '::')) seleccionados[area].add(id); });
+                            ids.forEach(id => {
+                                // El identificador ahora incluye grado y módulo, pero el área es la primera parte
+                                if (id.startsWith(area + '::')) seleccionados[area].add(id);
+                            });
                         }
                     });
                 }
@@ -1153,7 +1160,13 @@ const RDA_POR_CICLO = {
         }
         const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
         let html = ''; const agrupados = {};
-        this.saberesSeleccionados.forEach(s => { const [area, nombre] = s.split('::'); if (!agrupados[area]) agrupados[area] = []; agrupados[area].push(nombre); });
+        this.saberesSeleccionados.forEach(s => {
+            const parts = s.split('::');
+            const area = parts[0];
+            const nombre = parts[3]; // El nombre está en la cuarta posición
+            if (!agrupados[area]) agrupados[area] = [];
+            agrupados[area].push(nombre);
+        });
         for (let area in agrupados) {
             html += `<p style="font-size: 1rem; font-weight: bold; color: #93c5fd; margin-top: 0.75rem;">${area}</p>`;
             agrupados[area].forEach(nombre => {
@@ -1161,7 +1174,7 @@ const RDA_POR_CICLO = {
                 const preview = saber ? saber.indicadores[0].substring(0, 35) + '…' : '';
                 html += `<div style="display: flex; align-items: center; justify-content: space-between; font-size: 1rem; padding-left: 0.5rem; margin-bottom: 0.25rem;">
                     <span>• ${nombre} <span style="font-size: 0.9rem; color: #cbd5e1;">${preview}</span></span>
-                    <i class="fas fa-times-circle" style="color: #f87171; cursor: pointer;" onclick="App.eliminarSaber('${area}::${nombre}')"></i>
+                    <i class="fas fa-times-circle" style="color: #f87171; cursor: pointer;" onclick="App.eliminarSaber('${area}::${this.nivelActual}::${this.moduloActual}::${nombre}')"></i>
                 </div>`;
             });
         }
@@ -1182,21 +1195,24 @@ const RDA_POR_CICLO = {
         ch.classList.toggle('fa-chevron-down');
         ch.classList.toggle('fa-chevron-up');
     },
-        generarPrompt() {
-            if (this.saberesSeleccionados.size === 0) { alert('Selecciona al menos un saber.'); return; }
-            const ciclo = this.getCiclo();
-            const rda = RDA_POR_CICLO[ciclo]?.["Apropiación tecnológica y Digital"] || '';
-            const ejesSeleccionados = [...document.querySelectorAll('#ejes-checkboxes input:checked')].map(cb => cb.value);
-            const ejesTxt = ejesSeleccionados.map(e => `- ${e}: ${EJES_POR_CICLO[ciclo][e]}`).join('\n');
-            let saberesTxt = ''; const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
-            for (let id of this.saberesSeleccionados) {
-                const [area, nombre] = id.split('::');
-                const saber = data[area]?.saberes?.find(s => s.nombre === nombre);
-                if (saber) { saberesTxt += `📌 ${area} - ${nombre}\n`; saber.indicadores.forEach(i => saberesTxt += `   • ${i}\n`); }
-            }
-            const duracion = document.getElementById('duracion-clase').value;
-            const metodologia = ciclo === 'II Ciclo' ? 'ABR' : (ciclo === 'III Ciclo' ? 'Design Thinking' : 'ABJ');
-            const prompt = `Actúa como especialista MEP-PNFT 2026.\nNivel: ${this.nivelActual} | Módulo: ${this.moduloActual} | Ciclo: ${ciclo}\nDuración clase: ${duracion} min.\nMetodología: ${metodologia}\n📌 SABERES:\n${saberesTxt}\n🎯 RdA: ${rda}\n⚙️ EJES TRANSVERSALES SELECCIONADOS:\n${ejesTxt}\nTAREA: Diseñar una Estrategia de Mediación Pedagógica completa:  1. Título creativo y motivador.
+
+    generarPrompt() {
+        if (this.saberesSeleccionados.size === 0) { alert('Selecciona al menos un saber.'); return; }
+        const ciclo = this.getCiclo();
+        const rda = RDA_POR_CICLO[ciclo]?.["Apropiación tecnológica y Digital"] || '';
+        const ejesSeleccionados = [...document.querySelectorAll('#ejes-checkboxes input:checked')].map(cb => cb.value);
+        const ejesTxt = ejesSeleccionados.map(e => `- ${e}: ${EJES_POR_CICLO[ciclo][e]}`).join('\n');
+        let saberesTxt = ''; const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
+        for (let id of this.saberesSeleccionados) {
+            const parts = id.split('::');
+            const area = parts[0];
+            const nombre = parts[3];
+            const saber = data[area]?.saberes?.find(s => s.nombre === nombre);
+            if (saber) { saberesTxt += `📌 ${area} - ${nombre}\n`; saber.indicadores.forEach(i => saberesTxt += `   • ${i}\n`); }
+        }
+        const duracion = document.getElementById('duracion-clase').value;
+        const metodologia = ciclo === 'II Ciclo' ? 'ABR' : (ciclo === 'III Ciclo' ? 'Design Thinking' : 'ABJ');
+        const prompt = `Actúa como especialista MEP-PNFT 2026.\nNivel: ${this.nivelActual} | Módulo: ${this.moduloActual} | Ciclo: ${ciclo}\nDuración clase: ${duracion} min.\nMetodología: ${metodologia}\n📌 SABERES:\n${saberesTxt}\n🎯 RdA: ${rda}\n⚙️ EJES TRANSVERSALES SELECCIONADOS:\n${ejesTxt}\nTAREA: Diseñar una Estrategia de Mediación Pedagógica completa: 1. Título creativo y motivador.
                 2. Momentos pedagógicos (Focalización, Exploración, Reflexión, Aplicación) alineados a los indicadores descritos.
                 3. Evaluación formativa: Rúbrica analítica de 3 niveles (Inicial, Intermedio, Avanzado) basada en los indicadores.
                 4. Recomendaciones DUA (Principios: Representación, Acción/Expresión, Motivación) para inclusión.
@@ -1219,11 +1235,16 @@ const RDA_POR_CICLO = {
                 - En caso de que el docente elija una metodología el sistema le debe solicitar seleccionar la totalidad de los saberes conceptuales del área o las áreas de conocimiento para que no se vea fraccionada la metodología como columna vertebral del aprendizaje.
                 Redacción profesional, inspiradora, coherente con el enfoque por competencias. Asegúrese de que cada indicador se evidencie en las actividades.
                 `;
+        document.getElementById('output-prompt').value = prompt;
+    },
 
-            document.getElementById('output-prompt').value = prompt;
-        },
-        copiarPrompt() { const ta = document.getElementById('output-prompt'); ta.select(); document.execCommand('copy'); alert('Prompt copiado.'); }
-    };
+    copiarPrompt() {
+        const ta = document.getElementById('output-prompt');
+        ta.select();
+        document.execCommand('copy');
+        alert('Prompt copiado.');
+    }
+};
 
     const Exportar = {
         backupCompleto() {
