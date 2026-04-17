@@ -241,7 +241,6 @@
                         <i class="fas fa-bullseye text-2xl text-red-400"></i>
                         <h3 class="font-bold text-lg">🎯 Progreso hacia el RdA</h3>
                     </div>
-                    <p id="rda-texto" class="text-sm text-white/80 mb-3 italic">Selecciona un nivel para ver el RdA.</p>
                     <div>
                        <div id="rda-progress-list" class="space-y-4">
                         <!-- Se llenará dinámicamente -->
@@ -912,14 +911,23 @@ const RDA_POR_CICLO = {
     const PESOS_EVALUACION = { "I Ciclo": { cotidiano:65, tareas:10, pruebas:15, proyecto:0, asistencia:10 }, "II Ciclo": { cotidiano:60, tareas:10, pruebas:20, proyecto:0, asistencia:10 }, "III Ciclo": { cotidiano:50, tareas:10, pruebas:0, proyecto:30, asistencia:10 } };
 
      // ---------- ALMACENAMIENTO (LOCALSTORAGE SIMPLE) ----------
-    const Storage = {
-        guardar(key, data) { localStorage.setItem(`pnft_${key}`, JSON.stringify(data)); },
-        cargar(key) { const d = localStorage.getItem(`pnft_${key}`); return d ? JSON.parse(d) : null; },
-        guardarTodo(data) { localStorage.setItem('pnft_backup', JSON.stringify(data)); },
-        cargarTodo() { const d = localStorage.getItem('pnft_backup'); return d ? JSON.parse(d) : null; }
-    };
+        const Storage = {
+            _normalizarGrado(grado) {
+                return grado.replace('°', '_grado_');
+            },
+            guardar(key, data) {
+                localStorage.setItem(`pnft_${key}`, JSON.stringify(data));
+            },
+            cargar(key) {
+                const d = localStorage.getItem(`pnft_${key}`);
+                return d ? JSON.parse(d) : null;
+            },
+            guardarTodo(data) { localStorage.setItem('pnft_backup', JSON.stringify(data)); },
+            cargarTodo() { const d = localStorage.getItem('pnft_backup'); return d ? JSON.parse(d) : null; }
+        };
 
     // ---------- APP PRINCIPAL ----------
+    
     const App = {
         nivelActual: '0°', moduloActual: 'Módulo 1',
         saberesSeleccionados: new Set(), saberesImpartidos: new Set(),
@@ -936,136 +944,244 @@ const RDA_POR_CICLO = {
                 <div class="island-card rounded-3xl p-6 border-l-8 border-l-purple-400" onclick="App.selectCycle('iii')"><h3 class="text-2xl font-black">🏝️ III Ciclo</h3><p class="text-white/60 text-sm">7° · 8° · 9° · Design Thinking</p></div>
             `;
         },
-        selectCycle(c) { const m = { materno: '0°', i: '1°', ii: '4°', iii: '7°' }; this.selectLevel(m[c]); },
-        selectLevel(l) { this.nivelActual = l; document.getElementById('current-level-display').innerText = l; document.querySelectorAll('.level-tab').forEach(t => t.classList.toggle('active', t.dataset.level === l)); this.cargarStorage(); this.renderizarTodo(); },
-        cargarSaberesDelNivel() { this.moduloActual = document.getElementById('select-modulo').value; this.cargarStorage(); document.getElementById('saberes-section').classList.remove('hidden'); this.renderSaberes(); this.renderBateriasYPerfiles(); this.renderListaSeleccionados(); },
-        switchTab(t) { document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden')); document.getElementById(`tab-${t}`).classList.remove('hidden'); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.querySelector(`[data-tab="${t}"]`).classList.add('active'); },
-        cargarStorage() { const key = `${this.nivelActual}_${this.moduloActual}`; const data = Storage.cargar(key) || {}; this.saberesSeleccionados = new Set(data.seleccionados || []); this.saberesImpartidos = new Set(data.impartidos || []); },
-        guardarStorage() { const key = `${this.nivelActual}_${this.moduloActual}`; Storage.guardar(key, { seleccionados: [...this.saberesSeleccionados], impartidos: [...this.saberesImpartidos] }); },
-        getCiclo() { const n = parseInt(this.nivelActual); if (isNaN(n)) return 'Materno Infantil/Transición'; if (n <= 3) return 'I Ciclo'; if (n <= 6) return 'II Ciclo'; return 'III Ciclo'; },
-        renderizarTodo() { this.renderSaberes(); this.renderBateriasYPerfiles(); this.renderListaSeleccionados(); this.renderEjesCheckboxes(); },
-        renderEjesCheckboxes() { const ejes = EJES_POR_CICLO[this.getCiclo()] || {}; document.getElementById('ejes-checkboxes').innerHTML = Object.keys(ejes).map(e => `<label class="flex items-center gap-2"><input type="checkbox" value="${e}" checked> ${e}</label>`).join(''); },
-        toggleSaber(id, chk) { if (chk) this.saberesSeleccionados.add(id); else this.saberesSeleccionados.delete(id); this.guardarStorage(); this.renderizarTodo(); this.actualizarPanelRdA(); },
-        toggleImpartido(id) { if (this.saberesImpartidos.has(id)) this.saberesImpartidos.delete(id); else this.saberesImpartidos.add(id); this.guardarStorage(); this.renderSaberes(); },
-        limpiarSeleccionModulo() { this.saberesSeleccionados.clear(); this.guardarStorage(); this.renderizarTodo(); this.actualizarPanelRdA(); },
-        renderSaberes() {
-            const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual];
-            const cont = document.getElementById('saberes-container');
-            if (!data) { cont.innerHTML = '<p class="text-white/40">Datos no disponibles.</p>'; return; }
-            let html = '', total = 0;
-            Object.entries(data).forEach(([area, content]) => {
-                html += `<h4 class="text-lg font-bold text-blue-300 mt-4">${area}</h4>`;
-                content.saberes.forEach(s => {
-                    const id = `${area}::${s.nombre}`;
-                    const checked = this.saberesSeleccionados.has(id);
-                    const impartido = this.saberesImpartidos.has(id);
-                    if (checked) total++;
-                    html += `<div class="flex items-start gap-3 p-2 border-b border-white/10 ${impartido ? 'bg-green-500/20' : ''}">
-                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="App.toggleSaber('${id}', this.checked)">
-                        <div class="flex-1"><span class="font-semibold">${s.nombre}</span><div style="font-size: 0.95rem; color: #e5e7eb; line-height: 1.5;">${s.indicadores.map(i => `• ${i}`).join('<br>')}</div></div>
-                        <button onclick="App.toggleImpartido('${id}')" class="text-xs ${impartido ? 'text-green-400' : 'text-white/40'}"><i class="fas fa-check-circle"></i> Impartido</button>
-                    </div>`;
-                });
-            });
-            cont.innerHTML = html;
-            document.getElementById('selected-count-badge').innerText = `${total} seleccionados`;
-        },
-        renderBateriasYPerfiles() {
-            const areas = ['Apropiación tecnológica y Digital', 'Programación y Algoritmos', 'Computación física y Robótica', 'Ciencia de datos e Inteligencia artificial'];
-            const contador = {}; areas.forEach(a => contador[a] = 0);
-            this.saberesSeleccionados.forEach(s => { const a = s.split('::')[0]; if (contador.hasOwnProperty(a)) contador[a]++; });
-            const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
-            const bhtml = areas.map(a => {
-                const tot = data[a]?.saberes?.length || 1;
-                const pct = Math.round((contador[a] / tot) * 100);
-                const color = a.includes('Apropiación') ? 'from-blue-500' : a.includes('Programación') ? 'from-emerald-500' : a.includes('Robótica') ? 'from-amber-500' : 'from-purple-500';
-                return `<div><div class="flex justify-between text-sm"><span>${a}</span><span>${pct}%</span></div><div class="w-full h-5 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r ${color}" style="width:${pct}%"></div></div></div>`;
-            }).join('');
-            document.getElementById('batteries-container').innerHTML = bhtml;
 
-            const ciclo = this.getCiclo();
-            const perfiles = PERFILES_POR_CICLO[ciclo] || [];
-            const phtml = perfiles.map(p => {
-                const tot = data[p.area]?.saberes?.length || 1;
-                const sel = [...this.saberesSeleccionados].filter(s => s.split('::')[0] === p.area).length;
-                return `<div><div class="flex justify-between text-xs"><span>${p.nombre}</span><span>${Math.round((sel/tot)*100)}%</span></div><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-emerald-500" style="width:${Math.round((sel/tot)*100)}%"></div></div></div>`;
-            }).join('');
-            document.getElementById('perfiles-content').innerHTML = phtml || '<p style="font-size:0.9rem; color:#e5e7eb;">No hay perfiles definidos para este ciclo.</p>';
-            this.actualizarPanelRdA();
-        },
-        obtenerProgresoCiclo() {
-            const ciclo = this.getCiclo();
-            let grados = ciclo === 'Materno Infantil/Transición' ? ['0°'] : ciclo === 'I Ciclo' ? ['1°','2°','3°'] : ciclo === 'II Ciclo' ? ['4°','5°','6°'] : ['7°','8°','9°'];
-            const areas = ['Apropiación tecnológica y Digital', 'Programación y Algoritmos', 'Computación física y Robótica', 'Ciencia de datos e Inteligencia artificial'];
-            const totales = {}, seleccionados = {};
-            areas.forEach(a => { totales[a] = 0; seleccionados[a] = new Set(); });
-            grados.forEach(grado => {
-                ['Módulo 1', 'Módulo 2'].forEach(modulo => {
-                    const key = `${grado}_${modulo}`;
-                    const data = Storage.cargar(key) || {};
-                    const ids = data.seleccionados || [];
-                    const modData = PNFT_DATA[grado]?.[modulo];
-                    if (modData) {
-                        areas.forEach(area => {
-                            const areaData = modData[area];
-                            if (areaData && areaData.saberes) {
-                                totales[area] += areaData.saberes.length;
-                                ids.forEach(id => { if (id.startsWith(area + '::')) seleccionados[area].add(id); });
-                            }
-                        });
-                    }
-                });
+    selectCycle(c) {
+        const m = { materno: '0°', i: '1°', ii: '4°', iii: '7°' };
+        this.selectLevel(m[c]);
+    },
+
+    selectLevel(l) {
+        this.nivelActual = l;
+        document.getElementById('current-level-display').innerText = l;
+        document.querySelectorAll('.level-tab').forEach(t => t.classList.toggle('active', t.dataset.level === l));
+        this.cargarStorage();
+        this.renderizarTodo();
+    },
+
+    cargarSaberesDelNivel() {
+        this.moduloActual = document.getElementById('select-modulo').value;
+        this.cargarStorage();
+        document.getElementById('saberes-section').classList.remove('hidden');
+        this.renderSaberes();
+        this.renderBateriasYPerfiles();
+        this.renderListaSeleccionados();
+    },
+
+    switchTab(t) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+        document.getElementById(`tab-${t}`).classList.remove('hidden');
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector(`[data-tab="${t}"]`).classList.add('active');
+    },
+
+    cargarStorage() {
+        const gradoNorm = Storage._normalizarGrado(this.nivelActual);
+        const key = `${gradoNorm}_${this.moduloActual}`;
+        const data = Storage.cargar(key) || {};
+        this.saberesSeleccionados = new Set(data.seleccionados || []);
+        this.saberesImpartidos = new Set(data.impartidos || []);
+    },
+
+    guardarStorage() {
+        const gradoNorm = Storage._normalizarGrado(this.nivelActual);
+        const key = `${gradoNorm}_${this.moduloActual}`;
+        Storage.guardar(key, {
+            seleccionados: [...this.saberesSeleccionados],
+            impartidos: [...this.saberesImpartidos]
+        });
+    },
+
+    getCiclo() {
+        const n = parseInt(this.nivelActual);
+        if (isNaN(n)) return 'Materno Infantil/Transición';
+        if (n <= 3) return 'I Ciclo';
+        if (n <= 6) return 'II Ciclo';
+        return 'III Ciclo';
+    },
+
+    renderizarTodo() {
+        this.renderSaberes();
+        this.renderBateriasYPerfiles();
+        this.renderListaSeleccionados();
+        this.renderEjesCheckboxes();
+    },
+
+    renderEjesCheckboxes() {
+        const ejes = EJES_POR_CICLO[this.getCiclo()] || {};
+        const div = document.getElementById('ejes-checkboxes');
+        div.innerHTML = Object.keys(ejes).map(e => `<label class="flex items-center gap-2"><input type="checkbox" value="${e}" checked> ${e}</label>`).join('');
+    },
+
+    toggleSaber(id, chk) {
+        if (chk) this.saberesSeleccionados.add(id);
+        else this.saberesSeleccionados.delete(id);
+        this.guardarStorage();
+        this.renderizarTodo();
+        this.actualizarPanelRdA();
+    },
+
+    toggleImpartido(id) {
+        if (this.saberesImpartidos.has(id)) this.saberesImpartidos.delete(id);
+        else this.saberesImpartidos.add(id);
+        this.guardarStorage();
+        this.renderSaberes();
+    },
+
+    limpiarSeleccionModulo() {
+        this.saberesSeleccionados.clear();
+        this.guardarStorage();
+        this.renderizarTodo();
+        this.actualizarPanelRdA();
+    },
+
+    renderSaberes() {
+        const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual];
+        const cont = document.getElementById('saberes-container');
+        if (!data) {
+            cont.innerHTML = '<p class="text-white/40">Datos no disponibles.</p>';
+            document.getElementById('selected-count-badge').innerText = '0 seleccionados';
+            return;
+        }
+        let html = '', total = 0;
+        Object.entries(data).forEach(([area, content]) => {
+            html += `<h4 class="text-lg font-bold text-blue-300 mt-4">${area}</h4>`;
+            content.saberes.forEach(s => {
+                const id = `${area}::${s.nombre}`;
+                const checked = this.saberesSeleccionados.has(id);
+                const impartido = this.saberesImpartidos.has(id);
+                if (checked) total++;
+                html += `<div class="flex items-start gap-3 p-2 border-b border-white/10 ${impartido ? 'bg-green-500/20' : ''}">
+                    <input type="checkbox" ${checked ? 'checked' : ''} onchange="App.toggleSaber('${id}', this.checked)">
+                    <div class="flex-1"><span class="font-semibold">${s.nombre}</span><div style="font-size: 0.95rem; color: #e5e7eb; line-height: 1.5;">${s.indicadores.map(i => `• ${i}`).join('<br>')}</div></div>
+                    <button onclick="App.toggleImpartido('${id}')" class="text-xs ${impartido ? 'text-green-400' : 'text-white/40'}"><i class="fas fa-check-circle"></i> Impartido</button>
+                </div>`;
             });
-            const res = {};
-            areas.forEach(area => {
-                const tot = totales[area] || 1;
-                const sel = seleccionados[area].size;
-                res[area] = { total: tot, seleccionados: sel, porcentaje: Math.round((sel/tot)*100), rda: RDA_POR_CICLO[ciclo]?.[area] || '' };
+        });
+        cont.innerHTML = html;
+        document.getElementById('selected-count-badge').innerText = `${total} seleccionados`;
+    },
+
+    renderBateriasYPerfiles() {
+        const areas = ['Apropiación tecnológica y Digital', 'Programación y Algoritmos', 'Computación física y Robótica', 'Ciencia de datos e Inteligencia artificial'];
+        const contador = {}; areas.forEach(a => contador[a] = 0);
+        this.saberesSeleccionados.forEach(s => { const a = s.split('::')[0]; if (contador.hasOwnProperty(a)) contador[a]++; });
+        const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
+        const bhtml = areas.map(a => {
+            const tot = data[a]?.saberes?.length || 1;
+            const pct = Math.round((contador[a] / tot) * 100);
+            const color = a.includes('Apropiación') ? 'from-blue-500' : a.includes('Programación') ? 'from-emerald-500' : a.includes('Robótica') ? 'from-amber-500' : 'from-purple-500';
+            return `<div><div class="flex justify-between text-sm"><span>${a}</span><span>${pct}%</span></div><div class="w-full h-5 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r ${color}" style="width:${pct}%"></div></div></div>`;
+        }).join('');
+        document.getElementById('batteries-container').innerHTML = bhtml;
+
+        const ciclo = this.getCiclo();
+        const perfiles = PERFILES_POR_CICLO[ciclo] || [];
+        const phtml = perfiles.map(p => {
+            const tot = data[p.area]?.saberes?.length || 1;
+            const sel = [...this.saberesSeleccionados].filter(s => s.split('::')[0] === p.area).length;
+            return `<div><div class="flex justify-between text-xs"><span>${p.nombre}</span><span>${Math.round((sel/tot)*100)}%</span></div><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-emerald-500" style="width:${Math.round((sel/tot)*100)}%"></div></div></div>`;
+        }).join('');
+        document.getElementById('perfiles-content').innerHTML = phtml || '<p style="font-size:0.9rem; color:#e5e7eb;">No hay perfiles definidos para este ciclo.</p>';
+        this.actualizarPanelRdA();
+    },
+
+    obtenerProgresoCiclo() {
+        const ciclo = this.getCiclo();
+        let grados = ciclo === 'Materno Infantil/Transición' ? ['0°'] : ciclo === 'I Ciclo' ? ['1°','2°','3°'] : ciclo === 'II Ciclo' ? ['4°','5°','6°'] : ['7°','8°','9°'];
+        const areas = ['Apropiación tecnológica y Digital', 'Programación y Algoritmos', 'Computación física y Robótica', 'Ciencia de datos e Inteligencia artificial'];
+        const totales = {}, seleccionados = {};
+        areas.forEach(a => { totales[a] = 0; seleccionados[a] = new Set(); });
+
+        grados.forEach(grado => {
+            ['Módulo 1', 'Módulo 2'].forEach(modulo => {
+                const gradoNorm = Storage._normalizarGrado(grado);
+                const key = `${gradoNorm}_${modulo}`;
+                const data = Storage.cargar(key) || {};
+                const ids = data.seleccionados || [];
+                const modData = PNFT_DATA[grado]?.[modulo];
+                if (modData) {
+                    areas.forEach(area => {
+                        const areaData = modData[area];
+                        if (areaData && areaData.saberes) {
+                            totales[area] += areaData.saberes.length;
+                            ids.forEach(id => { if (id.startsWith(area + '::')) seleccionados[area].add(id); });
+                        }
+                    });
+                }
             });
-            return res;
-        },
-        actualizarPanelRdA() {
-            const ciclo = this.getCiclo();
-            const progreso = this.obtenerProgresoCiclo();
-            const areas = Object.keys(progreso).filter(area => {
-                if (progreso[area].total === 0) return false;
-                if (ciclo === 'I Ciclo' && area === 'Computación física y Robótica') return RDA_POR_CICLO[ciclo]['Computación física y Robótica'] !== 'No aplica para este ciclo.';
-                return true;
+        });
+
+        const res = {};
+        areas.forEach(area => {
+            const tot = totales[area] || 1;
+            const sel = seleccionados[area].size;
+            res[area] = { total: tot, seleccionados: sel, porcentaje: Math.round((sel/tot)*100), rda: RDA_POR_CICLO[ciclo]?.[area] || '' };
+        });
+        return res;
+    },
+
+    actualizarPanelRdA() {
+        const ciclo = this.getCiclo();
+        const progreso = this.obtenerProgresoCiclo();
+        const areas = Object.keys(progreso).filter(area => {
+            if (progreso[area].total === 0) return false;
+            if (ciclo === 'I Ciclo' && area === 'Computación física y Robótica') return RDA_POR_CICLO[ciclo]['Computación física y Robótica'] !== 'No aplica para este ciclo.';
+            return true;
+        });
+        const container = document.getElementById('rda-progress-list');
+        if (!container) return;
+        if (areas.length === 0) {
+            container.innerHTML = '<p style="font-size:0.9rem; color:#e5e7eb;">No hay RdA definidos para este ciclo.</p>';
+            return;
+        }
+        let html = '';
+        areas.forEach(area => {
+            const d = progreso[area];
+            const pct = d.porcentaje;
+            let barColor = area.includes('Programación') ? 'from-emerald-500' : area.includes('Robótica') ? 'from-amber-500' : area.includes('Ciencia') ? 'from-purple-500' : 'from-blue-500';
+            let msg = pct === 0 ? '🌱 Sin saberes planificados en el ciclo' : pct < 40 ? '📌 Iniciando el camino en el ciclo' : pct < 70 ? '📈 Progresando hacia el RdA del ciclo' : pct < 100 ? '🔥 ¡Muy cerca del RdA del ciclo!' : '🏆 ¡RdA del ciclo completamente planificado!';
+            html += `<div><div class="flex justify-between"><span class="font-semibold">${area}</span><span>${pct}% (${d.seleccionados}/${d.total})</span></div><p class="text-xs text-white/70 italic">${d.rda.substring(0,80)}…</p><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r ${barColor}" style="width:${pct}%"></div></div><p class="text-xs text-white/60">${msg}</p></div>`;
+        });
+        container.innerHTML = html;
+    },
+
+    renderListaSeleccionados() {
+        const lista = document.getElementById('selected-saberes-list');
+        if (this.saberesSeleccionados.size === 0) {
+            lista.innerHTML = '<p style="font-size: 1rem; color: #e5e7eb; text-align: center;">No hay saberes seleccionados</p>';
+            return;
+        }
+        const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
+        let html = ''; const agrupados = {};
+        this.saberesSeleccionados.forEach(s => { const [area, nombre] = s.split('::'); if (!agrupados[area]) agrupados[area] = []; agrupados[area].push(nombre); });
+        for (let area in agrupados) {
+            html += `<p style="font-size: 1rem; font-weight: bold; color: #93c5fd; margin-top: 0.75rem;">${area}</p>`;
+            agrupados[area].forEach(nombre => {
+                const saber = data[area]?.saberes?.find(s => s.nombre === nombre);
+                const preview = saber ? saber.indicadores[0].substring(0, 35) + '…' : '';
+                html += `<div style="display: flex; align-items: center; justify-content: space-between; font-size: 1rem; padding-left: 0.5rem; margin-bottom: 0.25rem;">
+                    <span>• ${nombre} <span style="font-size: 0.9rem; color: #cbd5e1;">${preview}</span></span>
+                    <i class="fas fa-times-circle" style="color: #f87171; cursor: pointer;" onclick="App.eliminarSaber('${area}::${nombre}')"></i>
+                </div>`;
             });
-            const container = document.getElementById('rda-progress-list');
-            if (!container) return;
-            if (areas.length === 0) { container.innerHTML = '<p style="font-size:0.9rem; color:#e5e7eb;">No hay RdA definidos para este ciclo.</p>'; return; }
-            let html = '';
-            areas.forEach(area => {
-                const d = progreso[area];
-                const pct = d.porcentaje;
-                let barColor = area.includes('Programación') ? 'from-emerald-500' : area.includes('Robótica') ? 'from-amber-500' : area.includes('Ciencia') ? 'from-purple-500' : 'from-blue-500';
-                let msg = pct === 0 ? '🌱 Sin saberes planificados en el ciclo' : pct < 40 ? '📌 Iniciando el camino en el ciclo' : pct < 70 ? '📈 Progresando hacia el RdA del ciclo' : pct < 100 ? '🔥 ¡Muy cerca del RdA del ciclo!' : '🏆 ¡RdA del ciclo completamente planificado!';
-                html += `<div><div class="flex justify-between"><span class="font-semibold">${area}</span><span>${pct}% (${d.seleccionados}/${d.total})</span></div><p class="text-xs text-white/70 italic">${d.rda.substring(0,80)}…</p><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r ${barColor}" style="width:${pct}%"></div></div><p class="text-xs text-white/60">${msg}</p></div>`;
-            });
-            container.innerHTML = html;
-        },
-        renderListaSeleccionados() {
-            const lista = document.getElementById('selected-saberes-list');
-            if (this.saberesSeleccionados.size === 0) { lista.innerHTML = '<p style="font-size: 1rem; color: #e5e7eb; text-align: center;">No hay saberes seleccionados</p>'; return; }
-            const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
-            let html = ''; const agrupados = {};
-            this.saberesSeleccionados.forEach(s => { const [area, nombre] = s.split('::'); if (!agrupados[area]) agrupados[area] = []; agrupados[area].push(nombre); });
-            for (let area in agrupados) {
-                html += `<p style="font-size: 1rem; font-weight: bold; color: #93c5fd; margin-top: 0.75rem;">${area}</p>`;
-                agrupados[area].forEach(nombre => {
-                    const saber = data[area]?.saberes?.find(s => s.nombre === nombre);
-                    const preview = saber ? saber.indicadores[0].substring(0, 35) + '…' : '';
-                    html += `<div style="display: flex; align-items: center; justify-content: space-between; font-size: 1rem; padding-left: 0.5rem; margin-bottom: 0.25rem;">
-                        <span>• ${nombre} <span style="font-size: 0.9rem; color: #cbd5e1;">${preview}</span></span>
-                        <i class="fas fa-times-circle" style="color: #f87171; cursor: pointer;" onclick="App.eliminarSaber('${area}::${nombre}')"></i>
-                    </div>`;
-                });
-            }
-            lista.innerHTML = html;
-        },
-        eliminarSaber(id) { this.saberesSeleccionados.delete(id); this.guardarStorage(); this.renderizarTodo(); this.actualizarPanelRdA(); },
-        togglePerfiles() { const c = document.getElementById('perfiles-content'); c.classList.toggle('hidden'); document.getElementById('perfiles-chevron').classList.toggle('fa-chevron-down'); },
+        }
+        lista.innerHTML = html;
+    },
+
+    eliminarSaber(id) {
+        this.saberesSeleccionados.delete(id);
+        this.guardarStorage();
+        this.renderizarTodo();
+        this.actualizarPanelRdA();
+    },
+
+    togglePerfiles() {
+        const c = document.getElementById('perfiles-content');
+        const ch = document.getElementById('perfiles-chevron');
+        c.classList.toggle('hidden');
+        ch.classList.toggle('fa-chevron-down');
+        ch.classList.toggle('fa-chevron-up');
+    },
         generarPrompt() {
             if (this.saberesSeleccionados.size === 0) { alert('Selecciona al menos un saber.'); return; }
             const ciclo = this.getCiclo();
