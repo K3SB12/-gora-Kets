@@ -910,34 +910,23 @@ const RDA_POR_CICLO = {
 };
     const PESOS_EVALUACION = { "I Ciclo": { cotidiano:65, tareas:10, pruebas:15, proyecto:0, asistencia:10 }, "II Ciclo": { cotidiano:60, tareas:10, pruebas:20, proyecto:0, asistencia:10 }, "III Ciclo": { cotidiano:50, tareas:10, pruebas:0, proyecto:30, asistencia:10 } };
 
-     // ---------- ALMACENAMIENTO (LOCALSTORAGE SIMPLE) ----------
-   const Storage = {
-        _normalizarGrado(grado) {
-            return grado.replace(/°/g, '_grado_');  // Reemplaza todas las ocurrencias de °
-        },
-        guardar(key, data) {
-            localStorage.setItem(`pnft_${key}`, JSON.stringify(data));
-        },
-        cargar(key) {
-            const d = localStorage.getItem(`pnft_${key}`);
-            return d ? JSON.parse(d) : null;
-        }
+    // ========== STORAGE CON NORMALIZACIÓN ==========
+    const Storage = {
+        _normalizarGrado(grado) { return grado.replace(/°/g, '_grado_'); },
+        guardar(key, data) { localStorage.setItem(`pnft_${key}`, JSON.stringify(data)); },
+        cargar(key) { const d = localStorage.getItem(`pnft_${key}`); return d ? JSON.parse(d) : null; }
     };
 
-    // ---------- APP PRINCIPAL ----------
-    
+    // ========== APP PRINCIPAL ==========
     const App = {
-        nivelActual: '0°',
-        moduloActual: 'Módulo 1',
-        saberesSeleccionados: new Set(),
-        saberesImpartidos: new Set(),
+        nivelActual: '0°', moduloActual: 'Módulo 1',
+        saberesSeleccionados: new Set(), saberesImpartidos: new Set(),
 
         init() {
             this.renderIslas();
             this.cargarStorage();
             this.renderizarTodo();
         },
-
         renderIslas() {
             document.getElementById('island-container').innerHTML = `
                 <div class="island-card rounded-3xl p-6 border-l-8 border-l-pink-400" onclick="App.selectCycle('materno')"><h3 class="text-2xl font-black">🏝️ Materno · Transición</h3><p class="text-white/60 text-sm">ABJ · 0°</p></div>
@@ -946,20 +935,18 @@ const RDA_POR_CICLO = {
                 <div class="island-card rounded-3xl p-6 border-l-8 border-l-purple-400" onclick="App.selectCycle('iii')"><h3 class="text-2xl font-black">🏝️ III Ciclo</h3><p class="text-white/60 text-sm">7° · 8° · 9° · Design Thinking</p></div>
             `;
         },
-
-        selectCycle(c) {
-            const m = { materno: '0°', i: '1°', ii: '4°', iii: '7°' };
-            if (m[c]) this.selectLevel(m[c]);
-        },
-
+        selectCycle(c) { const m = { materno: '0°', i: '1°', ii: '4°', iii: '7°' }; if (m[c]) this.selectLevel(m[c]); },
         selectLevel(l) {
             this.nivelActual = l;
             document.getElementById('current-level-display').innerText = l;
             document.querySelectorAll('.level-tab').forEach(t => t.classList.toggle('active', t.dataset.level === l));
+            // Al cambiar de nivel, forzamos visibilidad del panel de saberes del Módulo 1
+            this.moduloActual = 'Módulo 1';
+            document.getElementById('select-modulo').value = 'Módulo 1';
             this.cargarStorage();
+            document.getElementById('saberes-section').classList.remove('hidden');
             this.renderizarTodo();
         },
-
         cargarSaberesDelNivel() {
             this.moduloActual = document.getElementById('select-modulo').value;
             this.cargarStorage();
@@ -968,14 +955,12 @@ const RDA_POR_CICLO = {
             this.renderBateriasYPerfiles();
             this.renderListaSeleccionados();
         },
-
         switchTab(t) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
             document.getElementById(`tab-${t}`).classList.remove('hidden');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelector(`[data-tab="${t}"]`).classList.add('active');
         },
-
         cargarStorage() {
             const gradoNorm = Storage._normalizarGrado(this.nivelActual);
             const key = `${gradoNorm}_${this.moduloActual}`;
@@ -983,16 +968,11 @@ const RDA_POR_CICLO = {
             this.saberesSeleccionados = new Set(data.seleccionados || []);
             this.saberesImpartidos = new Set(data.impartidos || []);
         },
-
         guardarStorage() {
             const gradoNorm = Storage._normalizarGrado(this.nivelActual);
             const key = `${gradoNorm}_${this.moduloActual}`;
-            Storage.guardar(key, {
-                seleccionados: [...this.saberesSeleccionados],
-                impartidos: [...this.saberesImpartidos]
-            });
+            Storage.guardar(key, { seleccionados: [...this.saberesSeleccionados], impartidos: [...this.saberesImpartidos] });
         },
-
         getCiclo() {
             const n = parseInt(this.nivelActual);
             if (isNaN(n)) return 'Materno Infantil/Transición';
@@ -1000,41 +980,19 @@ const RDA_POR_CICLO = {
             if (n <= 6) return 'II Ciclo';
             return 'III Ciclo';
         },
-
         renderizarTodo() {
             this.renderSaberes();
             this.renderBateriasYPerfiles();
             this.renderListaSeleccionados();
             this.renderEjesCheckboxes();
         },
-
         renderEjesCheckboxes() {
             const ejes = EJES_POR_CICLO[this.getCiclo()] || {};
-            document.getElementById('ejes-checkboxes').innerHTML = Object.keys(ejes).map(e =>
-                `<label class="flex items-center gap-2"><input type="checkbox" value="${e}" checked> ${e}</label>`
-            ).join('');
+            document.getElementById('ejes-checkboxes').innerHTML = Object.keys(ejes).map(e => `<label class="flex items-center gap-2"><input type="checkbox" value="${e}" checked> ${e}</label>`).join('');
         },
-
-        toggleSaber(id, chk) {
-            if (chk) this.saberesSeleccionados.add(id);
-            else this.saberesSeleccionados.delete(id);
-            this.guardarStorage();
-            this.renderizarTodo();
-        },
-
-        toggleImpartido(id) {
-            if (this.saberesImpartidos.has(id)) this.saberesImpartidos.delete(id);
-            else this.saberesImpartidos.add(id);
-            this.guardarStorage();
-            this.renderSaberes();
-        },
-
-        limpiarSeleccionModulo() {
-            this.saberesSeleccionados.clear();
-            this.guardarStorage();
-            this.renderizarTodo();
-        },
-
+        toggleSaber(id, chk) { if (chk) this.saberesSeleccionados.add(id); else this.saberesSeleccionados.delete(id); this.guardarStorage(); this.renderizarTodo(); },
+        toggleImpartido(id) { if (this.saberesImpartidos.has(id)) this.saberesImpartidos.delete(id); else this.saberesImpartidos.add(id); this.guardarStorage(); this.renderSaberes(); },
+        limpiarSeleccionModulo() { this.saberesSeleccionados.clear(); this.guardarStorage(); this.renderizarTodo(); },
         renderSaberes() {
             const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual];
             const cont = document.getElementById('saberes-container');
@@ -1057,7 +1015,6 @@ const RDA_POR_CICLO = {
             cont.innerHTML = html;
             document.getElementById('selected-count-badge').innerText = `${total} seleccionados`;
         },
-
         renderBateriasYPerfiles() {
             const areas = ['Apropiación tecnológica y Digital', 'Programación y Algoritmos', 'Computación física y Robótica', 'Ciencia de datos e Inteligencia artificial'];
             const contador = {}; areas.forEach(a => contador[a] = 0);
@@ -1081,7 +1038,22 @@ const RDA_POR_CICLO = {
             document.getElementById('perfiles-content').innerHTML = phtml || '<p style="font-size:0.9rem; color:#e5e7eb;">No hay perfiles definidos para este ciclo.</p>';
             this.actualizarPanelRdA();
         },
-
+        // 🔥 NUEVA FUNCIÓN AUXILIAR: Progreso de un grado específico
+        obtenerProgresoGrado(grado, area) {
+            let totalGrado = 0, selGrado = 0;
+            ['Módulo 1', 'Módulo 2'].forEach(modulo => {
+                const gradoNorm = Storage._normalizarGrado(grado);
+                const key = `${gradoNorm}_${modulo}`;
+                const data = Storage.cargar(key) || {};
+                const ids = data.seleccionados || [];
+                const modData = PNFT_DATA[grado]?.[modulo];
+                if (modData && modData[area]) {
+                    totalGrado += modData[area].saberes.length;
+                    ids.forEach(id => { if (id.startsWith(area + '::')) selGrado++; });
+                }
+            });
+            return totalGrado === 0 ? 0 : Math.round((selGrado / totalGrado) * 100);
+        },
         obtenerProgresoCiclo() {
             const ciclo = this.getCiclo();
             const grados = ciclo === 'Materno Infantil/Transición' ? ['0°'] :
@@ -1123,7 +1095,6 @@ const RDA_POR_CICLO = {
             });
             return res;
         },
-
         actualizarPanelRdA() {
             const ciclo = this.getCiclo();
             const progreso = this.obtenerProgresoCiclo();
@@ -1139,6 +1110,12 @@ const RDA_POR_CICLO = {
                 return;
             }
             let html = '';
+            // Determinamos el último grado del ciclo para la verificación de cierre
+            let ultimoGrado = '3°';
+            if (ciclo === 'II Ciclo') ultimoGrado = '6°';
+            if (ciclo === 'III Ciclo') ultimoGrado = '9°';
+            const esCicloCompleto = ciclo !== 'Materno Infantil/Transición';
+
             areas.forEach(area => {
                 const d = progreso[area];
                 const pct = d.porcentaje;
@@ -1149,32 +1126,39 @@ const RDA_POR_CICLO = {
                           pct < 40 ? '📌 Iniciando el camino en el ciclo' :
                           pct < 70 ? '📈 Progresando hacia el RdA del ciclo' :
                           pct < 100 ? '🔥 Muy cerca del RdA del ciclo' : '🏆 ¡RdA del ciclo completamente planificado!';
-                // Mostrar texto completo sin cortar (se muestra con puntos suspensivos solo si es necesario para espacio)
+
+                // 🔥 VERIFICACIÓN DE CIERRE DE CICLO 🔥
+                let mostrarBarra = true;
+                let mensajeCierre = '';
+                if (esCicloCompleto) {
+                    const progresoUltimo = this.obtenerProgresoGrado(ultimoGrado, area);
+                    if (progresoUltimo === 0) {
+                        mostrarBarra = false;
+                        mensajeCierre = `⏳ Para alcanzar el RdA de ${ciclo}, es necesario trabajar los saberes de ${ultimoGrado} grado.`;
+                    }
+                }
+
                 const rdaTexto = d.rda || 'Resultado de Aprendizaje no definido';
                 html += `<div>
                     <div class="flex justify-between"><span class="font-semibold">${area}</span><span>${pct}% (${d.seleccionados}/${d.total})</span></div>
-                    <p class="text-xs text-white/70 italic">${rdaTexto.length > 100 ? rdaTexto.substring(0,100)+'…' : rdaTexto}</p>
-                    <div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r ${barColor}" style="width:${pct}%"></div></div>
-                    <p class="text-xs text-white/60">${msg}</p>
-                </div>`;
+                    <p class="text-xs text-white/70 italic">${rdaTexto.length > 100 ? rdaTexto.substring(0,100)+'…' : rdaTexto}</p>`;
+                
+                if (mostrarBarra) {
+                    html += `<div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r ${barColor}" style="width:${pct}%"></div></div>
+                             <p class="text-xs text-white/60">${msg}</p>`;
+                } else {
+                    html += `<p class="text-xs text-amber-300 italic mt-2">${mensajeCierre}</p>`;
+                }
+                html += `</div>`;
             });
             container.innerHTML = html;
         },
-
         renderListaSeleccionados() {
             const lista = document.getElementById('selected-saberes-list');
-            if (this.saberesSeleccionados.size === 0) {
-                lista.innerHTML = '<p style="font-size: 1rem; color: #e5e7eb; text-align: center;">No hay saberes seleccionados</p>';
-                return;
-            }
+            if (this.saberesSeleccionados.size === 0) { lista.innerHTML = '<p style="font-size: 1rem; color: #e5e7eb; text-align: center;">No hay saberes seleccionados</p>'; return; }
             const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
-            let html = '';
-            const agrupados = {};
-            this.saberesSeleccionados.forEach(s => {
-                const [area, nombre] = s.split('::');
-                if (!agrupados[area]) agrupados[area] = [];
-                agrupados[area].push(nombre);
-            });
+            let html = ''; const agrupados = {};
+            this.saberesSeleccionados.forEach(s => { const [area, nombre] = s.split('::'); if (!agrupados[area]) agrupados[area] = []; agrupados[area].push(nombre); });
             for (let area in agrupados) {
                 html += `<p style="font-size: 1rem; font-weight: bold; color: #93c5fd; margin-top: 0.75rem;">${area}</p>`;
                 agrupados[area].forEach(nombre => {
@@ -1188,37 +1172,19 @@ const RDA_POR_CICLO = {
             }
             lista.innerHTML = html;
         },
-
-        eliminarSaber(id) {
-            this.saberesSeleccionados.delete(id);
-            this.guardarStorage();
-            this.renderizarTodo();
-        },
-
-        togglePerfiles() {
-            const c = document.getElementById('perfiles-content');
-            c.classList.toggle('hidden');
-            document.getElementById('perfiles-chevron').classList.toggle('fa-chevron-down');
-        },
-
+        eliminarSaber(id) { this.saberesSeleccionados.delete(id); this.guardarStorage(); this.renderizarTodo(); },
+        togglePerfiles() { const c = document.getElementById('perfiles-content'); c.classList.toggle('hidden'); document.getElementById('perfiles-chevron').classList.toggle('fa-chevron-down'); },
         generarPrompt() {
-            if (this.saberesSeleccionados.size === 0) {
-                alert('Selecciona al menos un saber.');
-                return;
-            }
+            if (this.saberesSeleccionados.size === 0) { alert('Selecciona al menos un saber.'); return; }
             const ciclo = this.getCiclo();
             const rda = RDA_POR_CICLO[ciclo]?.["Apropiación tecnológica y Digital"] || '';
             const ejesSeleccionados = [...document.querySelectorAll('#ejes-checkboxes input:checked')].map(cb => cb.value);
             const ejesTxt = ejesSeleccionados.map(e => `- ${e}: ${EJES_POR_CICLO[ciclo][e]}`).join('\n');
-            let saberesTxt = '';
-            const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
+            let saberesTxt = ''; const data = PNFT_DATA[this.nivelActual]?.[this.moduloActual] || {};
             for (let id of this.saberesSeleccionados) {
                 const [area, nombre] = id.split('::');
                 const saber = data[area]?.saberes?.find(s => s.nombre === nombre);
-                if (saber) {
-                    saberesTxt += `📌 ${area} - ${nombre}\n`;
-                    saber.indicadores.forEach(i => saberesTxt += `   • ${i}\n`);
-                }
+                if (saber) { saberesTxt += `📌 ${area} - ${nombre}\n`; saber.indicadores.forEach(i => saberesTxt += `   • ${i}\n`); }
             }
             const duracion = document.getElementById('duracion-clase').value;
             const metodologia = ciclo === 'II Ciclo' ? 'ABR' : (ciclo === 'III Ciclo' ? 'Design Thinking' : 'ABJ');
@@ -1245,53 +1211,36 @@ const RDA_POR_CICLO = {
                 - En caso de que el docente elija una metodología el sistema le debe solicitar seleccionar la totalidad de los saberes conceptuales del área o las áreas de conocimiento para que no se vea fraccionada la metodología como columna vertebral del aprendizaje.
                 Redacción profesional, inspiradora, coherente con el enfoque por competencias. Asegúrese de que cada indicador se evidencie en las actividades.
                 `;
+
             document.getElementById('output-prompt').value = prompt;
         },
-
-        copiarPrompt() {
-            const ta = document.getElementById('output-prompt');
-            ta.select();
-            document.execCommand('copy');
-            alert('Prompt copiado.');
-        }
+        copiarPrompt() { const ta = document.getElementById('output-prompt'); ta.select(); document.execCommand('copy'); alert('Prompt copiado.'); }
     };
 
     const Exportar = {
         backupCompleto() {
             const backup = {};
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('pnft_')) backup[key] = localStorage.getItem(key);
-            }
+            for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); if (key.startsWith('pnft_')) backup[key] = localStorage.getItem(key); }
             const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `backup_pnft_${new Date().toISOString().slice(0,10)}.json`;
-            a.click();
-            URL.revokeObjectURL(a.href);
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `backup_pnft_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(a.href);
             alert('✅ Backup exportado correctamente.');
         },
         importarBackup(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+            const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     const backup = JSON.parse(e.target.result);
                     if (!confirm('¿Reemplazar todos los datos de planificación?')) return;
                     for (let key in backup) localStorage.setItem(key, backup[key]);
-                    alert('✅ Backup importado. Recargando...');
-                    window.location.reload();
-                } catch (err) {
-                    alert('❌ Archivo inválido.');
-                }
+                    alert('✅ Backup importado. Recargando...'); window.location.reload();
+                } catch (err) { alert('❌ Archivo inválido.'); }
             };
             reader.readAsText(file);
         }
     };
 
-    window.App = App;
-    window.Exportar = Exportar;
+    window.App = App; window.Exportar = Exportar;
     window.onload = () => App.init();
 </script>
 </body>
