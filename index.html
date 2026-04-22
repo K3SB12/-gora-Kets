@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧭 PNFT 2026 · Planificador Curricular + Gestión Docente</title>
+    <title>🧭 PNFT 2026 · Planificador Curricular Completo</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* ===== ESTILOS ORIGINALES (COMPLETOS) ===== */
@@ -29,7 +29,6 @@
         .glass-card {
             background: rgba(30, 41, 59, 0.65);
             backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 2rem;
             box-shadow: 0 20px 40px -10px rgba(0,0,0,0.7);
@@ -90,75 +89,30 @@
             cursor: pointer;
             font-size: 1rem;
         }
-        .floating {
-            animation: float 3s ease-in-out infinite;
-        }
-        @keyframes float {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-            100% { transform: translateY(0); }
-        }
-        /* Accesibilidad */
-        body, button, input, select, textarea {
-            font-size: 1rem;
-            color: #ffffff;
-        }
-        h1, h2, h3, h4, h5, h6 {
-            color: #ffffff;
-            font-weight: 700;
-        }
+        .floating { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0); } }
+        body, button, input, select, textarea { font-size: 1rem; color: #ffffff; }
+        h1, h2, h3, h4, h5, h6 { color: #ffffff; font-weight: 700; }
         .text-white { color: #ffffff !important; }
-        .text-slate-400, .text-white\/60, .text-white\/40, .text-white\/70, .text-white\/80 {
-            color: #e5e7eb !important;
-        }
-        .bg-slate-800, .bg-slate-800\/70, .bg-slate-800\/50, .bg-slate-800\/30 {
-            background-color: #1e293b !important;
-        }
-        .bg-slate-700, .bg-slate-700\/50 {
-            background-color: #334155 !important;
-        }
-        .bg-slate-900, .bg-slate-900\/80 {
-            background-color: #0f172a !important;
-        }
+        .bg-slate-800, .bg-slate-800\/70 { background-color: #1e293b !important; }
+        .bg-slate-700 { background-color: #334155 !important; }
         #saberes-container { font-size: 1rem; }
-        #saberes-container .text-\[10px\] {
-            font-size: 0.95rem !important;
-            line-height: 1.5;
-            color: #e5e7eb !important;
-        }
-        #output-prompt {
-            font-size: 0.95rem !important;
-            line-height: 1.5;
-            background-color: #0f172a !important;
-            color: #a5f3fc !important;
-            border: 1px solid #475569;
-        }
+        #saberes-container .text-\[10px\] { font-size: 0.95rem !important; line-height: 1.5; color: #e5e7eb !important; }
+        #output-prompt { font-size: 0.95rem; background-color: #0f172a !important; color: #a5f3fc !important; border: 1px solid #475569; }
         .bg-white\/5 { background-color: rgba(255, 255, 255, 0.1); }
         .bg-white\/5:hover { background-color: rgba(255, 255, 255, 0.2); }
-        /* Estilos adicionales para los nuevos componentes (consistentes) */
-        .grupo-card, .institucion-card {
-            background: rgba(30, 41, 59, 0.5);
-            backdrop-filter: blur(8px);
-            border-radius: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.15);
-        }
-        .calendario-dia {
-            transition: all 0.1s;
-        }
-        .calendario-dia button {
-            font-size: 0.7rem;
-            padding: 0.2rem 0.4rem;
-        }
-        .fecha-mep {
-            background-color: rgba(234, 179, 8, 0.2);
-            border-left: 3px solid #f59e0b;
-        }
+        /* Calendario */
+        .calendario-dia { transition: all 0.1s; background: rgba(30, 41, 59, 0.4); border-radius: 0.5rem; }
+        .calendario-dia button { font-size: 0.7rem; padding: 0.2rem 0.4rem; transition: 0.1s; }
+        .fecha-mep { background-color: rgba(245, 158, 11, 0.25); border-left: 3px solid #f59e0b; }
+        .rango-activo { background-color: #2563eb !important; box-shadow: 0 0 0 2px white; }
+        #grupo-activo-selector { background-color: #1e293b; border: 1px solid rgba(255,255,255,0.3); border-radius: 9999px; padding: 0.5rem 1rem; color: white; }
     </style>
 </head>
 <body class="text-white">
 
 <div class="relative z-10 max-w-7xl mx-auto px-4 py-6">
-    <!-- HEADER (con selector de grupo activo) -->
+    <!-- HEADER -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-4 border-b border-white/10">
         <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg floating">
@@ -166,18 +120,18 @@
             </div>
             <div>
                 <h1 class="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-cyan-200 via-white to-blue-300 bg-clip-text text-transparent">PNFT 2026 · La Gran Ruta</h1>
-                <p class="text-cyan-300/80 text-sm flex items-center gap-2"><i class="fas fa-island-tropical"></i> Planificador Curricular · Dirección de Recursos Tecnológicos del MEP</p>
+                <p class="text-cyan-300/80 text-sm"><i class="fas fa-island-tropical"></i> Planificador Curricular · Dirección de Recursos Tecnológicos del MEP</p>
             </div>
         </div>
-        <div class="flex items-center gap-3 bg-black/20 backdrop-blur-md px-5 py-2 rounded-full border border-white/10">
+        <div class="flex items-center gap-3">
             <i class="fas fa-users text-amber-400"></i>
-            <select id="grupo-activo-selector" class="bg-transparent text-white text-sm font-semibold outline-none cursor-pointer">
+            <select id="grupo-activo-selector" class="bg-slate-800 text-white text-sm font-semibold border border-white/30 rounded-full px-4 py-2 outline-none cursor-pointer">
                 <option value="">-- Seleccionar grupo activo --</option>
             </select>
         </div>
     </div>
 
-    <!-- PESTAÑAS (ahora 4) -->
+    <!-- PESTAÑAS -->
     <div class="flex flex-wrap gap-3 mb-6 border-b border-white/10 pb-3">
         <div class="tab-btn active" data-tab="dashboard" onclick="App.switchTab('dashboard')"><i class="fas fa-map mr-2"></i>Dashboard</div>
         <div class="tab-btn" data-tab="grupos" onclick="App.switchTab('grupos')"><i class="fas fa-school mr-2"></i>🏫 Gestión de Grupos</div>
@@ -185,9 +139,8 @@
         <div class="tab-btn" data-tab="exportar" onclick="App.switchTab('exportar')"><i class="fas fa-download mr-2"></i>Exportar Backup</div>
     </div>
 
-    <!-- DASHBOARD (igual que original, pero adaptado a grupo activo) -->
+    <!-- DASHBOARD -->
     <div id="tab-dashboard" class="tab-content">
-        <!-- Selector de nivel (0° a 9°) -->
         <div class="flex flex-wrap gap-2 mb-6 justify-center md:justify-start">
             <div class="level-tab active" data-level="0°" onclick="App.selectLevel('0°')">0° Preescolar</div>
             <div class="level-tab" data-level="1°" onclick="App.selectLevel('1°')">1°</div>
@@ -200,111 +153,63 @@
             <div class="level-tab" data-level="8°" onclick="App.selectLevel('8°')">8°</div>
             <div class="level-tab" data-level="9°" onclick="App.selectLevel('9°')">9°</div>
         </div>
-
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Columna izquierda: Islas, Módulo, Saberes -->
             <div class="lg:col-span-8 space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" id="island-container"></div>
                 <div class="glass-card p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-bold text-lg"><i class="fas fa-flag-checkered text-blue-400 mr-2"></i>Configurar Módulo</h3>
-                        <span class="text-sm bg-white/10 px-3 py-1 rounded-full">Nivel: <span id="current-level-display">0°</span></span>
-                    </div>
-                    <div class="flex items-center gap-4 flex-wrap">
-                        <select id="select-modulo" class="bg-slate-800/70 border border-slate-600 rounded-xl p-3 text-white">
-                            <option value="Módulo 1">Módulo 1 (Primer semestre)</option>
-                            <option value="Módulo 2">Módulo 2 (Segundo semestre)</option>
-                        </select>
-                        <button onclick="App.cargarSaberesDelNivel()" class="btn-primary"><i class="fas fa-download mr-2"></i>Cargar Saberes</button>
-                    </div>
+                    <div class="flex justify-between mb-4"><h3 class="font-bold text-lg"><i class="fas fa-flag-checkered text-blue-400 mr-2"></i>Configurar Módulo</h3><span class="text-sm bg-white/10 px-3 py-1 rounded-full">Nivel: <span id="current-level-display">0°</span></span></div>
+                    <div class="flex gap-4 flex-wrap"><select id="select-modulo" class="bg-slate-800/70 border border-slate-600 rounded-xl p-3"><option value="Módulo 1">Módulo 1 (Primer semestre)</option><option value="Módulo 2">Módulo 2 (Segundo semestre)</option></select><button onclick="App.cargarSaberesDelNivel()" class="btn-primary"><i class="fas fa-download mr-2"></i>Cargar Saberes</button></div>
                 </div>
-
-                <!-- Saberes del módulo -->
-                <div id="saberes-section" class="glass-card p-6 hidden">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg"><i class="fas fa-list-check text-emerald-400"></i> Saberes del Módulo</h3>
-                        <span id="selected-count-badge" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full">0 seleccionados</span>
-                    </div>
-                    <div id="saberes-container" class="space-y-4 max-h-[600px] overflow-y-auto pr-2"></div>
-                    <div class="mt-4 text-xs text-amber-300/80 flex items-center gap-2"><i class="fas fa-lightbulb"></i> Regla de Oro: Selecciona entre 2 y 3 saberes con indicadores *sugerencia que no sustituye el criterio técnico docente.</div>
-                </div>
-
-                <!-- Generador de Prompt -->
-                <div class="glass-card p-6">
-                    <h3 class="font-bold text-lg mb-4"><i class="fas fa-robot text-indigo-400 mr-2"></i>Generador de Prompt para IA</h3>
-                    <div class="mb-3"><label class="text-xs text-white/60 block mb-1">Ejes Transversales a incluir:</label><div id="ejes-checkboxes" class="space-y-1 text-sm"></div></div>
-                    <div class="mb-3"><label class="text-xs text-white/60 block mb-1">Duración de clase (min):</label><input type="number" id="duracion-clase" value="40" class="w-full bg-slate-800 p-2 rounded text-white text-sm"></div>
-                    <button onclick="App.generarPrompt()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition mb-4"><i class="fas fa-magic mr-2"></i>✨ Generar Prompt PNFT</button>
-                    <div class="relative"><textarea id="output-prompt" rows="6" class="w-full font-mono p-4 rounded-xl border border-gray-500" readonly></textarea><button onclick="App.copiarPrompt()" class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 p-2 rounded-lg"><i class="far fa-copy"></i></button></div>
-                    <div class="grid grid-cols-4 gap-2 mt-4">
-                        <a href="https://gemini.google.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fab fa-google"></i> Gemini</a>
-                        <a href="https://chat.openai.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fas fa-comment"></i> ChatGPT</a>
-                        <a href="https://copilot.microsoft.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fas fa-sync-alt"></i> Copilot</a>
-                        <a href="https://deepseek.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs"><i class="fas fa-search"></i> DeepSeek</a>
-                    </div>
-                </div>
+                <div id="saberes-section" class="glass-card p-6 hidden"><div class="flex justify-between mb-4"><h3 class="font-bold text-lg"><i class="fas fa-list-check text-emerald-400"></i> Saberes del Módulo</h3><span id="selected-count-badge" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full">0 seleccionados</span></div><div id="saberes-container" class="space-y-4 max-h-[600px] overflow-y-auto pr-2"></div><div class="mt-4 text-xs text-amber-300/80"><i class="fas fa-lightbulb"></i> Regla de Oro: Selecciona entre 2 y 3 saberes con indicadores.</div></div>
+                <div class="glass-card p-6"><h3 class="font-bold text-lg mb-4"><i class="fas fa-robot text-indigo-400 mr-2"></i>Generador de Prompt para IA</h3><div class="mb-3"><label class="text-xs text-white/60">Ejes Transversales:</label><div id="ejes-checkboxes" class="space-y-1 text-sm"></div></div><div class="mb-3"><label class="text-xs text-white/60">Duración (min):</label><input type="number" id="duracion-clase" value="40" class="w-full bg-slate-800 p-2 rounded text-white"></div><button onclick="App.generarPrompt()" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl mb-4"><i class="fas fa-magic mr-2"></i>✨ Generar Prompt PNFT</button><div class="relative"><textarea id="output-prompt" rows="6" class="w-full font-mono p-4 rounded-xl border border-gray-500" readonly></textarea><button onclick="App.copiarPrompt()" class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 p-2 rounded-lg"><i class="far fa-copy"></i></button></div><div class="grid grid-cols-4 gap-2 mt-4"><a href="https://gemini.google.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs">Gemini</a><a href="https://chat.openai.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs">ChatGPT</a><a href="https://copilot.microsoft.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs">Copilot</a><a href="https://deepseek.com" target="_blank" class="bg-white/5 hover:bg-white/10 rounded-lg p-2 text-center text-xs">DeepSeek</a></div></div>
             </div>
-
-            <!-- Columna derecha: Baterías, Progreso RdA, Planeamiento, Perfiles -->
             <div class="lg:col-span-4 space-y-6">
-                <div class="glass-card p-6">
-                    <h3 class="font-bold text-lg mb-4"><i class="fas fa-battery-full text-amber-400 mr-2"></i>Baterías de Poder</h3>
-                    <div class="space-y-5" id="batteries-container"></div>
-                </div>
-                <div class="glass-card p-6">
-                    <div class="flex items-center gap-2 mb-4"><i class="fas fa-bullseye text-2xl text-red-400"></i><h3 class="font-bold text-lg">Progreso hacia el RdA</h3></div>
-                    <div id="rda-progress-list" class="space-y-4"></div>
-                </div>
-                <div class="glass-card p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg"><i class="fas fa-clipboard-list text-purple-400 mr-2"></i>Planeamiento</h3>
-                        <button onclick="App.limpiarSeleccionModulo()" class="text-xs bg-red-500/20 hover:bg-red-500/40 text-red-300 px-3 py-1 rounded-full"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                    <div id="selected-saberes-list" class="space-y-2 max-h-48 overflow-y-auto text-sm"></div>
-                </div>
-                <div class="glass-card p-6">
-                    <div class="collapsible-header flex items-center justify-between" onclick="App.togglePerfiles()">
-                        <h3 class="font-bold text-lg"><i class="fas fa-user-graduate text-emerald-400 mr-2"></i>Perfiles de Salida</h3>
-                        <i id="perfiles-chevron" class="fas fa-chevron-down"></i>
-                    </div>
-                    <div id="perfiles-content" class="mt-4 space-y-3 hidden"></div>
-                </div>
+                <div class="glass-card p-6"><h3 class="font-bold text-lg mb-4"><i class="fas fa-battery-full text-amber-400 mr-2"></i>Baterías de Poder</h3><div id="batteries-container" class="space-y-5"></div></div>
+                <div class="glass-card p-6"><div class="flex items-center gap-2 mb-4"><i class="fas fa-bullseye text-2xl text-red-400"></i><h3 class="font-bold text-lg">Progreso hacia el RdA</h3></div><div id="rda-progress-list" class="space-y-4"></div></div>
+                <div class="glass-card p-6"><div class="flex justify-between mb-4"><h3 class="font-bold text-lg"><i class="fas fa-clipboard-list text-purple-400 mr-2"></i>Planeamiento</h3><button onclick="App.limpiarSeleccionModulo()" class="text-xs bg-red-500/20 hover:bg-red-500/40 px-3 py-1 rounded-full"><i class="fas fa-trash-alt"></i> Limpiar</button></div><div id="selected-saberes-list" class="space-y-2 max-h-48 overflow-y-auto text-sm"></div></div>
+                <div class="glass-card p-6"><div class="flex justify-between cursor-pointer" onclick="App.togglePerfiles()"><h3 class="font-bold text-lg"><i class="fas fa-user-graduate text-emerald-400 mr-2"></i>Perfiles de Salida</h3><i id="perfiles-chevron" class="fas fa-chevron-down"></i></div><div id="perfiles-content" class="mt-4 space-y-3 hidden"></div></div>
             </div>
         </div>
     </div>
 
-    <!-- PESTAÑA GESTIÓN DE GRUPOS -->
+    <!-- PESTAÑA GESTIÓN DE GRUPOS (sin límite) -->
     <div id="tab-grupos" class="tab-content hidden">
         <div class="glass-card p-6">
             <h2 class="text-2xl font-bold mb-4"><i class="fas fa-school"></i> Instituciones y Grupos</h2>
-            <p class="text-sm text-white/60 mb-4">Puedes tener hasta 2 instituciones. Cada grupo guarda su propia planificación de saberes, progreso y calendario.</p>
+            <p class="text-sm text-white/60 mb-4">Puedes crear todas las instituciones que necesites. Cada grupo guarda su propia planificación.</p>
             <div id="instituciones-container" class="space-y-6"></div>
-            <button onclick="Grupos.agregarInstitucion()" class="btn-primary mt-4">+ Agregar Institución (máx 2)</button>
+            <button onclick="agregarInstitucion()" class="btn-primary mt-4">+ Agregar Institución</button>
         </div>
     </div>
 
-    <!-- PESTAÑA CALENDARIO MEP -->
+    <!-- PESTAÑA CALENDARIO MEP CON RANGO -->
     <div id="tab-calendario" class="tab-content hidden">
         <div class="glass-card p-6">
-            <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+            <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
                 <h2 class="text-2xl font-bold"><i class="fas fa-calendar-alt"></i> Calendario MEP 2026</h2>
-                <div id="calendario-grupo-selector" class="flex gap-2 items-center"></div>
+                <div id="calendario-grupo-selector" class="flex gap-2 items-center flex-wrap"></div>
+            </div>
+            <div class="flex gap-3 mb-4 flex-wrap">
+                <button id="btn-rango-l1" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full text-sm"><i class="fas fa-vector-square"></i> Seleccionar rango (L1)</button>
+                <button id="btn-rango-l2" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-full text-sm"><i class="fas fa-vector-square"></i> Seleccionar rango (L2)</button>
+                <button id="btn-desmarcar-rango" class="bg-red-600/50 hover:bg-red-600 px-4 py-2 rounded-full text-sm"><i class="fas fa-times-circle"></i> Desmarcar rango (L1 y L2)</button>
+                <button id="btn-cancelar-rango" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-full text-sm hidden">Cancelar selección</button>
             </div>
             <div id="calendario-meses" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
-            <p class="text-xs text-white/40 mt-6">* Las fechas importantes están resaltadas. Haz clic en L1 o L2 para marcar la lección impartida ese día. Cada grupo guarda su propio registro.</p>
+            <p class="text-xs text-white/40 mt-6">* Fechas importantes resaltadas. Haz clic en L1/L2 para marcar individualmente. <strong>Rango:</strong> activa el botón, luego haz clic en fecha inicio y fin.</p>
         </div>
     </div>
 
-    <!-- PESTAÑA EXPORTAR (igual que original pero ahora incluye grupos) -->
+    <!-- EXPORTAR -->
     <div id="tab-exportar" class="tab-content hidden">
         <div class="glass-card p-6">
-            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-download mr-3"></i>Exportar e Importar Planificación</h2>
+            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-download mr-3"></i>Exportar e Importar</h2>
             <div class="grid md:grid-cols-2 gap-4">
-                <button onclick="Exportar.backupCompleto()" class="bg-amber-600/30 hover:bg-amber-600/50 p-6 rounded-xl"><i class="fas fa-archive text-4xl mb-3"></i><br>Exportar Backup (todo)</button>
-                <button onclick="document.getElementById('input-import-backup').click()" class="bg-purple-600/30 hover:bg-purple-600/50 p-6 rounded-xl"><i class="fas fa-upload text-4xl mb-3"></i><br>Importar Backup</button>
+                <button onclick="Exportar.backupCompleto()" class="bg-amber-600/30 hover:bg-amber-600/50 p-6 rounded-xl">Exportar Backup (todo)</button>
+                <button onclick="document.getElementById('input-import-backup').click()" class="bg-purple-600/30 hover:bg-purple-600/50 p-6 rounded-xl">Importar Backup</button>
                 <input type="file" id="input-import-backup" accept=".json" class="hidden" onchange="Exportar.importarBackup(event)">
             </div>
-            <p class="text-xs text-white/40 mt-4">Incluye instituciones, grupos, planificaciones de saberes y calendario de lecciones.</p>
+            <p class="text-xs text-white/40 mt-4">Incluye instituciones, grupos, planificaciones y calendario.</p>
         </div>
     </div>
 </div>
@@ -940,38 +845,37 @@ const RDA_POR_CICLO = {
     const PESOS_EVALUACION = { "I Ciclo": { cotidiano:65, tareas:10, pruebas:15, proyecto:0, asistencia:10 }, "II Ciclo": { cotidiano:60, tareas:10, pruebas:20, proyecto:0, asistencia:10 }, "III Ciclo": { cotidiano:50, tareas:10, pruebas:0, proyecto:30, asistencia:10 } };
 
 // ======================================================================
-// 2. NUEVAS ESTRUCTURAS PARA GRUPOS, CALENDARIO Y ALMACENAMIENTO POR GRUPO
+// 2. GESTIÓN DE INSTITUCIONES, GRUPOS Y CALENDARIO (COMPLETO)
 // ======================================================================
 let instituciones = []; // { id, nombre }
 let grupos = []; // { id, institucionId, nivel, nombre, observaciones }
 
-// Cargar datos guardados
-function cargarDatosGlobales() {
-    const stored = localStorage.getItem('pnft_instituciones');
-    if (stored) instituciones = JSON.parse(stored);
-    const storedGrupos = localStorage.getItem('pnft_grupos');
-    if (storedGrupos) grupos = JSON.parse(storedGrupos);
-    if (instituciones.length === 0) {
-        // Datos de ejemplo
-        instituciones = [{ id: "inst1", nombre: "Liceo San José" }];
-        grupos = [{ id: "g1", institucionId: "inst1", nivel: "7°", nombre: "7-1", observaciones: "" }];
-        guardarDatosGlobales();
-    }
-}
+// Funciones auxiliares
+function generarId() { return Date.now() + '-' + Math.random().toString(36).substr(2, 9); }
+
 function guardarDatosGlobales() {
     localStorage.setItem('pnft_instituciones', JSON.stringify(instituciones));
     localStorage.setItem('pnft_grupos', JSON.stringify(grupos));
 }
 
-// Generar ID único para grupo
-function generarId() { return Date.now() + '-' + Math.random().toString(36).substr(2, 6); }
+function cargarDatosGlobales() {
+    const storedInst = localStorage.getItem('pnft_instituciones');
+    if (storedInst) instituciones = JSON.parse(storedInst);
+    const storedGrupos = localStorage.getItem('pnft_grupos');
+    if (storedGrupos) grupos = JSON.parse(storedGrupos);
+    if (instituciones.length === 0) {
+        instituciones = [{ id: generarId(), nombre: "Liceo San José" }];
+        grupos = [{ id: generarId(), institucionId: instituciones[0].id, nivel: "7°", nombre: "7-1", observaciones: "" }];
+        guardarDatosGlobales();
+    }
+}
 
-// Obtener clave de almacenamiento para saberes de un grupo
-function getStorageKeyForGrupo(grupoId, modulo, tipo = 'seleccionados') {
+// Claves de almacenamiento por grupo
+function getStorageKeyForGrupo(grupoId, modulo, tipo) {
     return `pnft_grupo_${grupoId}_${modulo}_${tipo}`;
 }
 
-// Saberes por grupo (seleccionados e impartidos)
+// Saberes por grupo
 function getSaberesGrupo(grupoId, modulo) {
     const sel = JSON.parse(localStorage.getItem(getStorageKeyForGrupo(grupoId, modulo, 'seleccionados')) || '[]');
     const imp = JSON.parse(localStorage.getItem(getStorageKeyForGrupo(grupoId, modulo, 'impartidos')) || '[]');
@@ -982,32 +886,59 @@ function setSaberesGrupo(grupoId, modulo, seleccionadosSet, impartidosSet) {
     localStorage.setItem(getStorageKeyForGrupo(grupoId, modulo, 'impartidos'), JSON.stringify([...impartidosSet]));
 }
 
-// Lecciones por grupo: objeto { "YYYY-MM-DD": { l1: bool, l2: bool } }
+// Lecciones por grupo: estructura { "YYYY-MM-DD": { l1: { marcado: bool, texto: string }, l2: {...} } }
 function getLeccionesGrupo(grupoId) {
     const key = `pnft_lecciones_${grupoId}`;
     const stored = localStorage.getItem(key);
     return stored ? JSON.parse(stored) : {};
 }
-function setLeccionGrupo(grupoId, fecha, tipo, value) {
+function setLeccionGrupo(grupoId, fecha, tipo, marcado, textoPersonalizado = null) {
     const lecc = getLeccionesGrupo(grupoId);
-    if (!lecc[fecha]) lecc[fecha] = { l1: false, l2: false };
-    lecc[fecha][tipo] = value;
+    if (!lecc[fecha]) lecc[fecha] = { l1: { marcado: false, texto: "L1" }, l2: { marcado: false, texto: "L2" } };
+    if (textoPersonalizado !== null) lecc[fecha][tipo].texto = textoPersonalizado;
+    else lecc[fecha][tipo].marcado = marcado;
     localStorage.setItem(`pnft_lecciones_${grupoId}`, JSON.stringify(lecc));
-    // Refrescar calendario si está visible
-    if (document.getElementById('tab-calendario') && !document.getElementById('tab-calendario').classList.contains('hidden')) {
-        renderizarCalendario();
+    if (typeof renderizarCalendario === 'function') renderizarCalendario();
+}
+function setRangoLecciones(grupoId, fechaInicio, fechaFin, tipo, marcado) {
+    let inicio = new Date(fechaInicio);
+    let fin = new Date(fechaFin);
+    if (inicio > fin) { [inicio, fin] = [fin, inicio]; }
+    const lecc = getLeccionesGrupo(grupoId);
+    for (let d = new Date(inicio); d <= fin; d.setDate(d.getDate() + 1)) {
+        const fechaStr = d.toISOString().slice(0,10);
+        if (!lecc[fechaStr]) lecc[fechaStr] = { l1: { marcado: false, texto: "L1" }, l2: { marcado: false, texto: "L2" } };
+        lecc[fechaStr][tipo].marcado = marcado;
     }
+    localStorage.setItem(`pnft_lecciones_${grupoId}`, JSON.stringify(lecc));
+    if (typeof renderizarCalendario === 'function') renderizarCalendario();
 }
 
-// ======================================================================
-// 3. APP PRINCIPAL (MODIFICADA PARA TRABAJAR CON GRUPO ACTIVO)
-// ======================================================================
+// Fechas importantes MEP 2026 (extraídas del PDF)
+const FECHAS_MEP = {
+    "2026-02-02": "Inicio de cursos Colegios Científicos",
+    "2026-02-23": "Inicio de lecciones 2026",
+    "2026-03-29": "Semana Santa",
+    "2026-04-05": "Semana Santa",
+    "2026-04-11": "Batalla de Rivas",
+    "2026-05-01": "Día del Trabajo",
+    "2026-07-06": "Vacaciones de medio periodo",
+    "2026-07-17": "Vacaciones de medio periodo",
+    "2026-07-25": "Anexión de Guanacaste",
+    "2026-08-15": "Día de la Madre",
+    "2026-09-15": "Independencia",
+    "2026-12-01": "Abolición del Ejército",
+    "2026-12-09": "Cierre lectivo"
+};
+
+// Variables globales del planificador
 let grupoActivoId = null;
 let nivelActual = '0°';
 let moduloActual = 'Módulo 1';
 let saberesSeleccionados = new Set();
 let saberesImpartidos = new Set();
 
+// Cargar/guardar saberes desde/hacia el grupo activo
 function cargarSaberesDesdeGrupo() {
     if (!grupoActivoId) {
         saberesSeleccionados.clear();
@@ -1024,6 +955,15 @@ function guardarSaberesAGrupo() {
     }
 }
 
+// ======================================================================
+// 3. APP PRINCIPAL (TODAS LAS FUNCIONES ORIGINALES COMPLETAS)
+// ======================================================================
+const Storage = {
+    _normalizarGrado(grado) { return grado.replace(/°/g, '_grado_'); },
+    guardar(key, data) { localStorage.setItem(`pnft_${key}`, JSON.stringify(data)); },
+    cargar(key) { const d = localStorage.getItem(`pnft_${key}`); return d ? JSON.parse(d) : null; }
+};
+
 const App = {
     init() {
         cargarDatosGlobales();
@@ -1031,12 +971,9 @@ const App = {
         this.actualizarSelectorGrupos();
         const grupoGuardado = localStorage.getItem('pnft_grupoActivo');
         if (grupoGuardado && grupos.some(g => g.id === grupoGuardado)) grupoActivoId = grupoGuardado;
-        if (grupoActivoId) {
-            document.getElementById('grupo-activo-selector').value = grupoActivoId;
-            this.cargarSaberesDelNivel(); // carga saberes del grupo
-        }
+        if (grupoActivoId) document.getElementById('grupo-activo-selector').value = grupoActivoId;
+        this.cargarSaberesDelNivel();
         this.renderizarTodo();
-        this.actualizarSelectorGruposCalendario();
     },
     renderIslas() {
         document.getElementById('island-container').innerHTML = `
@@ -1071,9 +1008,7 @@ const App = {
         this.renderListaSeleccionados();
         this.guardarEstadoActual();
     },
-    guardarEstadoActual() {
-        if (grupoActivoId) guardarSaberesAGrupo();
-    },
+    guardarEstadoActual() { if (grupoActivoId) guardarSaberesAGrupo(); },
     renderizarTodo() {
         this.renderSaberes();
         this.renderBateriasYPerfiles();
@@ -1083,7 +1018,9 @@ const App = {
     renderEjesCheckboxes() {
         const ciclo = this.getCiclo();
         const ejes = EJES_POR_CICLO[ciclo] || {};
-        document.getElementById('ejes-checkboxes').innerHTML = Object.keys(ejes).map(e => `<label class="flex items-center gap-2"><input type="checkbox" value="${e}" checked> ${e}</label>`).join('');
+        document.getElementById('ejes-checkboxes').innerHTML = Object.keys(ejes).map(e =>
+            `<label class="flex items-center gap-2"><input type="checkbox" value="${e}" checked> ${e}</label>`
+        ).join('');
     },
     toggleSaber(id, chk) {
         if (chk) saberesSeleccionados.add(id);
@@ -1127,6 +1064,7 @@ const App = {
     getCiclo() {
         if (nivelActual === '0°') return 'Materno Infantil/Transición';
         const n = parseInt(nivelActual);
+        if (isNaN(n)) return 'Materno Infantil/Transición';
         if (n <= 3) return 'I Ciclo';
         if (n <= 6) return 'II Ciclo';
         return 'III Ciclo';
@@ -1135,7 +1073,7 @@ const App = {
         const areas = ['Apropiación tecnológica y Digital', 'Programación y Algoritmos', 'Computación física y Robótica', 'Ciencia de datos e Inteligencia artificial'];
         const contador = {};
         areas.forEach(a => contador[a] = 0);
-        saberesSeleccionados.forEach(s => { const a = s.split('::')[0]; if(contador[a]!==undefined) contador[a]++; });
+        saberesSeleccionados.forEach(s => { const a = s.split('::')[0]; if (contador.hasOwnProperty(a)) contador[a]++; });
         const data = PNFT_DATA[nivelActual]?.[moduloActual] || {};
         const bhtml = areas.map(a => {
             const tot = data[a]?.saberes?.length || 1;
@@ -1144,6 +1082,7 @@ const App = {
             return `<div><div class="flex justify-between text-sm"><span>${a}</span><span>${pct}%</span></div><div class="w-full h-5 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r ${color}" style="width:${pct}%"></div></div></div>`;
         }).join('');
         document.getElementById('batteries-container').innerHTML = bhtml;
+
         const ciclo = this.getCiclo();
         const perfiles = PERFILES_POR_CICLO[ciclo] || [];
         const phtml = perfiles.map(p => {
@@ -1151,14 +1090,11 @@ const App = {
             const sel = [...saberesSeleccionados].filter(s => s.split('::')[0] === p.area).length;
             return `<div><div class="flex justify-between text-xs"><span>${p.nombre}</span><span>${Math.round((sel / tot) * 100)}%</span></div><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-emerald-500" style="width:${Math.round((sel / tot) * 100)}%"></div></div></div>`;
         }).join('');
-        document.getElementById('perfiles-content').innerHTML = phtml || '<p style="font-size:0.9rem; color:#e5e7eb;">No hay perfiles definidos para este ciclo.</p>';
+        document.getElementById('perfiles-content').innerHTML = phtml || '<p class="text-sm">No hay perfiles definidos para este ciclo.</p>';
         this.actualizarPanelRdA();
     },
     actualizarPanelRdA() {
         const ciclo = this.getCiclo();
-        // Progreso basado en el grupo activo? Para simplificar, mostramos progreso del ciclo completo (todos los grupos). 
-        // Pero como el usuario quiere 100% efectividad, mostramos progreso general del ciclo (todos los grupos del mismo ciclo).
-        // Esto es opcional, se puede cambiar a solo el grupo activo. Lo dejamos general.
         const areas = ['Apropiación tecnológica y Digital', 'Programación y Algoritmos', 'Computación física y Robótica', 'Ciencia de datos e Inteligencia artificial'];
         const grados = ciclo === 'Materno Infantil/Transición' ? ['0°'] : ciclo === 'I Ciclo' ? ['1°','2°','3°'] : ciclo === 'II Ciclo' ? ['4°','5°','6°'] : ['7°','8°','9°'];
         let totales = {}, seleccionados = {};
@@ -1170,51 +1106,53 @@ const App = {
                     areas.forEach(area => {
                         if(dataMod[area] && dataMod[area].saberes) {
                             totales[area] += dataMod[area].saberes.length;
-                            // Para contar seleccionados, necesitaríamos sumar sobre todos los grupos del ciclo. 
-                            // Esto es complejo, lo dejamos como estática la barra o mostramos solo del grupo activo.
-                            // Por simplicidad, mostramos 0% si no hay grupo activo.
+                            // Aquí deberíamos sumar seleccionados de todos los grupos del ciclo. Por simplicidad, usamos solo el grupo activo si existe.
                         }
                     });
                 }
             });
         });
         const container = document.getElementById('rda-progress-list');
-        if(!container) return;
+        if (!container) return;
         let html = '';
         areas.forEach(area => {
             const rda = RDA_POR_CICLO[ciclo]?.[area] || '';
             let pct = 0;
-            if(grupoActivoId) {
-                // Calcular porcentaje del grupo activo para este ciclo (suma de ambos módulos)
-                let totalArea = 0, selArea = 0;
-                ['Módulo 1','Módulo 2'].forEach(mod => {
-                    const dataMod = PNFT_DATA[nivelActual]?.[mod]; // Nota: nivelActual puede no ser el del ciclo. Mejor usar grados del ciclo pero es lioso. Simplificamos: mostramos el progreso del grupo activo en su nivel actual.
-                    // Pero para el RdA del ciclo, debería sumar todos los niveles. Para no complicar, mostramos un mensaje.
-                });
-                // Alternativa: mostrar el progreso en el nivel actual del grupo activo
+            if (grupoActivoId) {
                 const dataMod = PNFT_DATA[nivelActual]?.[moduloActual];
-                if(dataMod && dataMod[area]) {
-                    totalArea = dataMod[area].saberes.length;
-                    selArea = [...saberesSeleccionados].filter(s => s.startsWith(area+'::')).length;
-                    pct = totalArea ? Math.round((selArea/totalArea)*100) : 0;
+                if (dataMod && dataMod[area]) {
+                    const total = dataMod[area].saberes.length;
+                    const sel = [...saberesSeleccionados].filter(s => s.startsWith(area+'::')).length;
+                    pct = total ? Math.round((sel/total)*100) : 0;
                 }
             }
-            let msg = pct === 0 ? '🌱 Sin saberes planificados en el grupo actual' : pct < 40 ? '📌 Iniciando el camino en el ciclo' : pct < 70 ? '📈 Progresando hacia el RdA del ciclo' : pct < 100 ? '🔥 Muy cerca del RdA del ciclo' : '🏆 ¡RdA del ciclo completamente planificado!';
-            html += `<div><div class="flex justify-between"><span class="font-semibold">${area}</span><span>${pct}%</span></div><p class="text-xs text-white/70 italic">${rda.substring(0,100)}...</p><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r from-blue-500" style="width:${pct}%"></div></div><p class="text-xs text-white/60">${msg}</p></div>`;
+            let msg = pct === 0 ? '🌱 Sin saberes planificados en el ciclo' :
+                      pct < 40 ? '📌 Iniciando el camino en el ciclo' :
+                      pct < 70 ? '📈 Progresando hacia el RdA del ciclo' :
+                      pct < 100 ? '🔥 Muy cerca del RdA del ciclo' : '🏆 ¡RdA del ciclo completamente planificado!';
+            html += `<div>
+                <div class="flex justify-between"><span class="font-semibold">${area}</span><span>${pct}%</span></div>
+                <p class="text-xs text-white/70 italic">${rda.substring(0,100)}...</p>
+                <div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r from-blue-500" style="width:${pct}%"></div></div>
+                <p class="text-xs text-white/60">${msg}</p>
+            </div>`;
         });
         container.innerHTML = html;
     },
     renderListaSeleccionados() {
         const lista = document.getElementById('selected-saberes-list');
-        if (saberesSeleccionados.size === 0) { lista.innerHTML = '<p style="font-size:1rem;color:#e5e7eb;text-align:center;">No hay saberes seleccionados</p>'; return; }
+        if (saberesSeleccionados.size === 0) {
+            lista.innerHTML = '<p class="text-center text-white/70">No hay saberes seleccionados</p>';
+            return;
+        }
         const data = PNFT_DATA[nivelActual]?.[moduloActual] || {};
         let html = '';
         const agrupados = {};
-        saberesSeleccionados.forEach(s => { const [area, nombre] = s.split('::'); if(!agrupados[area]) agrupados[area]=[]; agrupados[area].push(nombre); });
-        for(let area in agrupados) {
-            html += `<p style="font-size:1rem;font-weight:bold;color:#93c5fd;margin-top:0.75rem;">${area}</p>`;
+        saberesSeleccionados.forEach(s => { const [area, nombre] = s.split('::'); if (!agrupados[area]) agrupados[area]=[]; agrupados[area].push(nombre); });
+        for (let area in agrupados) {
+            html += `<p class="font-bold text-blue-300 mt-2">${area}</p>`;
             agrupados[area].forEach(nombre => {
-                html += `<div style="display:flex;align-items:center;justify-content:space-between;font-size:1rem;padding-left:0.5rem;margin-bottom:0.25rem;"><span>• ${nombre}</span><i class="fas fa-times-circle" style="color:#f87171;cursor:pointer;" onclick="App.eliminarSaber('${area}::${nombre}')"></i></div>`;
+                html += `<div class="flex justify-between items-center text-sm"><span>• ${nombre}</span><i class="fas fa-times-circle text-red-400 cursor-pointer" onclick="App.eliminarSaber('${area}::${nombre}')"></i></div>`;
             });
         }
         lista.innerHTML = html;
@@ -1239,34 +1177,31 @@ const App = {
         }
         const duracion = document.getElementById('duracion-clase').value;
         const metodologia = ciclo === 'II Ciclo' ? 'ABR' : (ciclo === 'III Ciclo' ? 'Design Thinking' : 'ABJ');
-        const prompt = `Actúa como especialista MEP-PNFT 2026.\nNivel: ${this.nivelActual} | Módulo: ${this.moduloActual} | Ciclo: ${ciclo}\nDuración clase: ${duracion} min.\nMetodología: ${metodologia}\n📌 SABERES:\n${saberesTxt}\n🎯 RdA: ${rda}\n⚙️ EJES TRANSVERSALES SELECCIONADOS:\n${ejesTxt}\nTAREA: Diseñar una Estrategia de Mediación Pedagógica completa:               
-                        1. Título creativo y motivador.
-                        2. Momentos pedagógicos (Focalización, Exploración, Reflexión, Aplicación) alineados a los indicadores descritos.
-                        3. Evaluación formativa: Rúbrica analítica de 3 niveles (Inicial, Intermedio, Avanzado) basada en los indicadores.
-                        4. Recomendaciones DUA (Principios: Representación, Acción/Expresión, Motivación) para inclusión.
-                        5. Preguntar al usuario si necesita algún tipo de formato (ppt, pdf, word, json o inclusive infografías) para entregar la información.
-                        6. Condiciones obligatorias:
-                        - NO resumir ni omitir información.
-                        - Mantener la redacción completa y profesional.
-                        - Incluir TODOS los apartados:
-                          1. Título
-                          2. Momentos pedagógicos (Focalización, Exploración, Aplicación, Reflexión) con todas sus actividades Inicio, desarrollo, conclusión. Tiempos estimados.
-                          3. Evaluación formativa (rúbrica analítica completa)
-                          4. Recomendaciones DUA (Representación, Acción/Expresión, Motivación)
-                          5. Resumen de alineación curricular.
-                        - Distribuir el contenido en varias diapositivas u hojas en caso de formatos (pdf o word) de forma clara (puede dividir un mismo apartado en varias diapositivas u hojas si es necesario).
-                        - Evitar formato de palabras sueltas; usar ideas completas comprensibles para docentes.
-                        - Agregar títulos por diapositiva u hojas en caso de pdf o word, coherentes con cada sección.
-                        - Cada momento pedagógico debe ocupar al menos 2 diapositivas o 1 hoja en caso de ser en formato pdf o word.
-                        - La rúbrica debe presentarse en formato de tabla.
-                        - El resumen curricular debe aparecer en una diapositiva final claramente identificada.
-                        - En caso de que el docente elija una metodología el sistema le debe solicitar seleccionar la totalidad de los saberes conceptuales del área o las áreas de conocimiento para que no se vea fraccionada la metodología como columna vertebral del aprendizaje.
-                        Redacción profesional, inspiradora, coherente con el enfoque por competencias. Asegúrese de que cada indicador se evidencie en las actividades.
-                        `;
-         
-                document.getElementById('output-prompt').value = prompt;
-            },
-
+        const prompt = `Actúa como especialista MEP-PNFT 2026.\nNivel: ${nivelActual} | Módulo: ${moduloActual} | Ciclo: ${ciclo}\nDuración clase: ${duracion} min.\nMetodología: ${metodologia}\n📌 SABERES:\n${saberesTxt}\n🎯 RdA: ${rda}\n⚙️ EJES TRANSVERSALES SELECCIONADOS:\n${ejesTxt}\nTAREA: Diseñar una Estrategia de Mediación Pedagógica completa:               
+                1. Título creativo y motivador.
+                2. Momentos pedagógicos (Focalización, Exploración, Reflexión, Aplicación) alineados a los indicadores descritos.
+                3. Evaluación formativa: Rúbrica analítica de 3 niveles (Inicial, Intermedio, Avanzado) basada en los indicadores.
+                4. Recomendaciones DUA (Principios: Representación, Acción/Expresión, Motivación) para inclusión.
+                5. Preguntar al usuario si necesita algún tipo de formato (ppt, pdf, word, json o inclusive infografías) para entregar la información.
+                6. Condiciones obligatorias:
+                - NO resumir ni omitir información.
+                - Mantener la redacción completa y profesional.
+                - Incluir TODOS los apartados:
+                  1. Título
+                  2. Momentos pedagógicos (Focalización, Exploración, Aplicación, Reflexión) con todas sus actividades Inicio, desarrollo, conclusión. Tiempos estimados.
+                  3. Evaluación formativa (rúbrica analítica completa)
+                  4. Recomendaciones DUA (Representación, Acción/Expresión, Motivación)
+                  5. Resumen de alineación curricular.
+                - Distribuir el contenido en varias diapositivas u hojas en caso de formatos (pdf o word) de forma clara (puede dividir un mismo apartado en varias diapositivas u hojas si es necesario).
+                - Evitar formato de palabras sueltas; usar ideas completas comprensibles para docentes.
+                - Agregar títulos por diapositiva u hojas en caso de pdf o word, coherentes con cada sección.
+                - Cada momento pedagógico debe ocupar al menos 2 diapositivas o 1 hoja en caso de ser en formato pdf o word.
+                - La rúbrica debe presentarse en formato de tabla.
+                - El resumen curricular debe aparecer en una diapositiva final claramente identificada.
+                - En caso de que el docente elija una metodología el sistema le debe solicitar seleccionar la totalidad de los saberes conceptuales del área o las áreas de conocimiento para que no se vea fraccionada la metodología como columna vertebral del aprendizaje.
+                Redacción profesional, inspiradora, coherente con el enfoque por competencias. Asegúrese de que cada indicador se evidencie en las actividades.`;
+        document.getElementById('output-prompt').value = prompt;
+    },
     copiarPrompt() { const ta = document.getElementById('output-prompt'); ta.select(); document.execCommand('copy'); alert('Prompt copiado.'); },
     switchTab(t) {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
@@ -1274,7 +1209,11 @@ const App = {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelector(`[data-tab="${t}"]`).classList.add('active');
         if (t === 'grupos') renderizarGestionGrupos();
-        if (t === 'calendario') renderizarCalendario();
+        if (t === 'calendario') {
+            actualizarSelectorGruposCalendario();
+            renderizarCalendario();
+            initRangos();
+        }
     },
     actualizarSelectorGrupos() {
         const select = document.getElementById('grupo-activo-selector');
@@ -1299,22 +1238,11 @@ const App = {
             }
         };
         if (grupoActivoId) select.value = grupoActivoId;
-    },
-    actualizarSelectorGruposCalendario() {
-        const container = document.getElementById('calendario-grupo-selector');
-        if (!container) return;
-        container.innerHTML = `
-            <select id="cal-grupo-select" class="bg-slate-800 p-2 rounded-xl text-sm">
-                <option value="">-- Grupo para calendario --</option>
-                ${grupos.map(g => `<option value="${g.id}">${instituciones.find(i=>i.id===g.institucionId)?.nombre || ''} - ${g.nivel} ${g.nombre}</option>`).join('')}
-            </select>
-            <button onclick="renderizarCalendario()" class="bg-blue-600 px-3 py-2 rounded-xl text-sm">Cargar</button>
-        `;
     }
 };
 
 // ======================================================================
-// 4. GESTIÓN DE GRUPOS (interfaz)
+// 4. FUNCIONES DE GESTIÓN DE GRUPOS (RENDER, AGREGAR, ELIMINAR, COPIAR, PDF)
 // ======================================================================
 function renderizarGestionGrupos() {
     const container = document.getElementById('instituciones-container');
@@ -1322,13 +1250,14 @@ function renderizarGestionGrupos() {
     let html = '';
     instituciones.forEach(inst => {
         const gruposInst = grupos.filter(g => g.institucionId === inst.id);
-        html += `<div class="institucion-card p-4 mb-4"><div class="flex justify-between items-center"><h3 class="text-xl font-bold"><i class="fas fa-building"></i> ${inst.nombre}</h3><button onclick="eliminarInstitucion('${inst.id}')" class="text-red-400 text-sm"><i class="fas fa-trash"></i></button></div>`;
-        html += `<div class="mt-3 space-y-3">`;
+        html += `<div class="institucion-card p-4 mb-4 bg-slate-800/30 rounded-2xl border border-white/10">
+            <div class="flex justify-between items-center"><h3 class="text-xl font-bold"><i class="fas fa-building"></i> ${inst.nombre}</h3><button onclick="eliminarInstitucion('${inst.id}')" class="text-red-400 text-sm"><i class="fas fa-trash"></i> Eliminar</button></div>
+            <div class="mt-3 space-y-3">`;
         gruposInst.forEach(g => {
             html += `<div class="bg-slate-800/50 p-3 rounded-xl flex justify-between items-center flex-wrap gap-2">
                         <div><span class="font-bold">${g.nivel} - ${g.nombre}</span><br><span class="text-xs text-white/60">Obs: ${g.observaciones || '—'}</span></div>
                         <div class="flex gap-2">
-                            <button onclick="copiarSaberesGrupo('${g.id}')" class="text-xs bg-amber-600/30 px-2 py-1 rounded"><i class="fas fa-copy"></i> Copiar saberes</button>
+                            <button onclick="copiarSaberesGrupo('${g.id}')" class="text-xs bg-amber-600/30 px-2 py-1 rounded"><i class="fas fa-copy"></i> Copiar</button>
                             <button onclick="generarReportePDF('${g.id}')" class="text-xs bg-emerald-600/30 px-2 py-1 rounded"><i class="fas fa-file-pdf"></i> PDF</button>
                             <button onclick="editarGrupo('${g.id}')" class="text-xs bg-blue-600/30 px-2 py-1 rounded"><i class="fas fa-edit"></i></button>
                             <button onclick="eliminarGrupo('${g.id}')" class="text-xs bg-red-600/30 px-2 py-1 rounded"><i class="fas fa-trash"></i></button>
@@ -1340,8 +1269,8 @@ function renderizarGestionGrupos() {
     });
     container.innerHTML = html;
 }
+
 function agregarInstitucion() {
-    if (instituciones.length >= 2) { alert('Máximo 2 instituciones'); return; }
     const nombre = prompt('Nombre de la institución:');
     if (!nombre) return;
     const id = generarId();
@@ -1349,16 +1278,28 @@ function agregarInstitucion() {
     guardarDatosGlobales();
     renderizarGestionGrupos();
     App.actualizarSelectorGrupos();
+    actualizarSelectorGruposCalendario();
 }
+
 function eliminarInstitucion(id) {
-    if (confirm('Eliminar institución y todos sus grupos?')) {
-        instituciones = instituciones.filter(i => i.id !== id);
-        grupos = grupos.filter(g => g.institucionId !== id);
-        guardarDatosGlobales();
-        renderizarGestionGrupos();
-        App.actualizarSelectorGrupos();
-    }
+    if (!confirm('¿Eliminar institución y todos sus grupos?')) return;
+    instituciones = instituciones.filter(i => i.id !== id);
+    const gruposAEliminar = grupos.filter(g => g.institucionId === id);
+    grupos = grupos.filter(g => g.institucionId !== id);
+    gruposAEliminar.forEach(g => {
+        localStorage.removeItem(`pnft_lecciones_${g.id}`);
+        ['Módulo 1', 'Módulo 2'].forEach(mod => {
+            localStorage.removeItem(`pnft_grupo_${g.id}_${mod}_seleccionados`);
+            localStorage.removeItem(`pnft_grupo_${g.id}_${mod}_impartidos`);
+        });
+    });
+    if (grupoActivoId && gruposAEliminar.some(g => g.id === grupoActivoId)) grupoActivoId = null;
+    guardarDatosGlobales();
+    renderizarGestionGrupos();
+    App.actualizarSelectorGrupos();
+    actualizarSelectorGruposCalendario();
 }
+
 function agregarGrupo(institucionId) {
     const nivel = prompt('Nivel (0° a 9°):', '7°');
     if (!nivel) return;
@@ -1370,7 +1311,9 @@ function agregarGrupo(institucionId) {
     guardarDatosGlobales();
     renderizarGestionGrupos();
     App.actualizarSelectorGrupos();
+    actualizarSelectorGruposCalendario();
 }
+
 function editarGrupo(id) {
     const grupo = grupos.find(g => g.id === id);
     if (!grupo) return;
@@ -1381,48 +1324,50 @@ function editarGrupo(id) {
     guardarDatosGlobales();
     renderizarGestionGrupos();
     App.actualizarSelectorGrupos();
+    actualizarSelectorGruposCalendario();
 }
+
 function eliminarGrupo(id) {
-    if (confirm('Eliminar grupo? Se perderán sus saberes y lecciones.')) {
-        grupos = grupos.filter(g => g.id !== id);
-        // Eliminar datos asociados
-        localStorage.removeItem(`pnft_lecciones_${id}`);
-        ['Módulo 1','Módulo 2'].forEach(mod => {
-            localStorage.removeItem(getStorageKeyForGrupo(id, mod, 'seleccionados'));
-            localStorage.removeItem(getStorageKeyForGrupo(id, mod, 'impartidos'));
-        });
-        if (grupoActivoId === id) grupoActivoId = null;
-        guardarDatosGlobales();
-        renderizarGestionGrupos();
-        App.actualizarSelectorGrupos();
-    }
+    if (!confirm('¿Eliminar grupo? Se perderán sus saberes y lecciones.')) return;
+    grupos = grupos.filter(g => g.id !== id);
+    localStorage.removeItem(`pnft_lecciones_${id}`);
+    ['Módulo 1', 'Módulo 2'].forEach(mod => {
+        localStorage.removeItem(`pnft_grupo_${id}_${mod}_seleccionados`);
+        localStorage.removeItem(`pnft_grupo_${id}_${mod}_impartidos`);
+    });
+    if (grupoActivoId === id) grupoActivoId = null;
+    guardarDatosGlobales();
+    renderizarGestionGrupos();
+    App.actualizarSelectorGrupos();
+    actualizarSelectorGruposCalendario();
 }
+
 async function copiarSaberesGrupo(destinoId) {
     const gruposDisponibles = grupos.filter(g => g.id !== destinoId);
     if (gruposDisponibles.length === 0) { alert('No hay otros grupos para copiar.'); return; }
     const opciones = gruposDisponibles.map(g => `${g.nivel} ${g.nombre}`).join(', ');
     const origenNombre = prompt(`¿Desde qué grupo copiar? (${opciones})`, gruposDisponibles[0]?.nombre);
-    const origen = grupos.find(g => g.nombre === origenNombre && g.id !== destinoId);
+    const origen = gruposDisponibles.find(g => g.nombre === origenNombre);
     if (!origen) { alert('Grupo origen no encontrado'); return; }
-    for (let mod of ['Módulo 1','Módulo 2']) {
+    for (let mod of ['Módulo 1', 'Módulo 2']) {
         const { seleccionados, impartidos } = getSaberesGrupo(origen.id, mod);
         setSaberesGrupo(destinoId, mod, seleccionados, impartidos);
     }
     alert('Saberes copiados exitosamente.');
     if (grupoActivoId === destinoId) App.cargarSaberesDelNivel();
 }
+
 async function generarReportePDF(grupoId) {
     const grupo = grupos.find(g => g.id === grupoId);
     if (!grupo) return;
     const inst = instituciones.find(i => i.id === grupo.institucionId);
-    // Construir contenido HTML para el PDF
-    let htmlContent = `<html><head><meta charset="UTF-8"><title>Reporte Grupo ${grupo.nombre}</title><style>body{font-family:sans-serif; padding:20px;} h1{color:#1e3a8a;} table{border-collapse:collapse; width:100%;} th,td{border:1px solid #ccc; padding:8px; text-align:left;} </style></head><body>
+    let htmlContent = `<html><head><meta charset="UTF-8"><title>Reporte Grupo ${grupo.nombre}</title><style>body{font-family:sans-serif;padding:20px;} h1{color:#1e3a8a;} table{border-collapse:collapse;width:100%;} th,td{border:1px solid #ccc;padding:8px;text-align:left;}</style></head><body>
     <h1>Reporte de Planificación - PNFT 2026</h1>
     <p><strong>Institución:</strong> ${inst ? inst.nombre : ''}</p>
     <p><strong>Grupo:</strong> ${grupo.nivel} - ${grupo.nombre}</p>
     <p><strong>Observaciones:</strong> ${grupo.observaciones || 'Ninguna'}</p>
     <h2>Saberes planificados por módulo</h2>`;
-    for (let mod of ['Módulo 1','Módulo 2']) {
+    for (let mod of ['Módulo 1', 'Módulo 2']) {
         const { seleccionados } = getSaberesGrupo(grupoId, mod);
         htmlContent += `<h3>${mod}</h3><ul>`;
         for (let id of seleccionados) {
@@ -1438,7 +1383,7 @@ async function generarReportePDF(grupoId) {
     for (let area of areas) {
         const total = (data[area]?.saberes?.length || 0) + (PNFT_DATA[grupo.nivel]?.['Módulo 2']?.[area]?.saberes?.length || 0);
         let sel = 0;
-        for (let mod of ['Módulo 1','Módulo 2']) {
+        for (let mod of ['Módulo 1', 'Módulo 2']) {
             const { seleccionados } = getSaberesGrupo(grupoId, mod);
             sel += [...seleccionados].filter(s => s.startsWith(area+'::')).length;
         }
@@ -1451,66 +1396,121 @@ async function generarReportePDF(grupoId) {
 }
 
 // ======================================================================
-// 5. CALENDARIO MEP 2026
+// 5. CALENDARIO CON SELECCIÓN POR RANGO
 // ======================================================================
-const FECHAS_MEP = {
-    "2026-02-02": "Inicio de cursos",
-    "2026-04-06": "Vaciones de medio año (semana santa)",
-    "2026-04-10": "Vacaciones de medio año",
-    "2026-07-04": "Día del Maestro",
-    "2026-07-25": "Anexión de Guanacaste",
-    "2026-08-15": "Día de la Madre",
-    "2026-09-15": "Independencia",
-    "2026-10-12": "Día de la Raza",
-    "2026-12-21": "Fin de cursos"
-};
+let modoRango = { activo: false, tipo: null, inicio: null };
+
+function actualizarSelectorGruposCalendario() {
+    const container = document.getElementById('calendario-grupo-selector');
+    if (!container) return;
+    container.innerHTML = `
+        <select id="cal-grupo-select" class="bg-slate-800 p-2 rounded-xl text-sm border border-white/20">
+            <option value="">-- Grupo para calendario --</option>
+            ${grupos.map(g => `<option value="${g.id}">${instituciones.find(i=>i.id===g.institucionId)?.nombre || ''} - ${g.nivel} ${g.nombre}</option>`).join('')}
+        </select>
+        <button onclick="renderizarCalendario()" class="bg-blue-600 px-3 py-2 rounded-xl text-sm">Cargar</button>
+    `;
+}
+
 function renderizarCalendario() {
     const select = document.getElementById('cal-grupo-select');
-    if (!select) return;
+    if (!select || !select.value) { document.getElementById('calendario-meses').innerHTML = '<p class="text-center">Selecciona un grupo</p>'; return; }
     const grupoId = select.value;
-    if (!grupoId) { document.getElementById('calendario-meses').innerHTML = '<p class="text-center">Selecciona un grupo</p>'; return; }
     const lecciones = getLeccionesGrupo(grupoId);
     const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
     let html = '';
     for (let i=0; i<12; i++) {
         const fecha = new Date(2026, i, 1);
-        const primerDiaSemana = fecha.getDay(); // 0 domingo
+        const primerDiaSemana = fecha.getDay();
         const diasEnMes = new Date(2026, i+1, 0).getDate();
-        let grid = [];
-        for (let d=1; d<=diasEnMes; d++) grid.push(d);
         const inicioOffset = primerDiaSemana === 0 ? 6 : primerDiaSemana-1;
         html += `<div class="glass-card p-3"><h3 class="font-bold text-center mb-2">${meses[i]} 2026</h3><div class="grid grid-cols-7 gap-1 text-center text-xs text-white/60"><div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div><div>D</div>`;
         for (let j=0; j<inicioOffset; j++) html += `<div></div>`;
         for (let d=1; d<=diasEnMes; d++) {
             const fechaStr = `2026-${String(i+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const esFeriado = FECHAS_MEP[fechaStr];
-            const lec = lecciones[fechaStr] || { l1: false, l2: false };
-            html += `<div class="calendario-dia p-1 border border-white/10 rounded ${esFeriado ? 'fecha-mep' : ''}">
+            const lec = lecciones[fechaStr] || { l1: { marcado: false, texto: "L1" }, l2: { marcado: false, texto: "L2" } };
+            const esInicioRango = (modoRango.activo && modoRango.inicio === fechaStr);
+            html += `<div class="calendario-dia p-1 border border-white/10 rounded ${esFeriado ? 'fecha-mep' : ''} ${esInicioRango ? 'rango-activo' : ''}" data-fecha="${fechaStr}">
                         <div class="text-sm font-bold">${d}</div>
                         <div class="flex gap-1 justify-center mt-1">
-                            <button onclick="marcarLeccion('${grupoId}','${fechaStr}','l1', ${!lec.l1})" class="text-xs ${lec.l1 ? 'bg-green-600' : 'bg-slate-700'} px-1 rounded">L1</button>
-                            <button onclick="marcarLeccion('${grupoId}','${fechaStr}','l2', ${!lec.l2})" class="text-xs ${lec.l2 ? 'bg-green-600' : 'bg-slate-700'} px-1 rounded">L2</button>
+                            <button class="text-xs ${lec.l1.marcado ? 'bg-green-600' : 'bg-slate-700'} px-1 rounded" data-tipo="l1" data-fecha="${fechaStr}" title="Haz clic para marcar/desmarcar. Haz clic en el texto para editarlo"><span class="editable-text" data-tipo="l1" data-fecha="${fechaStr}">${lec.l1.texto}</span></button>
+                            <button class="text-xs ${lec.l2.marcado ? 'bg-green-600' : 'bg-slate-700'} px-1 rounded" data-tipo="l2" data-fecha="${fechaStr}" title="Haz clic para marcar/desmarcar. Haz clic en el texto para editarlo"><span class="editable-text" data-tipo="l2" data-fecha="${fechaStr}">${lec.l2.texto}</span></button>
                         </div>
-                        ${esFeriado ? `<div class="text-[10px] text-amber-300">${esFeriado}</div>` : ''}
+                        ${esFeriado ? `<div class="text-[10px] text-amber-300" title="${FECHAS_MEP[fechaStr]}">📅</div>` : ''}
                     </div>`;
         }
         html += `</div></div>`;
     }
     document.getElementById('calendario-meses').innerHTML = html;
+    // Eventos de marcado individual y rango
+    document.querySelectorAll('.calendario-dia button[data-tipo]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const tipo = btn.dataset.tipo;
+            const fecha = btn.dataset.fecha;
+            const grupoIdSel = document.getElementById('cal-grupo-select').value;
+            if (!grupoIdSel) return;
+            if (modoRango.activo && modoRango.tipo === tipo) {
+                if (!modoRango.inicio) {
+                    modoRango.inicio = fecha;
+                    renderizarCalendario();
+                } else {
+                    setRangoLecciones(grupoIdSel, modoRango.inicio, fecha, tipo, true);
+                    modoRango = { activo: false, tipo: null, inicio: null };
+                    document.getElementById('btn-cancelar-rango').classList.add('hidden');
+                    renderizarCalendario();
+                }
+                return;
+            }
+            const lecActual = getLeccionesGrupo(grupoIdSel)[fecha] || { l1: { marcado: false, texto: "L1" }, l2: { marcado: false, texto: "L2" } };
+            const nuevoEstado = !lecActual[tipo].marcado;
+            setLeccionGrupo(grupoIdSel, fecha, tipo, nuevoEstado);
+        });
+    });
+    // Edición de texto (nombre de la lección)
+    document.querySelectorAll('.editable-text').forEach(span => {
+        span.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const tipo = span.dataset.tipo;
+            const fecha = span.dataset.fecha;
+            const grupoIdSel = document.getElementById('cal-grupo-select').value;
+            if (!grupoIdSel) return;
+            const nuevoTexto = prompt('Editar nombre de la actividad:', span.innerText);
+            if (nuevoTexto && nuevoTexto.trim() !== '') {
+                setLeccionGrupo(grupoIdSel, fecha, tipo, null, nuevoTexto);
+            }
+        });
+    });
 }
-function marcarLeccion(grupoId, fecha, tipo, valor) {
-    setLeccionGrupo(grupoId, fecha, tipo, valor);
+
+function initRangos() {
+    const btnRangoL1 = document.getElementById('btn-rango-l1');
+    const btnRangoL2 = document.getElementById('btn-rango-l2');
+    const btnDesmarcar = document.getElementById('btn-desmarcar-rango');
+    const btnCancelar = document.getElementById('btn-cancelar-rango');
+    if (btnRangoL1) btnRangoL1.onclick = () => { modoRango = { activo: true, tipo: 'l1', inicio: null }; btnCancelar.classList.remove('hidden'); };
+    if (btnRangoL2) btnRangoL2.onclick = () => { modoRango = { activo: true, tipo: 'l2', inicio: null }; btnCancelar.classList.remove('hidden'); };
+    if (btnDesmarcar) btnDesmarcar.onclick = () => {
+        const grupoId = document.getElementById('cal-grupo-select')?.value;
+        if (!grupoId) { alert('Selecciona un grupo primero'); return; }
+        const inicio = prompt('Fecha inicio (YYYY-MM-DD):');
+        const fin = prompt('Fecha fin (YYYY-MM-DD):');
+        if (inicio && fin) {
+            setRangoLecciones(grupoId, inicio, fin, 'l1', false);
+            setRangoLecciones(grupoId, inicio, fin, 'l2', false);
+            alert('Rango desmarcado (L1 y L2)');
+        }
+    };
+    if (btnCancelar) btnCancelar.onclick = () => { modoRango = { activo: false, tipo: null, inicio: null }; btnCancelar.classList.add('hidden'); renderizarCalendario(); };
 }
 
 // ======================================================================
-// 6. EXPORTAR (incluye todos los datos)
+// 6. EXPORTAR / IMPORTAR BACKUP COMPLETO
 // ======================================================================
 const Exportar = {
     backupCompleto() {
-        const backup = {
-            instituciones, grupos,
-            pnft_data_keys: []
-        };
+        const backup = { instituciones, grupos };
         for (let i=0; i<localStorage.length; i++) {
             const key = localStorage.key(i);
             if (key.startsWith('pnft_')) backup[key] = localStorage.getItem(key);
@@ -1518,26 +1518,26 @@ const Exportar = {
         const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `backup_pnft_completo_${new Date().toISOString().slice(0,10)}.json`;
+        a.download = `backup_pnft_${new Date().toISOString().slice(0,10)}.json`;
         a.click();
         URL.revokeObjectURL(a.href);
         alert('Backup completo exportado.');
     },
     importarBackup(event) {
         const file = event.target.files[0];
-        if(!file) return;
+        if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
                 const backup = JSON.parse(e.target.result);
-                if(!confirm('¿Reemplazar todos los datos actuales?')) return;
-                for(let key in backup) {
-                    if(key !== 'instituciones' && key !== 'grupos') localStorage.setItem(key, backup[key]);
+                if (!confirm('¿Reemplazar todos los datos actuales? Se perderán los cambios no guardados.')) return;
+                for (let key in backup) {
+                    if (key !== 'instituciones' && key !== 'grupos') localStorage.setItem(key, backup[key]);
                 }
-                if(backup.instituciones) instituciones = backup.instituciones;
-                if(backup.grupos) grupos = backup.grupos;
+                if (backup.instituciones) instituciones = backup.instituciones;
+                if (backup.grupos) grupos = backup.grupos;
                 guardarDatosGlobales();
-                alert('Backup importado. Recargando...');
+                alert('Backup importado. Recargando página...');
                 window.location.reload();
             } catch(err) { alert('Archivo inválido'); }
         };
@@ -1545,11 +1545,11 @@ const Exportar = {
     }
 };
 
-// Asignar globales
+// ======================================================================
+// 7. INICIALIZACIÓN GLOBAL
+// ======================================================================
 window.App = App;
 window.Exportar = Exportar;
-window.grupos = grupos; // referencia
-window.instituciones = instituciones;
 window.agregarInstitucion = agregarInstitucion;
 window.eliminarInstitucion = eliminarInstitucion;
 window.agregarGrupo = agregarGrupo;
@@ -1559,9 +1559,8 @@ window.copiarSaberesGrupo = copiarSaberesGrupo;
 window.generarReportePDF = generarReportePDF;
 window.renderizarGestionGrupos = renderizarGestionGrupos;
 window.renderizarCalendario = renderizarCalendario;
-window.marcarLeccion = marcarLeccion;
+window.actualizarSelectorGruposCalendario = actualizarSelectorGruposCalendario;
 
-// Inicializar
 App.init();
 </script>
 </body>
