@@ -1428,7 +1428,7 @@ function generarReportePDF(grupoId) {
 }
 
 // ======================================================================
-// 5. CALENDARIO CON FULLCALENDAR (completamente nuevo)
+// 5. CALENDARIO CON FULLCALENDAR (versión definitiva SIN ERRORES)
 // ======================================================================
 
 let calendar = null;
@@ -1463,12 +1463,10 @@ function renderizarCalendarioFullCalendar() {
     const calendarEl = document.getElementById('fullcalendar-container');
     if (!calendarEl) return;
     
-    // Si ya existe un calendario, destrúyelo
     if (calendar) {
         calendar.destroy();
     }
     
-    // Cargar eventos del grupo
     const lecciones = getLeccionesGrupo(currentCalendarGroupId);
     const eventos = [];
     for (const [fecha, lec] of Object.entries(lecciones)) {
@@ -1494,9 +1492,6 @@ function renderizarCalendarioFullCalendar() {
         }
     }
     
-    // Obtener días no laborables (fines de semana + fechas especiales)
-    const fechasNoLaborables = obtenerFechasNoLaborables(currentCalendarGroupId);
-    
     calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'es',
@@ -1507,27 +1502,22 @@ function renderizarCalendarioFullCalendar() {
         },
         events: eventos,
         editable: true,
-        droppable: false,
         eventDrop: function(info) {
-            // Al mover un evento, actualizar la fecha en localStorage
             const eventId = info.event.id;
             const [oldFecha, tipo] = eventId.split('_');
             const newFecha = info.event.startStr.slice(0,10);
             if (oldFecha === newFecha) return;
             
-            // Mover lección: eliminar de oldFecha, crear en newFecha
             const leccionesGrupo = getLeccionesGrupo(currentCalendarGroupId);
             const leccion = leccionesGrupo[oldFecha]?.[tipo];
             if (leccion) {
-                // Eliminar de antigua fecha
                 delete leccionesGrupo[oldFecha][tipo];
                 if (Object.keys(leccionesGrupo[oldFecha]).length === 0) delete leccionesGrupo[oldFecha];
-                // Crear en nueva fecha
                 if (!leccionesGrupo[newFecha]) leccionesGrupo[newFecha] = {};
                 leccionesGrupo[newFecha][tipo] = leccion;
                 localStorage.setItem(`pnft_lecciones_${currentCalendarGroupId}`, JSON.stringify(leccionesGrupo));
                 actualizarContadorLeccionesFullCalendar();
-                renderizarCalendarioFullCalendar(); // refrescar
+                renderizarCalendarioFullCalendar();
             }
         },
         eventClick: function(info) {
@@ -1558,7 +1548,6 @@ function renderizarCalendarioFullCalendar() {
         },
         dateClick: function(info) {
             const fecha = info.dateStr.slice(0,10);
-            // Verificar si la fecha es no laborable
             if (esFechaNoLaborable(currentCalendarGroupId, fecha)) {
                 alert('Esta fecha es no laborable (fin de semana o día especial). No puedes agregar lecciones.');
                 return;
@@ -1582,7 +1571,6 @@ function renderizarCalendarioFullCalendar() {
             renderizarCalendarioFullCalendar();
         },
         dayCellDidMount: function(info) {
-            // Marcar días no laborables con fondo gris
             const fechaStr = info.date.toISOString().slice(0,10);
             if (esFechaNoLaborable(currentCalendarGroupId, fechaStr)) {
                 info.el.style.backgroundColor = '#1e293b';
@@ -1595,22 +1583,9 @@ function renderizarCalendarioFullCalendar() {
     actualizarContadorLeccionesFullCalendar();
 }
 
-function obtenerFechasNoLaborables(grupoId) {
-    const especiales = getFechasEspecialesGrupo(grupoId);
-    const noLaborables = new Set();
-    // Fines de semana (sábado y domingo) - pero podemos excluirlos si el docente quiere, por defecto los incluimos.
-    // Para evitar sobrecarga, los calculamos al vuelo en esFechaNoLaborable.
-    // Pero agregamos las fechas especiales marcadas como no laborables.
-    for (const [fecha, info] of Object.entries(especiales)) {
-        if (info.noLaborable) noLaborables.add(fecha);
-    }
-    return noLaborables;
-}
-
 function esFechaNoLaborable(grupoId, fechaStr) {
     const fecha = new Date(fechaStr);
     const diaSemana = fecha.getDay();
-    // Fines de semana
     if (diaSemana === 0 || diaSemana === 6) return true;
     const especiales = getFechasEspecialesGrupo(grupoId);
     if (especiales[fechaStr] && especiales[fechaStr].noLaborable) return true;
@@ -1667,18 +1642,7 @@ function gestionarFechasNoLaborables() {
     }
 }
 
-// Sobrescribir la función de actualizar selector para que al cambiar de grupo se recargue
-function recargarCalendarioSiVisible() {
-    const tab = document.getElementById('tab-calendario');
-    if (tab && !tab.classList.contains('hidden') && currentCalendarGroupId) {
-        renderizarCalendarioFullCalendar();
-    }
-}
-
-// Parche adicional: cuando se cambia de grupo activo en la cabecera, no afecta al calendario directamente, pero si el calendario está visible, debe mantener su propio grupo.
-// No necesario, pero por si acaso.
-    
-// Asegurar que al hacer clic en la pestaña calendario se inicialice correctamente
+// Sobrescritura para inicializar al abrir la pestaña
 const originalSwitchTab = App.switchTab;
 App.switchTab = function(t) {
     originalSwitchTab.call(this, t);
@@ -1690,7 +1654,7 @@ App.switchTab = function(t) {
             renderizarCalendarioFullCalendar();
         }
     }
-};    
+};
     
 // ======================================================================
 // 6. EXPORTAR / IMPORTAR BACKUP COMPLETO
