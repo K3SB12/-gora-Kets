@@ -845,12 +845,11 @@ const RDA_POR_CICLO = {
     const PESOS_EVALUACION = { "I Ciclo": { cotidiano:65, tareas:10, pruebas:15, proyecto:0, asistencia:10 }, "II Ciclo": { cotidiano:60, tareas:10, pruebas:20, proyecto:0, asistencia:10 }, "III Ciclo": { cotidiano:50, tareas:10, pruebas:0, proyecto:30, asistencia:10 } };
 
 // ======================================================================
-// 2. GESTIÓN DE INSTITUCIONES, GRUPOS Y CALENDARIO (COMPLETO)
+// 2. GESTIÓN DE INSTITUCIONES, GRUPOS Y CALENDARIO (REDISEÑADO)
 // ======================================================================
 let instituciones = []; // { id, nombre }
 let grupos = []; // { id, institucionId, nivel, nombre, observaciones }
 
-// Funciones auxiliares
 function generarId() { return Date.now() + '-' + Math.random().toString(36).substr(2, 9); }
 
 function guardarDatosGlobales() {
@@ -870,12 +869,10 @@ function cargarDatosGlobales() {
     }
 }
 
-// Claves de almacenamiento por grupo
+// Claves de almacenamiento por grupo para saberes
 function getStorageKeyForGrupo(grupoId, modulo, tipo) {
     return `pnft_grupo_${grupoId}_${modulo}_${tipo}`;
 }
-
-// Saberes por grupo
 function getSaberesGrupo(grupoId, modulo) {
     const sel = JSON.parse(localStorage.getItem(getStorageKeyForGrupo(grupoId, modulo, 'seleccionados')) || '[]');
     const imp = JSON.parse(localStorage.getItem(getStorageKeyForGrupo(grupoId, modulo, 'impartidos')) || '[]');
@@ -886,7 +883,12 @@ function setSaberesGrupo(grupoId, modulo, seleccionadosSet, impartidosSet) {
     localStorage.setItem(getStorageKeyForGrupo(grupoId, modulo, 'impartidos'), JSON.stringify([...impartidosSet]));
 }
 
-// Lecciones por grupo: estructura { "YYYY-MM-DD": { l1: { marcado: bool, texto: string }, l2: {...} } }
+// === NUEVA ESTRUCTURA DE LECCIONES (con soporte para fechas especiales por grupo) ===
+// lecciones[grupoId] = {
+//   "YYYY-MM-DD": { l1: { marcado: bool, texto: string }, l2: { marcado: bool, texto: string } }
+// }
+// fechasEspeciales[grupoId] = { "YYYY-MM-DD": { noLaborable: bool, descripcion: string } }
+
 function getLeccionesGrupo(grupoId) {
     const key = `pnft_lecciones_${grupoId}`;
     const stored = localStorage.getItem(key);
@@ -899,37 +901,87 @@ function setLeccionGrupo(grupoId, fecha, tipo, marcado, textoPersonalizado = nul
     else lecc[fecha][tipo].marcado = marcado;
     localStorage.setItem(`pnft_lecciones_${grupoId}`, JSON.stringify(lecc));
     if (typeof renderizarCalendario === 'function') renderizarCalendario();
+    if (typeof actualizarContadorLecciones === 'function') actualizarContadorLecciones(grupoId);
 }
-function setRangoLecciones(grupoId, fechaInicio, fechaFin, tipo, marcado) {
-    let inicio = new Date(fechaInicio);
-    let fin = new Date(fechaFin);
-    if (inicio > fin) { [inicio, fin] = [fin, inicio]; }
-    const lecc = getLeccionesGrupo(grupoId);
-    for (let d = new Date(inicio); d <= fin; d.setDate(d.getDate() + 1)) {
-        const fechaStr = d.toISOString().slice(0,10);
-        if (!lecc[fechaStr]) lecc[fechaStr] = { l1: { marcado: false, texto: "L1" }, l2: { marcado: false, texto: "L2" } };
-        lecc[fechaStr][tipo].marcado = marcado;
-    }
-    localStorage.setItem(`pnft_lecciones_${grupoId}`, JSON.stringify(lecc));
+
+function getFechasEspecialesGrupo(grupoId) {
+    const key = `pnft_fechas_especiales_${grupoId}`;
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : {};
+}
+function setFechaEspecialGrupo(grupoId, fecha, noLaborable, descripcion) {
+    const fechas = getFechasEspecialesGrupo(grupoId);
+    if (noLaborable === false && !descripcion) delete fechas[fecha];
+    else fechas[fecha] = { noLaborable, descripcion: descripcion || '' };
+    localStorage.setItem(`pnft_fechas_especiales_${grupoId}`, JSON.stringify(fechas));
     if (typeof renderizarCalendario === 'function') renderizarCalendario();
 }
 
-// Fechas importantes MEP 2026 (extraídas del PDF)
-const FECHAS_MEP = {
-    "2026-02-02": "Inicio de cursos Colegios Científicos",
-    "2026-02-23": "Inicio de lecciones 2026",
-    "2026-03-29": "Semana Santa",
-    "2026-04-05": "Semana Santa",
-    "2026-04-11": "Batalla de Rivas",
-    "2026-05-01": "Día del Trabajo",
-    "2026-07-06": "Vacaciones de medio periodo",
-    "2026-07-17": "Vacaciones de medio periodo",
-    "2026-07-25": "Anexión de Guanacaste",
-    "2026-08-15": "Día de la Madre",
-    "2026-09-15": "Independencia",
-    "2026-12-01": "Abolición del Ejército",
-    "2026-12-09": "Cierre lectivo"
+// Calendario oficial MEP 2026 (precargado, no se guardan por grupo)
+const CALENDARIO_OFICIAL_MEP = {
+    // Inicio y fin
+    "2026-02-23": { noLaborable: false, descripcion: "Inicio de lecciones" },
+    "2026-12-09": { noLaborable: false, descripcion: "Cierre lectivo" },
+    // Vacaciones de medio periodo (rango)
+    "2026-07-06": { noLaborable: true, descripcion: "Inicio vacaciones medio periodo" },
+    "2026-07-07": { noLaborable: true, descripcion: "Vacaciones medio periodo" },
+    "2026-07-08": { noLaborable: true, descripcion: "Vacaciones medio periodo" },
+    "2026-07-09": { noLaborable: true, descripcion: "Vacaciones medio periodo" },
+    "2026-07-10": { noLaborable: true, descripcion: "Vacaciones medio periodo" },
+    "2026-07-13": { noLaborable: true, descripcion: "Vacaciones medio periodo" },
+    "2026-07-14": { noLaborable: true, descripcion: "Vacaciones medio periodo" },
+    "2026-07-15": { noLaborable: true, descripcion: "Vacaciones medio periodo" },
+    "2026-07-16": { noLaborable: true, descripcion: "Vacaciones medio periodo" },
+    "2026-07-17": { noLaborable: true, descripcion: "Fin vacaciones medio periodo" },
+    // Semana Santa
+    "2026-03-29": { noLaborable: true, descripcion: "Semana Santa" },
+    "2026-03-30": { noLaborable: true, descripcion: "Semana Santa" },
+    "2026-03-31": { noLaborable: true, descripcion: "Semana Santa" },
+    "2026-04-01": { noLaborable: true, descripcion: "Semana Santa" },
+    "2026-04-02": { noLaborable: true, descripcion: "Semana Santa" },
+    "2026-04-03": { noLaborable: true, descripcion: "Semana Santa" },
+    "2026-04-04": { noLaborable: true, descripcion: "Semana Santa" },
+    "2026-04-05": { noLaborable: true, descripcion: "Semana Santa" },
+    // Feriados oficiales
+    "2026-04-11": { noLaborable: true, descripcion: "Batalla de Rivas" },
+    "2026-05-01": { noLaborable: true, descripcion: "Día del Trabajo" },
+    "2026-07-25": { noLaborable: true, descripcion: "Anexión de Guanacaste" },
+    "2026-08-15": { noLaborable: true, descripcion: "Día de la Madre" },
+    "2026-09-15": { noLaborable: true, descripcion: "Independencia" },
+    "2026-12-01": { noLaborable: true, descripcion: "Abolición del Ejército" }
 };
+
+function esDiaNoLaborable(grupoId, fecha) {
+    const diaSemana = new Date(fecha).getDay(); // 0 domingo, 6 sábado
+    if (diaSemana === 0 || diaSemana === 6) return true;
+    const especiales = getFechasEspecialesGrupo(grupoId);
+    if (especiales[fecha] && especiales[fecha].noLaborable) return true;
+    if (CALENDARIO_OFICIAL_MEP[fecha] && CALENDARIO_OFICIAL_MEP[fecha].noLaborable) return true;
+    return false;
+}
+
+function obtenerDescripcionFecha(grupoId, fecha) {
+    const especiales = getFechasEspecialesGrupo(grupoId);
+    if (especiales[fecha] && especiales[fecha].descripcion) return especiales[fecha].descripcion;
+    if (CALENDARIO_OFICIAL_MEP[fecha] && CALENDARIO_OFICIAL_MEP[fecha].descripcion) return CALENDARIO_OFICIAL_MEP[fecha].descripcion;
+    return null;
+}
+
+// Contador de lecciones impartidas (L1 y L2 marcadas)
+function actualizarContadorLecciones(grupoId) {
+    const lecciones = getLeccionesGrupo(grupoId);
+    let totalL1 = 0, totalL2 = 0;
+    for (const fecha in lecciones) {
+        if (!esDiaNoLaborable(grupoId, fecha)) {
+            if (lecciones[fecha].l1?.marcado) totalL1++;
+            if (lecciones[fecha].l2?.marcado) totalL2++;
+        }
+    }
+    const totalImpartidas = totalL1 + totalL2;
+    const restantes = Math.max(0, 96 - totalImpartidas); // 96 lecciones anuales aprox (2 por semana * 48 semanas)
+    const contadorDiv = document.getElementById('contador-lecciones');
+    if (contadorDiv) contadorDiv.innerHTML = `<div class="bg-slate-800 p-3 rounded-xl text-center"><i class="fas fa-chalkboard-user"></i> Lecciones impartidas: <strong>${totalImpartidas}</strong> (L1: ${totalL1}, L2: ${totalL2})<br>Restantes aprox: ${restantes}</div>`;
+}
 
 // Variables globales del planificador
 let grupoActivoId = null;
@@ -938,21 +990,14 @@ let moduloActual = 'Módulo 1';
 let saberesSeleccionados = new Set();
 let saberesImpartidos = new Set();
 
-// Cargar/guardar saberes desde/hacia el grupo activo
 function cargarSaberesDesdeGrupo() {
-    if (!grupoActivoId) {
-        saberesSeleccionados.clear();
-        saberesImpartidos.clear();
-        return;
-    }
+    if (!grupoActivoId) { saberesSeleccionados.clear(); saberesImpartidos.clear(); return; }
     const { seleccionados, impartidos } = getSaberesGrupo(grupoActivoId, moduloActual);
     saberesSeleccionados = seleccionados;
     saberesImpartidos = impartidos;
 }
 function guardarSaberesAGrupo() {
-    if (grupoActivoId) {
-        setSaberesGrupo(grupoActivoId, moduloActual, saberesSeleccionados, saberesImpartidos);
-    }
+    if (grupoActivoId) setSaberesGrupo(grupoActivoId, moduloActual, saberesSeleccionados, saberesImpartidos);
 }
 
 // ======================================================================
@@ -996,12 +1041,8 @@ const App = {
     },
     cargarSaberesDelNivel() {
         moduloActual = document.getElementById('select-modulo').value;
-        if (grupoActivoId) {
-            cargarSaberesDesdeGrupo();
-        } else {
-            saberesSeleccionados.clear();
-            saberesImpartidos.clear();
-        }
+        if (grupoActivoId) cargarSaberesDesdeGrupo();
+        else { saberesSeleccionados.clear(); saberesImpartidos.clear(); }
         document.getElementById('saberes-section').classList.remove('hidden');
         this.renderSaberes();
         this.renderBateriasYPerfiles();
@@ -1106,7 +1147,6 @@ const App = {
                     areas.forEach(area => {
                         if(dataMod[area] && dataMod[area].saberes) {
                             totales[area] += dataMod[area].saberes.length;
-                            // Aquí deberíamos sumar seleccionados de todos los grupos del ciclo. Por simplicidad, usamos solo el grupo activo si existe.
                         }
                     });
                 }
@@ -1130,21 +1170,13 @@ const App = {
                       pct < 40 ? '📌 Iniciando el camino en el ciclo' :
                       pct < 70 ? '📈 Progresando hacia el RdA del ciclo' :
                       pct < 100 ? '🔥 Muy cerca del RdA del ciclo' : '🏆 ¡RdA del ciclo completamente planificado!';
-            html += `<div>
-                <div class="flex justify-between"><span class="font-semibold">${area}</span><span>${pct}%</span></div>
-                <p class="text-xs text-white/70 italic">${rda.substring(0,100)}...</p>
-                <div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r from-blue-500" style="width:${pct}%"></div></div>
-                <p class="text-xs text-white/60">${msg}</p>
-            </div>`;
+            html += `<div><div class="flex justify-between"><span class="font-semibold">${area}</span><span>${pct}%</span></div><p class="text-xs text-white/70 italic">${rda.substring(0,100)}...</p><div class="w-full h-4 bg-slate-700/50 rounded-full"><div class="battery-fill h-full rounded-full bg-gradient-to-r from-blue-500" style="width:${pct}%"></div></div><p class="text-xs text-white/60">${msg}</p></div>`;
         });
         container.innerHTML = html;
     },
     renderListaSeleccionados() {
         const lista = document.getElementById('selected-saberes-list');
-        if (saberesSeleccionados.size === 0) {
-            lista.innerHTML = '<p class="text-center text-white/70">No hay saberes seleccionados</p>';
-            return;
-        }
+        if (saberesSeleccionados.size === 0) { lista.innerHTML = '<p class="text-center text-white/70">No hay saberes seleccionados</p>'; return; }
         const data = PNFT_DATA[nivelActual]?.[moduloActual] || {};
         let html = '';
         const agrupados = {};
@@ -1242,7 +1274,7 @@ const App = {
 };
 
 // ======================================================================
-// 4. FUNCIONES DE GESTIÓN DE GRUPOS (RENDER, AGREGAR, ELIMINAR, COPIAR, PDF)
+// 4. FUNCIONES DE GESTIÓN DE GRUPOS (SIN LÍMITE, CON OPCIONES COMPLETAS)
 // ======================================================================
 function renderizarGestionGrupos() {
     const container = document.getElementById('instituciones-container');
@@ -1288,6 +1320,7 @@ function eliminarInstitucion(id) {
     grupos = grupos.filter(g => g.institucionId !== id);
     gruposAEliminar.forEach(g => {
         localStorage.removeItem(`pnft_lecciones_${g.id}`);
+        localStorage.removeItem(`pnft_fechas_especiales_${g.id}`);
         ['Módulo 1', 'Módulo 2'].forEach(mod => {
             localStorage.removeItem(`pnft_grupo_${g.id}_${mod}_seleccionados`);
             localStorage.removeItem(`pnft_grupo_${g.id}_${mod}_impartidos`);
@@ -1328,9 +1361,10 @@ function editarGrupo(id) {
 }
 
 function eliminarGrupo(id) {
-    if (!confirm('¿Eliminar grupo? Se perderán sus saberes y lecciones.')) return;
+    if (!confirm('¿Eliminar grupo? Se perderán sus saberes, lecciones y fechas especiales.')) return;
     grupos = grupos.filter(g => g.id !== id);
     localStorage.removeItem(`pnft_lecciones_${id}`);
+    localStorage.removeItem(`pnft_fechas_especiales_${id}`);
     ['Módulo 1', 'Módulo 2'].forEach(mod => {
         localStorage.removeItem(`pnft_grupo_${id}_${mod}_seleccionados`);
         localStorage.removeItem(`pnft_grupo_${id}_${mod}_impartidos`);
@@ -1342,7 +1376,7 @@ function eliminarGrupo(id) {
     actualizarSelectorGruposCalendario();
 }
 
-async function copiarSaberesGrupo(destinoId) {
+function copiarSaberesGrupo(destinoId) {
     const gruposDisponibles = grupos.filter(g => g.id !== destinoId);
     if (gruposDisponibles.length === 0) { alert('No hay otros grupos para copiar.'); return; }
     const opciones = gruposDisponibles.map(g => `${g.nivel} ${g.nombre}`).join(', ');
@@ -1357,7 +1391,7 @@ async function copiarSaberesGrupo(destinoId) {
     if (grupoActivoId === destinoId) App.cargarSaberesDelNivel();
 }
 
-async function generarReportePDF(grupoId) {
+function generarReportePDF(grupoId) {
     const grupo = grupos.find(g => g.id === grupoId);
     if (!grupo) return;
     const inst = instituciones.find(i => i.id === grupo.institucionId);
@@ -1396,7 +1430,7 @@ async function generarReportePDF(grupoId) {
 }
 
 // ======================================================================
-// 5. CALENDARIO CON SELECCIÓN POR RANGO
+// 5. CALENDARIO REDISEÑADO (GRID MENSUAL + SELECCIÓN RANGO + GESTIÓN FECHAS ESPECIALES)
 // ======================================================================
 let modoRango = { activo: false, tipo: null, inicio: null };
 
@@ -1409,6 +1443,7 @@ function actualizarSelectorGruposCalendario() {
             ${grupos.map(g => `<option value="${g.id}">${instituciones.find(i=>i.id===g.institucionId)?.nombre || ''} - ${g.nivel} ${g.nombre}</option>`).join('')}
         </select>
         <button onclick="renderizarCalendario()" class="bg-blue-600 px-3 py-2 rounded-xl text-sm">Cargar</button>
+        <button onclick="gestionarFechasEspeciales()" class="bg-amber-600 px-3 py-2 rounded-xl text-sm"><i class="fas fa-cog"></i> Gestionar fechas especiales</button>
     `;
 }
 
@@ -1428,22 +1463,36 @@ function renderizarCalendario() {
         for (let j=0; j<inicioOffset; j++) html += `<div></div>`;
         for (let d=1; d<=diasEnMes; d++) {
             const fechaStr = `2026-${String(i+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            const esFeriado = FECHAS_MEP[fechaStr];
+            const noLaborable = esDiaNoLaborable(grupoId, fechaStr);
+            const descripcion = obtenerDescripcionFecha(grupoId, fechaStr);
             const lec = lecciones[fechaStr] || { l1: { marcado: false, texto: "L1" }, l2: { marcado: false, texto: "L2" } };
             const esInicioRango = (modoRango.activo && modoRango.inicio === fechaStr);
-            html += `<div class="calendario-dia p-1 border border-white/10 rounded ${esFeriado ? 'fecha-mep' : ''} ${esInicioRango ? 'rango-activo' : ''}" data-fecha="${fechaStr}">
-                        <div class="text-sm font-bold">${d}</div>
-                        <div class="flex gap-1 justify-center mt-1">
-                            <button class="text-xs ${lec.l1.marcado ? 'bg-green-600' : 'bg-slate-700'} px-1 rounded" data-tipo="l1" data-fecha="${fechaStr}" title="Haz clic para marcar/desmarcar. Haz clic en el texto para editarlo"><span class="editable-text" data-tipo="l1" data-fecha="${fechaStr}">${lec.l1.texto}</span></button>
-                            <button class="text-xs ${lec.l2.marcado ? 'bg-green-600' : 'bg-slate-700'} px-1 rounded" data-tipo="l2" data-fecha="${fechaStr}" title="Haz clic para marcar/desmarcar. Haz clic en el texto para editarlo"><span class="editable-text" data-tipo="l2" data-fecha="${fechaStr}">${lec.l2.texto}</span></button>
+            let clases = "calendario-dia p-1 border rounded transition-all ";
+            if (noLaborable) clases += "bg-slate-900 border-red-800/50 opacity-70";
+            else if (esInicioRango) clases += "bg-blue-700 border-blue-400 shadow-md";
+            else clases += "bg-slate-800/40 border-white/10";
+            html += `<div class="${clases}" data-fecha="${fechaStr}">
+                        <div class="text-sm font-bold flex justify-between items-center">
+                            <span>${d}</span>
+                            ${descripcion ? `<span class="text-[10px] text-amber-400" title="${descripcion}">📌</span>` : ''}
                         </div>
-                        ${esFeriado ? `<div class="text-[10px] text-amber-300" title="${FECHAS_MEP[fechaStr]}">📅</div>` : ''}
-                    </div>`;
+                        <div class="flex gap-1 justify-center mt-1">`;
+            if (!noLaborable) {
+                html += `<button class="text-xs ${lec.l1.marcado ? 'bg-green-600' : 'bg-slate-600'} px-1 rounded hover:bg-opacity-80" data-tipo="l1" data-fecha="${fechaStr}" title="Marcar/desmarcar L1"><span class="editable-text inline-block min-w-[24px]" data-tipo="l1" data-fecha="${fechaStr}">${lec.l1.texto}</span></button>
+                         <button class="text-xs ${lec.l2.marcado ? 'bg-green-600' : 'bg-slate-600'} px-1 rounded hover:bg-opacity-80" data-tipo="l2" data-fecha="${fechaStr}" title="Marcar/desmarcar L2"><span class="editable-text inline-block min-w-[24px]" data-tipo="l2" data-fecha="${fechaStr}">${lec.l2.texto}</span></button>`;
+            } else {
+                html += `<span class="text-xs text-red-400" title="Día no laborable">⛔</span><span class="text-xs text-red-400">⛔</span>`;
+            }
+            html += `</div></div>`;
         }
         html += `</div></div>`;
     }
     document.getElementById('calendario-meses').innerHTML = html;
-    // Eventos de marcado individual y rango
+    actualizarContadorLecciones(grupoId);
+    attachCalendarEvents();
+}
+
+function attachCalendarEvents() {
     document.querySelectorAll('.calendario-dia button[data-tipo]').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1468,7 +1517,6 @@ function renderizarCalendario() {
             setLeccionGrupo(grupoIdSel, fecha, tipo, nuevoEstado);
         });
     });
-    // Edición de texto (nombre de la lección)
     document.querySelectorAll('.editable-text').forEach(span => {
         span.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1484,25 +1532,51 @@ function renderizarCalendario() {
     });
 }
 
+function setRangoLecciones(grupoId, fechaInicio, fechaFin, tipo, marcado) {
+    let inicio = new Date(fechaInicio);
+    let fin = new Date(fechaFin);
+    if (inicio > fin) { [inicio, fin] = [fin, inicio]; }
+    for (let d = new Date(inicio); d <= fin; d.setDate(d.getDate() + 1)) {
+        const fechaStr = d.toISOString().slice(0,10);
+        if (!esDiaNoLaborable(grupoId, fechaStr)) {
+            setLeccionGrupo(grupoId, fechaStr, tipo, marcado);
+        }
+    }
+}
+
 function initRangos() {
     const btnRangoL1 = document.getElementById('btn-rango-l1');
     const btnRangoL2 = document.getElementById('btn-rango-l2');
-    const btnDesmarcar = document.getElementById('btn-desmarcar-rango');
     const btnCancelar = document.getElementById('btn-cancelar-rango');
-    if (btnRangoL1) btnRangoL1.onclick = () => { modoRango = { activo: true, tipo: 'l1', inicio: null }; btnCancelar.classList.remove('hidden'); };
-    if (btnRangoL2) btnRangoL2.onclick = () => { modoRango = { activo: true, tipo: 'l2', inicio: null }; btnCancelar.classList.remove('hidden'); };
-    if (btnDesmarcar) btnDesmarcar.onclick = () => {
-        const grupoId = document.getElementById('cal-grupo-select')?.value;
-        if (!grupoId) { alert('Selecciona un grupo primero'); return; }
-        const inicio = prompt('Fecha inicio (YYYY-MM-DD):');
-        const fin = prompt('Fecha fin (YYYY-MM-DD):');
-        if (inicio && fin) {
-            setRangoLecciones(grupoId, inicio, fin, 'l1', false);
-            setRangoLecciones(grupoId, inicio, fin, 'l2', false);
-            alert('Rango desmarcado (L1 y L2)');
-        }
-    };
-    if (btnCancelar) btnCancelar.onclick = () => { modoRango = { activo: false, tipo: null, inicio: null }; btnCancelar.classList.add('hidden'); renderizarCalendario(); };
+    if (btnRangoL1) btnRangoL1.onclick = () => { modoRango = { activo: true, tipo: 'l1', inicio: null }; btnCancelar.classList.remove('hidden'); alert('Modo rango L1 activado. Haz clic en fecha inicio y luego en fecha fin.'); };
+    if (btnRangoL2) btnRangoL2.onclick = () => { modoRango = { activo: true, tipo: 'l2', inicio: null }; btnCancelar.classList.remove('hidden'); alert('Modo rango L2 activado. Haz clic en fecha inicio y luego en fecha fin.'); };
+    if (btnCancelar) btnCancelar.onclick = () => { modoRango = { activo: false, tipo: null, inicio: null }; btnCancelar.classList.add('hidden'); renderizarCalendario(); alert('Modo rango cancelado.'); };
+}
+
+function gestionarFechasEspeciales() {
+    const grupoId = document.getElementById('cal-grupo-select')?.value;
+    if (!grupoId) { alert('Primero selecciona un grupo.'); return; }
+    const fechasActuales = getFechasEspecialesGrupo(grupoId);
+    let lista = Object.entries(fechasActuales).map(([fecha, info]) => `${fecha}: ${info.descripcion} (${info.noLaborable ? 'No laborable' : 'Laborable'})`).join('\n');
+    const opcion = prompt(`Gestionar fechas especiales para este grupo:\n1. Agregar/editar\n2. Eliminar\n3. Ver actuales\n\nActuales:\n${lista || 'Ninguna'}`, '1');
+    if (opcion === '1') {
+        const fecha = prompt('Fecha (YYYY-MM-DD):');
+        if (!fecha) return;
+        const noLaborable = confirm('¿Es día no laborable? (Aceptar = Sí, Cancelar = No)');
+        const descripcion = prompt('Descripción (ej: Día del árbol, suspensión de clases):');
+        setFechaEspecialGrupo(grupoId, fecha, noLaborable, descripcion);
+        alert('Fecha especial guardada.');
+        renderizarCalendario();
+    } else if (opcion === '2') {
+        const fecha = prompt('Fecha a eliminar (YYYY-MM-DD):');
+        if (fecha && fechasActuales[fecha]) {
+            setFechaEspecialGrupo(grupoId, fecha, false, '');
+            alert('Eliminada.');
+            renderizarCalendario();
+        } else alert('Fecha no encontrada.');
+    } else {
+        alert(lista || 'No hay fechas especiales configuradas.');
+    }
 }
 
 // ======================================================================
@@ -1560,8 +1634,6 @@ window.generarReportePDF = generarReportePDF;
 window.renderizarGestionGrupos = renderizarGestionGrupos;
 window.renderizarCalendario = renderizarCalendario;
 window.actualizarSelectorGruposCalendario = actualizarSelectorGruposCalendario;
+window.gestionarFechasEspeciales = gestionarFechasEspeciales;
 
 App.init();
-</script>
-</body>
-</html>
