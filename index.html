@@ -1699,22 +1699,22 @@ function gestionarFechasNoLaborables() {
 
 
 // ======================================================================
-// 6. EXPORTAR / IMPORTAR BACKUP COMPLETO
+// 6. EXPORTAR / IMPORTAR BACKUP COMPLETO (VERSIÓN CORRECTA)
 // ======================================================================
 const Exportar = {
     backupCompleto() {
         const backup = { instituciones, grupos };
-        for (let i=0; i<localStorage.length; i++) {
+        for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             if (key.startsWith('pnft_')) backup[key] = localStorage.getItem(key);
         }
-        const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+        const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = `backup_pnft_${new Date().toISOString().slice(0,10)}.json`;
         a.click();
         URL.revokeObjectURL(a.href);
-        alert('Backup completo exportado.');
+        alert('Backup exportado.');
     },
     importarBackup(event) {
         const file = event.target.files[0];
@@ -1732,62 +1732,51 @@ const Exportar = {
                 guardarDatosGlobales();
                 alert('Backup importado. Recargando página...');
                 window.location.reload();
-            } catch(err) { alert('Archivo inválido'); }
+            } catch (err) { alert('Archivo inválido'); }
         };
         reader.readAsText(file);
     },
-const Exportar = {
-    backupCompleto() {
-        const backup = { instituciones, grupos };
-        for (let i=0; i<localStorage.length; i++) {
+    descargarHTML() {
+        // Recopilar datos actuales
+        const backupDatos = { instituciones, grupos, localStorage: {} };
+        for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key.startsWith('pnft_')) backup[key] = localStorage.getItem(key);
+            if (key.startsWith('pnft_')) backupDatos.localStorage[key] = localStorage.getItem(key);
         }
-        const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+        // Script de restauración (escapado para no cerrar el script actual)
+        const scriptRestauracion = `<script>
+(function() {
+    const datosRespaldo = ${JSON.stringify(backupDatos)};
+    function restaurarDatos() {
+        if (!localStorage.getItem('pnft_instituciones') || confirm('¿Cargar los datos guardados previamente? (Esto sobrescribirá los actuales)')) {
+            localStorage.setItem('pnft_instituciones', JSON.stringify(datosRespaldo.instituciones));
+            localStorage.setItem('pnft_grupos', JSON.stringify(datosRespaldo.grupos));
+            for (const [key, value] of Object.entries(datosRespaldo.localStorage)) {
+                localStorage.setItem(key, value);
+            }
+            alert('✅ Datos restaurados. La página se recargará.');
+            window.location.reload();
+        }
+    }
+    if (!localStorage.getItem('pnft_instituciones')) restaurarDatos();
+})();\n<\/script>`;
+        let htmlCompleto = document.documentElement.outerHTML;
+        htmlCompleto = htmlCompleto.replace('</body>', scriptRestauracion + '\n</body>');
+        const blob = new Blob([htmlCompleto], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `backup_pnft_${new Date().toISOString().slice(0,10)}.json`;
+        a.href = url;
+        a.download = `planificador_pnft_2026_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}_con_datos.html`;
+        document.body.appendChild(a);
         a.click();
-        URL.revokeObjectURL(a.href);
-        alert('Backup completo exportado.');
-    },
-    importarBackup(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const backup = JSON.parse(e.target.result);
-                if (!confirm('¿Reemplazar todos los datos actuales? Se perderán los cambios no guardados.')) return;
-                for (let key in backup) {
-                    if (key !== 'instituciones' && key !== 'grupos') localStorage.setItem(key, backup[key]);
-                }
-                if (backup.instituciones) instituciones = backup.instituciones;
-                if (backup.grupos) grupos = backup.grupos;
-                guardarDatosGlobales();
-                alert('Backup importado. Recargando página...');
-                window.location.reload();
-            } catch(err) { alert('Archivo inválido'); }
-        };
-        reader.readAsText(file);
-    },   // <--- COMA AÑADIDA
-descargarHTML() {
-    const htmlCompleto = document.documentElement.outerHTML;
-    const blob = new Blob([htmlCompleto], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `planificador_pnft_2026_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    alert('✅ Planificador descargado.');
-}
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        alert('✅ Planificador descargado con todos tus datos actuales.');
+    }
 };
 
 // ======================================================================
-// 7. INICIALIZACIÓN GLOBAL (Exportar funciones necesarias)
+// 7. INICIALIZACIÓN GLOBAL
 // ======================================================================
 window.App = App;
 window.Exportar = Exportar;
