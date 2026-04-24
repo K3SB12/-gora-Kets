@@ -1750,10 +1750,9 @@ descargarHTML() {
         }
     }
 
-    // 2. Generar el script de restauración de forma segura (sin etiquetas script anidadas)
+    // 2. Generar el script de restauración (escapando la etiqueta de cierre)
     const datosStr = JSON.stringify(backupDatos);
-    const scriptRestauracion = `
-<script>
+    const scriptRestauracion = `<script>
 (function() {
     const datosRespaldo = ${datosStr};
     function restaurarDatos() {
@@ -1771,17 +1770,12 @@ descargarHTML() {
 })();
 <\/script>`;
 
-    // 3. Clonar el contenido actual para no interferir con la página viva
-    const doctype = '<!DOCTYPE html>\n';
-    const html = document.documentElement.outerHTML;
-    // Insertar el script justo antes de </body>, escapando correctamente
-    let htmlFinal = html.replace('</body>', scriptRestauracion + '\n</body>');
-    
-    // Asegurar que el título sea correcto
-    htmlFinal = htmlFinal.replace(/<title>.*?<\/title>/, '<title>🧭 PNFT 2026 · Planificador Curricular Completo</title>');
+    // 3. Obtener el HTML actual y añadir el script justo antes de </body>
+    let htmlCompleto = document.documentElement.outerHTML;
+    htmlCompleto = htmlCompleto.replace('</body>', scriptRestauracion + '\n</body>');
 
-    // 4. Descargar
-    const blob = new Blob([doctype + htmlFinal], { type: 'text/html' });
+    // 4. Descargar el archivo
+    const blob = new Blob([htmlCompleto], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
