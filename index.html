@@ -1737,55 +1737,55 @@ const Exportar = {
         reader.readAsText(file);
     },
     descargarHTML() {
-        // 1. Recopilar los datos actuales
-        const backupDatos = {
-            instituciones: instituciones,
-            grupos: grupos,
-            localStorage: {}
-        };
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith('pnft_')) {
-                backupDatos.localStorage[key] = localStorage.getItem(key);
-            }
+    // Recopilar datos actuales
+    const backupDatos = {
+        instituciones: instituciones,
+        grupos: grupos,
+        localStorage: {}
+    };
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('pnft_')) {
+            backupDatos.localStorage[key] = localStorage.getItem(key);
         }
-    
-        // 2. Generar el script de restauración (escapando la etiqueta de cierre)
-        const datosStr = JSON.stringify(backupDatos);
-        const scriptRestauracion = `<script>
-    (function() {
-        const datosRespaldo = ${datosStr};
-        function restaurarDatos() {
-            if (!localStorage.getItem('pnft_instituciones') || confirm('¿Cargar los datos guardados previamente? (Esto sobrescribirá los actuales)')) {
-                localStorage.setItem('pnft_instituciones', JSON.stringify(datosRespaldo.instituciones));
-                localStorage.setItem('pnft_grupos', JSON.stringify(datosRespaldo.grupos));
-                for (const [key, value] of Object.entries(datosRespaldo.localStorage)) {
-                    localStorage.setItem(key, value);
-                }
-                alert('✅ Datos restaurados. La página se recargará.');
-                window.location.reload();
-            }
-        }
-        if (!localStorage.getItem('pnft_instituciones')) restaurarDatos();
-    })();
-    <\/script>`;
-    
-        // 3. Obtener el HTML actual y añadir el script justo antes de </body>
-        let htmlCompleto = document.documentElement.outerHTML;
-        htmlCompleto = htmlCompleto.replace('</body>', scriptRestauracion + '\n</body>');
-    
-        // 4. Descargar el archivo
-        const blob = new Blob([htmlCompleto], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `planificador_pnft_2026_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.html`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        alert('✅ Planificador descargado con todos tus datos actuales.');
     }
+
+    // Crear el script de restauración como una cadena limpia (sin template literal anidado para evitar escapes)
+    const scriptRestauracion = '<script>\n' +
+        '(function() {\n' +
+        '    const datosRespaldo = ' + JSON.stringify(backupDatos) + ';\n' +
+        '    function restaurarDatos() {\n' +
+        '        if (!localStorage.getItem("pnft_instituciones") || confirm("¿Cargar los datos guardados previamente? (Esto sobrescribirá los actuales)")) {\n' +
+        '            localStorage.setItem("pnft_instituciones", JSON.stringify(datosRespaldo.instituciones));\n' +
+        '            localStorage.setItem("pnft_grupos", JSON.stringify(datosRespaldo.grupos));\n' +
+        '            for (const [key, value] of Object.entries(datosRespaldo.localStorage)) {\n' +
+        '                localStorage.setItem(key, value);\n' +
+        '            }\n' +
+        '            alert("✅ Datos restaurados. La página se recargará.");\n' +
+        '            window.location.reload();\n' +
+        '        }\n' +
+        '    }\n' +
+        '    if (!localStorage.getItem("pnft_instituciones")) restaurarDatos();\n' +
+        '})();\n' +
+        '<\/script>';
+
+    // Clonar el contenido actual
+    let htmlCompleto = document.documentElement.outerHTML;
+    // Insertar el script justo antes de </body>
+    htmlCompleto = htmlCompleto.replace('</body>', scriptRestauracion + '\n</body>');
+
+    // Descargar
+    const blob = new Blob([htmlCompleto], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `planificador_pnft_2026_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    alert('✅ Planificador descargado con todos tus datos actuales.');
+}
     };
 
 // ======================================================================
