@@ -216,6 +216,7 @@
             <div class="grid md:grid-cols-2 gap-4">
                 <button onclick="Exportar.backupCompleto()" class="bg-amber-600/30 hover:bg-amber-600/50 p-6 rounded-xl">Exportar Backup (todo)</button>
                 <button onclick="document.getElementById('input-import-backup').click()" class="bg-purple-600/30 hover:bg-purple-600/50 p-6 rounded-xl">Importar Backup</button>
+                <button onclick="Exportar.descargarHTML()" class="bg-blue-600/30 hover:bg-blue-600/50 p-6 rounded-xl"><i class="fas fa-download text-4xl mb-3"></i><br>Descargar Planificador HTML</button>
                 <input type="file" id="input-import-backup" accept=".json" class="hidden" onchange="Exportar.importarBackup(event)">
             </div>
             <p class="text-xs text-white/40 mt-4">Incluye instituciones, grupos, planificaciones y calendario.</p>
@@ -1734,7 +1735,21 @@ const Exportar = {
             } catch(err) { alert('Archivo inválido'); }
         };
         reader.readAsText(file);
-    }
+    },
+    descargarHTML() {
+    // Obtener el HTML actual de la página (incluyendo la estructura completa)
+    const htmlCompleto = document.documentElement.outerHTML;
+    const blob = new Blob([htmlCompleto], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `planificador_pnft_2026_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    alert('✅ Planificador descargado. Guárdalo en tu computadora.');
+}
 };
 
 // ======================================================================
