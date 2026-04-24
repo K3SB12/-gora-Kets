@@ -110,6 +110,17 @@
         .fecha-mep { background-color: rgba(245, 158, 11, 0.25); border-left: 3px solid #f59e0b; }
         .rango-activo { background-color: #2563eb !important; box-shadow: 0 0 0 2px white; }
         #grupo-activo-selector { background-color: #1e293b; border: 1px solid rgba(255,255,255,0.3); border-radius: 9999px; padding: 0.5rem 1rem; color: white; }
+
+        /* Forzar que los eventos en el calendario se muestren en columna vertical */
+        .fc-daygrid-day-events {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2px;
+        }
+        /* Opcional: dar un poco más de altura a las celdas de día */
+        .fc-daygrid-day-frame {
+            min-height: 80px;
+        }
     </style>
 </head>
 <body class="text-white">
@@ -1488,6 +1499,14 @@ function renderizarCalendarioFullCalendar() {
         },
         events: eventos,
         editable: true,
+        eventOrder: function(a, b) {
+            // Ordenar para que 'l1' aparezca antes que 'l2'
+            const tipoA = a.extendedProps.tipo;
+            const tipoB = b.extendedProps.tipo;
+            if (tipoA === 'l1' && tipoB === 'l2') return -1;
+            if (tipoA === 'l2' && tipoB === 'l1') return 1;
+            return 0;
+        },
         eventDrop: function(info) {
             const eventId = info.event.id;
             const [oldFecha, tipo] = eventId.split('_');
