@@ -954,8 +954,10 @@ const CALENDARIO_OFICIAL_MEP = {
 
 // Función unificada para determinar si una fecha es no laborable
 function esFechaNoLaborable(grupoId, fechaStr) {
-    const fecha = new Date(fechaStr);
-    const diaSemana = fecha.getDay();
+    // Convertir fechaStr (YYYY-MM-DD) a fecha local
+    const [year, month, day] = fechaStr.split('-').map(Number);
+    const fecha = new Date(year, month - 1, day);  // mes 0-indexado
+    const diaSemana = fecha.getDay(); // 0 domingo, 1 lunes, ..., 6 sábado
     if (diaSemana === 0 || diaSemana === 6) return true;
     const especiales = getFechasEspecialesGrupo(grupoId);
     if (especiales[fechaStr] && especiales[fechaStr].noLaborable) return true;
