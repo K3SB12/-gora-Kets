@@ -1409,7 +1409,7 @@ function generarReportePDF(grupoId) {
 }
 
 // ======================================================================
-// 5. CALENDARIO CON FULLCALENDAR (VERSIÓN DEFINITIVA)
+// 5. CALENDARIO CON FULLCALENDAR (VERSIÓN DEFINITIVA CORREGIDA)
 // ======================================================================
 let calendar = null;
 let currentCalendarGroupId = null;
@@ -1451,7 +1451,12 @@ function renderizarCalendarioFullCalendar() {
                 id: `${fecha}_l1`,
                 title: lec.l1.texto || 'L1',
                 start: fecha,
-                extendedProps: { tipo: 'l1', marcado: lec.l1.marcado, texto: lec.l1.texto || 'L1' },
+                extendedProps: {
+                    tipo: 'l1',
+                    marcado: lec.l1.marcado,
+                    texto: lec.l1.texto || 'L1',
+                    notas: lec.l1.notas || ''
+                },
                 color: lec.l1.marcado ? '#22c55e' : '#64748b',
                 textColor: 'white'
             });
@@ -1461,7 +1466,12 @@ function renderizarCalendarioFullCalendar() {
                 id: `${fecha}_l2`,
                 title: lec.l2.texto || 'L2',
                 start: fecha,
-                extendedProps: { tipo: 'l2', marcado: lec.l2.marcado, texto: lec.l2.texto || 'L2' },
+                extendedProps: {
+                    tipo: 'l2',
+                    marcado: lec.l2.marcado,
+                    texto: lec.l2.texto || 'L2',
+                    notas: lec.l2.notas || ''
+                },
                 color: lec.l2.marcado ? '#22c55e' : '#64748b',
                 textColor: 'white'
             });
@@ -1495,73 +1505,124 @@ function renderizarCalendarioFullCalendar() {
                 renderizarCalendarioFullCalendar();
             }
         },
+        eventDidMount: function(info) {
+            if (info.event.extendedProps.notas) {
+                info.el.setAttribute('title', info.event.extendedProps.notas);
+            } else {
+                info.el.setAttribute('title', `Haz clic para editar (${info.event.title})`);
+            }
+        },
+        dateClick: function(info) {
+            const fecha = info.dateStr.slice(0,10);
+            if (esFechaNoLaborable(currentCalendarGroupId, fecha)) {
+                alert('⚠️ Esta fecha es no laborable. No se pueden agregar lecciones.');
+                return;
+            }
+            let entrada = prompt('📝 Nueva lección\n\nEscribe el tipo (L1 o L2) seguido del contenido.\nEjemplos:\n  L1 Algoritmos de ordenamiento\n  L2 Proyecto final - presentación\n\nTambién puedes añadir notas con |\nEj: L1 Algoritmos | Revisar ejercicios pág 15', 'L1 ');
+            if (!entrada) return;
+            let tipo = null;
+            let resto = entrada.trim();
+            if (resto.toLowerCase().startsWith('l1')) {
+                tipo = 'l1';
+                resto = resto.substring(2).trim();
+            } else if (resto.toLowerCase().startsWith('l2')) {
+                tipo = 'l2';
+                resto = resto.substring(2).trim();
+            } else {
+                alert('Debes comenzar con L1 o L2');
+                return;
+            }
+            let texto = resto;
+            let notas = '';
+            if (resto.includes('|')) {
+                const partes = resto.split('|');
+                texto = partes[0].trim();
+                notas = partes.slice(1).join('|').trim();
+            }
+            if (!texto) texto = tipo.toUpperCase();
+            const marcado = confirm(`¿Marcar como impartida la lección "${texto}"?`);
+            const leccionesGrupo = getLeccionesGrupo(currentCalendarGroupId);
+            if (!leccionesGrupo[fecha]) leccionesGrupo[fecha] = {};
+            leccionesGrupo[fecha][tipo] = { 
+                texto: texto, 
+                marcado: marcado, 
+                notas: notas 
+            };
+            localStorage.setItem(`pnft_lecciones_${currentCalendarGroupId}`, JSON.stringify(leccionesGrupo));
+            actualizarContadorLeccionesFullCalendar();
+            renderizarCalendarioFullCalendar();
+        },
         eventClick: function(info) {
             const event = info.event;
             const [fecha, tipo] = event.id.split('_');
             const leccionesGrupo = getLeccionesGrupo(currentCalendarGroupId);
             const leccion = leccionesGrupo[fecha]?.[tipo];
             if (!leccion) return;
-            const opcion = prompt(`Editar lección ${tipo.toUpperCase()} del ${fecha}\nTexto actual: ${leccion.texto}\nMarcado: ${leccion.marcado ? 'Sí' : 'No'}\n\nEscribe: nuevo texto|marcado (sí/no)  o  "eliminar"`, `${leccion.texto}|${leccion.marcado ? 'sí' : 'no'}`);
-            if (opcion === null) return;
-            if (opcion.toLowerCase() === 'eliminar') {
-                delete leccionesGrupo[fecha][tipo];
-                if (Object.keys(leccionesGrupo[fecha]).length === 0) delete leccionesGrupo[fecha];
-                localStorage.setItem(`pnft_lecciones_${currentCalendarGroupId}`, JSON.stringify(leccionesGrupo));
-                actualizarContadorLeccionesFullCalendar();
-                renderizarCalendarioFullCalendar();
+            const entrada = prompt(
+                `✏️ Editando lección del ${fecha} (${tipo.toUpperCase()})\n` +
+                `Texto actual: "${leccion.texto}"\n` +
+                `Notas: ${leccion.notas || '(ninguna)'}\n` +
+                `Impartida: ${leccion.marcado ? 'Sí' : 'No'}\n\n` +
+                `Puedes cambiar:\n` +
+                `- El texto (escribe solo el nuevo texto, sin L1/L2)\n` +
+                `- Añadir notas con | (ej: tema nuevo | ver ejercicio 5)\n` +
+                `- Para cambiar impartido escribe "marcado sí" o "marcado no"\n` +
+                `- Para eliminar, escribe "eliminar"\n\n` +
+                `Deja el texto igual si no quieres cambiarlo.`,
+                `${leccion.texto}${leccion.notas ? ' | ' + leccion.notas : ''}`
+            );
+            if (entrada === null) return;
+            let nuevoTexto = leccion.texto;
+            let nuevasNotas = leccion.notas || '';
+            let nuevoMarcado = leccion.marcado;
+            if (entrada.toLowerCase() === 'eliminar') {
+                if (confirm(`¿Eliminar lección del ${fecha}?`)) {
+                    delete leccionesGrupo[fecha][tipo];
+                    if (Object.keys(leccionesGrupo[fecha]).length === 0) delete leccionesGrupo[fecha];
+                    localStorage.setItem(`pnft_lecciones_${currentCalendarGroupId}`, JSON.stringify(leccionesGrupo));
+                    actualizarContadorLeccionesFullCalendar();
+                    renderizarCalendarioFullCalendar();
+                }
                 return;
             }
-            const partes = opcion.split('|');
-            const nuevoTexto = partes[0].trim() || leccion.texto;
-            const nuevoMarcado = partes[1] ? (partes[1].toLowerCase().includes('sí') || partes[1].toLowerCase().includes('true')) : leccion.marcado;
-            leccionesGrupo[fecha][tipo] = { texto: nuevoTexto, marcado: nuevoMarcado };
+            if (entrada.toLowerCase().includes('marcado sí')) {
+                nuevoMarcado = true;
+                entrada = entrada.replace(/marcado sí/i, '').trim();
+            } else if (entrada.toLowerCase().includes('marcado no')) {
+                nuevoMarcado = false;
+                entrada = entrada.replace(/marcado no/i, '').trim();
+            }
+            if (entrada.includes('|')) {
+                const partes = entrada.split('|');
+                nuevoTexto = partes[0].trim() || leccion.texto;
+                nuevasNotas = partes.slice(1).join('|').trim();
+            } else if (entrada.trim() !== '') {
+                nuevoTexto = entrada.trim();
+            }
+            leccionesGrupo[fecha][tipo] = { 
+                texto: nuevoTexto, 
+                marcado: nuevoMarcado, 
+                notas: nuevasNotas 
+            };
             localStorage.setItem(`pnft_lecciones_${currentCalendarGroupId}`, JSON.stringify(leccionesGrupo));
             actualizarContadorLeccionesFullCalendar();
             renderizarCalendarioFullCalendar();
-        },
-        dateClick: function(info) {
-            const fecha = info.dateStr.slice(0,10);
-            if (esFechaNoLaborable(currentCalendarGroupId, fecha)) {
-                alert('Esta fecha es no laborable (fin de semana o día especial). No puedes agregar lecciones.');
-                return;
-            }
-            const tipo = prompt('¿Qué tipo de lección deseas agregar? (L1 o L2)', 'L1');
-            if (!tipo) return;
-            const tipoLower = tipo.toLowerCase();
-            if (tipoLower !== 'l1' && tipoLower !== 'l2') {
-                alert('Solo se permiten L1 o L2');
-                return;
-            }
-            const texto = prompt('Nombre de la actividad (ej: Proyecto IA)', tipo.toUpperCase());
-            if (!texto) return;
-            const marcado = confirm('¿Dar como impartida? (Aceptar = Sí, Cancelar = No)');
-            const leccionesGrupo = getLeccionesGrupo(currentCalendarGroupId);
-            if (!leccionesGrupo[fecha]) leccionesGrupo[fecha] = {};
-            leccionesGrupo[fecha][tipoLower] = { texto: texto, marcado: marcado };
-            localStorage.setItem(`pnft_lecciones_${currentCalendarGroupId}`, JSON.stringify(leccionesGrupo));
-            actualizarContadorLeccionesFullCalendar();
-            renderizarCalendarioFullCalendar();
-        },
-        dayCellDidMount: function(info) {
-            const fechaStr = info.date.toISOString().slice(0,10);
-            if (esFechaNoLaborable(currentCalendarGroupId, fechaStr)) {
-                info.el.style.backgroundColor = '#1e293b';
-                info.el.style.opacity = '0.6';
-                info.el.title = 'Día no laborable';
-            }
         }
     });
     calendar.render();
     actualizarContadorLeccionesFullCalendar();
 }
 
+// Función independiente para actualizar el contador (CORRECTAMENTE UBICADA)
 function actualizarContadorLeccionesFullCalendar() {
     if (!currentCalendarGroupId) return;
     const lecciones = getLeccionesGrupo(currentCalendarGroupId);
     let totalL1 = 0, totalL2 = 0;
     for (const fecha in lecciones) {
-        if (lecciones[fecha].l1?.marcado) totalL1++;
-        if (lecciones[fecha].l2?.marcado) totalL2++;
+        if (!esFechaNoLaborable(currentCalendarGroupId, fecha)) {
+            if (lecciones[fecha].l1?.marcado) totalL1++;
+            if (lecciones[fecha].l2?.marcado) totalL2++;
+        }
     }
     const totalImpartidas = totalL1 + totalL2;
     const restantes = Math.max(0, 96 - totalImpartidas);
@@ -1604,20 +1665,6 @@ function gestionarFechasNoLaborables() {
         alert(lista || 'No hay días no laborables adicionales configurados.');
     }
 }
-
-// Sobrescritura para inicializar al abrir la pestaña (ya está en App.switchTab, pero la dejamos igual)
-const originalSwitchTab = App.switchTab;
-App.switchTab = function(t) {
-    originalSwitchTab.call(this, t);
-    if (t === 'calendario') {
-        actualizarSelectorGruposCalendario();
-        const select = document.getElementById('cal-grupo-select');
-        if (select && select.value) {
-            currentCalendarGroupId = select.value;
-            renderizarCalendarioFullCalendar();
-        }
-    }
-};
 
 // ======================================================================
 // 6. EXPORTAR / IMPORTAR BACKUP COMPLETO
