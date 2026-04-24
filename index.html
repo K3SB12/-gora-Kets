@@ -1771,19 +1771,19 @@ const Exportar = {
         };
         reader.readAsText(file);
     },   // <--- COMA AÑADIDA
-    descargarHTML() {
-        const htmlCompleto = document.documentElement.outerHTML;
-        const blob = new Blob([htmlCompleto], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `planificador_pnft_2026_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.html`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        alert('✅ Planificador descargado. Guárdalo en tu computadora.');
-    }
+descargarHTML() {
+    const htmlCompleto = document.documentElement.outerHTML;
+    const blob = new Blob([htmlCompleto], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `planificador_pnft_2026_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    alert('✅ Planificador descargado.');
+}
 };
 
 // ======================================================================
