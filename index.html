@@ -1626,7 +1626,16 @@ function renderizarCalendarioFullCalendar() {
             localStorage.setItem(`pnft_lecciones_${currentCalendarGroupId}`, JSON.stringify(leccionesGrupo));
             actualizarContadorLeccionesFullCalendar();
             renderizarCalendarioFullCalendar();
+        },
+             dayCellDidMount: function(info) {      // 👈 NUEVO: colorea días no laborables
+        const fechaStr = info.date.toISOString().slice(0,10);
+        if (esFechaNoLaborable(currentCalendarGroupId, fechaStr)) {
+            info.el.style.backgroundColor = '#1e293b';
+            info.el.style.opacity = '0.6';
+            info.el.style.borderRadius = '0.5rem';
+            info.el.title = 'Día no laborable';
         }
+    }
     });
     calendar.render();
     actualizarContadorLeccionesFullCalendar();
@@ -1684,6 +1693,7 @@ function gestionarFechasNoLaborables() {
         alert(lista || 'No hay días no laborables adicionales configurados.');
     }
 }
+
 
 // ======================================================================
 // 6. EXPORTAR / IMPORTAR BACKUP COMPLETO
